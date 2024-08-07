@@ -1,3 +1,10 @@
 /mychatgpt.db
 /settings.ini
 /.venv/
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/MyChatGPT.iml
+/.idea/vcs.xml
