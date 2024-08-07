@@ -21,7 +21,7 @@ class ChatView(QWidget):
     submitted_signal = pyqtSignal(str)
     stop_signal = pyqtSignal()
     chat_llm_signal = pyqtSignal(str)
-    reload_llm_signal = pyqtSignal(int)
+    reload_chat_detail_signal = pyqtSignal(int)
 
     def __init__(self, model):
         super().__init__()
@@ -47,7 +47,7 @@ class ChatView(QWidget):
         self.copy_all_button.clicked.connect(lambda: QApplication.clipboard().setText(self.get_all_text()))
 
         self.reload_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'cards-address.png')), UI.RELOAD_ALL)
-        self.reload_button.clicked.connect(self.reload_llm_signal_emit)
+        self.reload_button.clicked.connect(lambda: self.reload_chat_detail_signal.emit(-1))
 
         self.search_text = PromptTextEdit()
         self.search_text.submitted_signal.connect(self.search)
@@ -157,9 +157,6 @@ class ChatView(QWidget):
         main_layout.addWidget(mainWidget)
 
         self.setLayout(main_layout)
-
-    def reload_llm_signal_emit(self):
-        self.reload_llm_signal.emit(-1)
 
     def reset_search_bar(self):
         self.found_text_positions = []
