@@ -1,0 +1,21 @@
+@startuml
+actor User
+participant ChatView
+participant ChatPresenter
+participant ChatModel
+
+User -> ChatView : submit(message)
+ChatView -> ChatPresenter : submitted_signal(message)
+ChatPresenter -> ChatView : add_user_question(ChatType.HUMAN, message)
+ChatPresenter -> ChatModel : send_user_input(message, stream)
+ChatModel -> ChatModel : open_ai_thread_process()
+ChatModel -> ChatView : [All signals]
+ChatModel --> ChatView :thread_started_signal
+ChatView --> ChatView : start_chat()
+ChatModel --> ChatView : response_signal
+ChatView --> ChatView : update_ui()
+ChatModel --> ChatView : thread_finished_signal
+ChatView --> ChatView : finish_chat()
+ChatModel --> ChatView : response_finished_signal
+ChatView --> ChatView : update_ui_finish()
+@enduml

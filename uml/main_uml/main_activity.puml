@@ -1,0 +1,27 @@
+@startuml
+start
+:initialize_manager();
+if (Settings file exists?) then (no)
+    :Show warning message;
+endif
+:initialize_settings();
+:get_settings();
+:initialize_database();
+:get_database();
+:initialize_variables();
+:initialize_ui();
+:initialize_window();
+:initialize chat presenter;
+:connect signals for chat;
+:initialize image presenter;
+:connect signals for image;
+:initialize vision presenter;
+:connect signals for vision;
+:initialize TTS presenter;
+:connect signals for TTS;
+:initialize STT presenter;
+:connect signals for STT;
+:set_main_widgets();
+:show();
+stop
+@enduml

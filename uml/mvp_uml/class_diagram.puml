@@ -1,0 +1,28 @@
+@startuml
+class ChatView {
+    +start_chat()
+    +finish_chat()
+    +update_ui()
+    +update_ui_finish()
+    +add_user_question(type: string, text: string)
+}
+
+class ChatModel {
+    +thread_started_signal
+    +thread_finished_signal
+    +response_signal
+    +response_finished_signal
+    +send_user_input(text: string, stream: boolean)
+}
+
+class ChatPresenter {
+    -chatView: ChatView
+    -chatModel: ChatModel
+    +initialize_ui()
+    +submit(text)
+}
+
+ChatPresenter *-- ChatView
+ChatPresenter *-- ChatModel
+
+@enduml

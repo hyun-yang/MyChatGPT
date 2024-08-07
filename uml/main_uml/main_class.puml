@@ -1,0 +1,81 @@
+@startuml
+class MainWindow {
+    - _chat
+    - _image
+    - _vision
+    - _tts
+    - _stt
+    - _settings
+    - _database
+    - current_llm
+    - current_system
+    - progress_bar
+    + __init__()
+    + initialize_manager()
+    + initialize_ui()
+    + initialize_window()
+    + set_main_widgets()
+}
+
+class SettingsManager {
+    + initialize_settings()
+    + get_settings(): dict
+}
+
+class DataManager {
+    + initialize_database()
+    + get_database(): object
+}
+
+class ChatPresenter {
+    - model: Model
+}
+
+class ImagePresenter {
+    - model: Model
+}
+
+class VisionPresenter {
+    - model: Model
+}
+
+class TTSPresenter {
+    - model: Model
+}
+
+class STTPresenter {
+    - model: Model
+}
+
+class QStackedWidget {
+    + addWidget(widget)
+}
+class MainWidgetIndex {
+    + CHAT_WIDGET
+    + IMAGE_WIDGET
+    + VISION_WIDGET
+    + TTS_WIDGET
+    + STT_WIDGET
+}
+
+class Model {
+    + thread_started_signal
+    + response_finished_signal
+    + connect(callback)
+}
+
+MainWindow --> ChatPresenter
+MainWindow --> ImagePresenter
+MainWindow --> VisionPresenter
+MainWindow --> TTSPresenter
+MainWindow --> STTPresenter
+MainWindow --> SettingsManager
+MainWindow --> DataManager
+MainWindow --> QStackedWidget
+MainWindow --> MainWidgetIndex
+ChatPresenter --> Model
+ImagePresenter --> Model
+VisionPresenter --> Model
+TTSPresenter --> Model
+STTPresenter --> Model
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+class AIThreadFactory {
+    +static create_thread(args, chat_llm)
+}
+
+class ChatModel {
+    -ai_thread
+    +thread_started_signal: pyqtSignal
+    +thread_finished_signal: pyqtSignal
+    +response_signal: pyqtSignal(str, bool)
+    +response_finished_signal: pyqtSignal(str, str, float, bool)
+    +send_user_input(args, chat_llm)
+    +handle_thread_finished()
+    +force_stop()
+}
+
+class ClaudeThread
+class GeminiThread
+class OllamaThread
+class OpenAIThread
+
+AIThreadFactory --> ClaudeThread
+AIThreadFactory --> GeminiThread
+AIThreadFactory --> OllamaThread
+AIThreadFactory --> OpenAIThread
+
+ChatModel --> AIThreadFactory
+ChatModel --> ClaudeThread
+ChatModel --> GeminiThread
+ChatModel --> OllamaThread
+ChatModel --> OpenAIThread
+
+ClaudeThread : +started
+ClaudeThread : +finished
+ClaudeThread : +response_signal
+ClaudeThread : +response_finished_signal
+
+GeminiThread : +started
+GeminiThread : +finished
+GeminiThread : +response_signal
+GeminiThread : +response_finished_signal
+
+OllamaThread : +started
+OllamaThread : +finished
+OllamaThread : +response_signal
+OllamaThread : +response_finished_signal
+
+OpenAIThread : +started
+OpenAIThread : +finished
+OpenAIThread : +response_signal
+OpenAIThread : +response_finished_signal
+@enduml

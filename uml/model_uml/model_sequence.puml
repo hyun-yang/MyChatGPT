@@ -1,0 +1,36 @@
+@startuml
+actor User
+participant ChatModel
+participant AIThreadFactory
+participant OpenAIThread
+participant GeminiThread
+participant ClaudeThread
+participant OllamaThread
+
+User -> ChatModel: send_user_input(args, chat_llm)
+'alt ai_thread is not None and ai_thread.isRunning()
+'    ChatModel -> ChatModel: print "Previous thread is still running!"
+'    ChatModel -> ChatModel: ai_thread.wait()
+'end
+ChatModel -> AIThreadFactory: create_thread(args, chat_llm)
+alt chat_llm == "OpenAI"
+    AIThreadFactory -> OpenAIThread: new OpenAIThread(args)
+    ChatModel -> OpenAIThread: ai_thread = OpenAIThread
+else chat_llm == "Gemini"
+    AIThreadFactory -> GeminiThread: new GeminiThread(args)
+    ChatModel -> GeminiThread: ai_thread = GeminiThread
+else chat_llm == "Claude"
+    AIThreadFactory -> ClaudeThread: new ClaudeThread(args)
+    ChatModel -> ClaudeThread: ai_thread = ClaudeThread
+else chat_llm == "Ollama"
+    AIThreadFactory -> OllamaThread: new OllamaThread(args)
+    ChatModel -> OllamaThread: ai_thread = OllamaThread
+else
+    AIThreadFactory -> ChatModel: raise ValueError
+end
+ChatModel -> ai_thread: started.connect(thread_started_signal.emit)
+ChatModel -> ai_thread: finished.connect(handle_thread_finished)
+ChatModel -> ai_thread: response_signal.connect(response_signal.emit)
+ChatModel -> ai_thread: response_finished_signal.connect(response_finished_signal.emit)
+ChatModel -> ai_thread: start()
+@enduml

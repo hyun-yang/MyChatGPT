@@ -1,0 +1,14 @@
+@startuml
+actor User
+participant ChatPresenter
+participant ChatView
+participant ChatModel
+participant Database
+
+User -> ChatView: submit(text)
+ChatView -> ChatPresenter: submit(text)
+ChatPresenter -> ChatPresenter: add_human_chat(text)
+ChatPresenter -> Database: insert_chat_detail(chat_main_id, ChatType.HUMAN, None, text, None, None)
+ChatPresenter -> ChatView: update_ui_submit(ChatType.HUMAN, text)
+ChatPresenter -> ChatModel: send_user_input(create_args(text, chat_llm), chat_llm)
+@enduml

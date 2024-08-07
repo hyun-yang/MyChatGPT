@@ -1,0 +1,69 @@
+@startuml
+actor User
+participant MainWindow
+participant ChatPresenter
+participant ImagePresenter
+participant VisionPresenter
+participant TTSPresenter
+participant STTPresenter
+
+User -> MainWindow: __init__()
+activate MainWindow
+MainWindow -> MainWindow: initialize_manager()
+MainWindow -> SettingsManager: initialize_settings()
+MainWindow -> SettingsManager: get_settings()
+activate SettingsManager
+SettingsManager --> MainWindow: settings
+deactivate SettingsManager
+MainWindow -> DataManager: initialize_database()
+MainWindow -> DataManager: get_database()
+activate DataManager
+DataManager --> MainWindow: database
+deactivate DataManager
+MainWindow -> MainWindow: initialize_variables()
+MainWindow -> MainWindow: initialize_ui()
+MainWindow -> MainWindow: initialize_window()
+deactivate MainWindow
+
+User -> MainWindow: Select "Chat" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.CHAT_WIDGET)
+MainWindow -> ChatPresenter: Initialize ChatPresenter
+ChatPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> ChatPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "Image" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.IMAGE_WIDGET)
+MainWindow -> ImagePresenter: Initialize ImagePresenter
+ImagePresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> ImagePresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "Vision" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.VISION_WIDGET)
+MainWindow -> VisionPresenter: Initialize VisionPresenter
+VisionPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> VisionPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "STT" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.STT_WIDGET)
+MainWindow -> TTSPresenter: Initialize TTSPresenter
+TTSPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> TTSPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "TTS" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.TTS_WIDGET)
+MainWindow -> STTPresenter: Initialize STTPresenter
+STTPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> STTPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+
+@enduml

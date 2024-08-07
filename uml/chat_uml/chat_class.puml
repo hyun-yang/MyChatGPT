@@ -1,0 +1,58 @@
+@startuml
+class ChatPresenter {
+    - _chat_main_id: int
+    - _chat_main_index: int
+    - chat_llm: str
+    - _settings: dict
+    - _database: Database
+    + __init__()
+    + initialize_manager()
+    + initialize_ui()
+    + initialize_chat_history()
+    + set_chat_main_id(chat_main_id: int)
+    + show_chat_detail(id: int)
+    + handle_response_finished_signal(model: str, finish_reason: str, elapsed_time: float, stream: bool)
+    + filter_list(text: str)
+    + confirm_delete_chat()
+    + add_new_chat_table()
+    + add_human_chat(text: str)
+    + clear_chat(delete_id: int)
+    + create_new_chat(title: str)
+    + delete_chat_table(id: int)
+    + delete_chat(index: int)
+    + read_chat(index: int)
+    + update_chat(index: int, new_title:str)
+    + submit(text: str)
+}
+
+class ChatModel {
+    + thread_started_signal: Signal
+    + thread_finished_signal: Signal
+    + response_signal: Signal
+    + response_finished_signal: Signal
+    + force_stop()
+    + send_user_input(args: dict, llm: str)
+}
+
+class ChatView {
+    + submitted_signal: Signal
+    + stop_signal: Signal
+    + chat_llm_signal: Signal
+    + set_prompt()
+    + update_ui()
+    + update_ui_finish(model: str, finish_reason: str, elapsed_time: float, stream: bool)
+    + clear_all()
+    + reset_search_bar()
+    + get_last_ai_widget(): AIWidget
+}
+
+class ChatListModel {
+    + new_chat_main_id_signal: Signal
+    + remove_chat_signal: Signal
+    + get_index_by_chat_main_id(chat_main_id: int): int
+}
+
+ChatPresenter --> ChatModel
+ChatPresenter --> ChatView
+ChatPresenter --> ChatListModel
+@enduml
