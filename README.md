@@ -3,6 +3,53 @@ The ultimate PyQt6 application featuring the power of OpenAI, Google Gemini, Cla
 
 It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS) and Speech-To-Text(STT).
 
+## Prerequisites
+Before you begin, ensure you have met the following requirements:
+
+1. Python:
+
+    Make sure you have Python 3.8 or later installed. You can download it from the official Python website.
+
+```bash
+  python --version
+```    
+
+2. pip:
+
+   Ensure you have pip installed, which is the package installer for Python.
+
+
+3. Git:
+
+   Ensure you have Git installed for version control. You can download it from the official Git website.
+
+
+4. Virtual Environment:
+
+    It is recommended to use a virtual environment to manage your project dependencies.
+
+    You can create a virtual environment using venv:
+
+```bash
+  python -m venv venv
+```    
+
+```bash
+  source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
+
+5. IDE/Code Editor:
+
+   Use an IDE or code editor of your choice. Popular options include PyCharm, VSCode, and Sublime Text.
+
+
+6. PlantUML: 
+
+    PlantUML is used for generating UML diagrams. 
+
+    Download PlantUML from the official PlantUML website or PyCharm plugin, Xcode extension.
+
+
 ## Quick Install
 
 1. With pip:
@@ -10,7 +57,7 @@ It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS
 ```bash
 pip install -r requirements.txt
 ```
-Or 
+Or virtual environment(venv), use this command
 
 ```bash
 python -m pip install -r requirements.txt
