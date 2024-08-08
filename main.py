@@ -170,8 +170,6 @@ class MainWindow(QMainWindow):
 
         main_toolbar_layout = QHBoxLayout()
 
-        separator = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
         self.setting_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'setting.svg')), '')
         self.setting_button.setFixedSize(40, 40)
         self.setting_button.setIconSize(icon_size)
@@ -200,9 +198,9 @@ class MainWindow(QMainWindow):
         main_toolbar_layout.addWidget(self.vision_button)
         main_toolbar_layout.addWidget(self.tts_button)
         main_toolbar_layout.addWidget(self.stt_button)
-        main_toolbar_layout.addItem(separator)
+        main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.setting_button)
-        main_toolbar_layout.addItem(separator)
+        main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.exit_button)
 
         toolbar_widget = QWidget()
