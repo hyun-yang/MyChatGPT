@@ -341,8 +341,15 @@ if __name__ == '__main__':
     app_splash = QSplashScreen(QPixmap(splash_image_path))
     app_splash.show()
 
+    sg = QGuiApplication.primaryScreen().availableGeometry()
+    screen_width = sg.width()
+
     mainWindow = MainWindow()
     app_splash.finish(mainWindow)
-    mainWindow.show()
+
+    if screen_width < 1450:
+        mainWindow.showMaximized()
+    else:
+        mainWindow.show()
 
     sys.exit(app.exec())

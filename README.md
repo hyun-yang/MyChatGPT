@@ -10,6 +10,11 @@ It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS
 ```bash
 pip install -r requirements.txt
 ```
+Or 
+
+```bash
+python -m pip install -r requirements.txt
+```
 
 2. Run main.py
 
@@ -43,6 +48,8 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 ### Tip
 After you generate the executable file on Windows, change the name of the .exe file to make its icon show up properly.
 
+
+## Known Issue
 ## Ubuntu Issue
 ### If you encounter the error message below while running/debugging the program on the Ubuntu operating system, please resolve it as described in the [Fix] section
 
@@ -61,6 +68,30 @@ Install following library then re-run it
 ```bash
 sudo apt-get install -y libxcb-cursor-dev
 ```
+
+## Segment fault error issue - Ubuntu 
+### If you encounter the error message above when closing the app - Ubuntu and Mac
+
+### Fix
+Use pyinstaller==6.5.0 
+
+Refer requirements.txt 
+
+### Related links
+[PyQT6.5.X fails with to start on macOS (segmentation fault)](https://github.com/pyinstaller/pyinstaller/issues/7789)
+
+[Segment fault when packed with pyinstaller on linux](https://github.com/pyglet/pyglet/issues/1049)
+
+## check_gcp_environment_no_op.cc:29] ALTS: Platforms other than Linux and Windows are not supported issue - Mac
+### If you encounter the error message above when closing the app - Ubuntu and Mac
+
+### Fix
+Use grpcio==1.64.1
+
+Refer requirements.txt
+
+### Related links
+[Suppress logs with google.cloud.workflows client instantiation](https://github.com/googleapis/google-cloud-python/issues/12902)
 
 ## License
 Distributed under the MIT License.
