@@ -8,7 +8,7 @@ Before you begin, ensure you have met the following requirements:
 
 1. Python:
 
-    Make sure you have Python 3.8 or later installed. You can download it from the official Python website.
+    Make sure you have Python 3.10 or later installed. You can download it from the official Python website.
 
 ```bash
   python --version
@@ -40,7 +40,7 @@ Before you begin, ensure you have met the following requirements:
 
 5. IDE/Code Editor:
 
-   Use an IDE or code editor of your choice. Popular options include PyCharm, VSCode, and Sublime Text.
+   Use an IDE or code editor of your choice. Popular options include PyCharm, VSCode, and Eclipse.
 
 
 6. PlantUML: 
@@ -92,7 +92,7 @@ python main.py
 ```bash
 pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "splash/pyqt-small.png:splash" --icon="ico/app.ico" --windowed --onefile main.py
 ```
-### Tip
+### Icon issue
 After you generate the executable file on Windows, change the name of the .exe file to make its icon show up properly.
 
 
