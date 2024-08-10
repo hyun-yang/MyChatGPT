@@ -305,11 +305,10 @@ class UI:
             }
             """
 
-
-def __setattr__(self, name, value):
-    if name in self.__dict__:
-        raise ValueError(f"Cannot reassign constant '{name}'")
-    self.__dict__[name] = value
+    def __setattr__(self, name, value):
+        if name in self.__dict__:
+            raise ValueError(f"Cannot reassign constant '{name}'")
+        self.__dict__[name] = value
 
 
 class MODEL_CONSTANTS:
