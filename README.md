@@ -52,7 +52,13 @@ Before you begin, ensure you have met the following requirements:
 
 ## Quick Install
 
-1. With pip:
+1. Clone repository
+
+```bash
+git clone https://github.com/hyun-yang/MyChatGPT.git
+```
+
+2. With pip:
 
 ```bash
 pip install -r requirements.txt
@@ -63,7 +69,7 @@ Or virtual environment(venv), use this command
 python -m pip install -r requirements.txt
 ```
 
-2. Run main.py
+3. Run main.py
 
 ```bash
 python main.py

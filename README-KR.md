@@ -52,7 +52,13 @@
 
 ## 빠른 설치
 
-1. pip를 사용하여 설치:
+1. 저장소 복사
+
+```bash
+git clone https://github.com/hyun-yang/MyChatGPT.git
+```
+
+2. pip를 사용하여 설치:
 
 ```bash
 pip install -r requirements.txt
@@ -63,7 +69,7 @@ pip install -r requirements.txt
 python -m pip install -r requirements.txt
 ```
 
-2. main.py 실행
+3. main.py 실행
 
 ```bash
 python main.py
