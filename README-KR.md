@@ -75,6 +75,17 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
+4. API Key 설정하기
+   * 'Setting' 메뉴를 열고 API Key를 설정합니다.  
+   * Ollama 를 사용하기전에 [Ollama](https://ollama.com/) 앱을 인스톨 한 후 사용하고 싶은 모델을 다운로드 합니다. 
+
+
+5. 재 실행
+
+```bash
+python main.py
+```
+
 ## 데모
 [MyChatGPT Demo - OpenAI, Gemini, Claude, Ollama-English](https://www.youtube.com/watch?v=KCdJH2MLwWM)
 
