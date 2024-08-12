@@ -112,6 +112,42 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 ### Icon issue
 After you generate the executable file on Windows, change the name of the .exe file to make its icon show up properly.
 
+## Screenshots
+
+* Setting
+![setting_screenshot](https://github.com/user-attachments/assets/856aebeb-38c0-44ae-914c-a729a037343b)
+
+
+* Chat
+![chat_screenshot](https://github.com/user-attachments/assets/50d1ac1e-a782-42dd-89fa-7477e0abda3e)
+
+
+* Image
+![image_screenshot](https://github.com/user-attachments/assets/0141b799-b09b-428c-b58e-7a6269e1d3e1)
+
+
+* Vision
+![vision_screenshot](https://github.com/user-attachments/assets/a5b164ac-906b-45ee-8e2e-9578dc576d43)
+
+
+* TTS
+![tts_screenshot](https://github.com/user-attachments/assets/34643d6d-63e3-4717-848e-bdc3dde5e698)
+
+
+* STT
+![stt_screenshot](https://github.com/user-attachments/assets/73ba987a-1c9e-4be6-9c10-cfe79f279a19)
+
+
+
+## UML Diagram
+
+* Main Class Diagram
+![main_class_screenshot_small](https://github.com/user-attachments/assets/a2d90e47-65ac-440c-8ff1-7f419b211ac6)
+
+
+* Main Sequence Diagram
+![main_sequence_screenshot_small](https://github.com/user-attachments/assets/89073c70-59e3-4cbf-b3d1-97d7c59e981c)
+
 
 ## Known Issue
 ## Ubuntu Issue
