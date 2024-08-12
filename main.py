@@ -21,6 +21,11 @@ from util.Utility import Utility
 from util.VerticalLine import VerticalLine
 from vision.VisionPresenter import VisionPresenter
 
+import logging
+
+httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.WARNING)
+
 
 class MainWindow(QMainWindow):
 
