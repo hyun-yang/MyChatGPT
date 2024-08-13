@@ -139,6 +139,13 @@ Windows에서 실행 파일을 생성한 후, .exe 파일의 이름을 변경하
 ![stt_screenshot](https://github.com/user-attachments/assets/73ba987a-1c9e-4be6-9c10-cfe79f279a19)
 
 
+* Claude 모델 리스트 (모델 정보를 직접 추가해야 합니다.)
+![claude_model_list_screenshot](https://github.com/user-attachments/assets/af60844d-0db3-4f33-a22b-cbe291f2ba31)
+
+
+* Ollama 모델 리스트 (모델 정보를 직접 추가해야 합니다. 그리고 사용하고 싶은 모델은 미리 다운로드해야 합니다.)
+![ollama_model_list_screenshot](https://github.com/user-attachments/assets/f7397692-d8df-419e-bd76-903e8e8c1263)
+
 
 ## UML Diagram
 

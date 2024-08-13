@@ -138,6 +138,13 @@ After you generate the executable file on Windows, change the name of the .exe f
 ![stt_screenshot](https://github.com/user-attachments/assets/73ba987a-1c9e-4be6-9c10-cfe79f279a19)
 
 
+* Claude Model List (You need to manually add models)
+![claude_model_list_screenshot](https://github.com/user-attachments/assets/af60844d-0db3-4f33-a22b-cbe291f2ba31)
+
+
+* Ollama Model List (You need to manually add models and make sure to download the model you wish to use beforehand)
+![ollama_model_list_screenshot](https://github.com/user-attachments/assets/f7397692-d8df-419e-bd76-903e8e8c1263)
+
 
 ## UML Diagram
 
