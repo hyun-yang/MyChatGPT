@@ -118,6 +118,7 @@ class Constants:
 
     TTS_PLAYER_WIDTH = 500
     TTS_PLAYER_HEIGHT = 150
+    TTS_4K_LIMIT = 4096
 
     # STT
     STT_MODEL_LIST = ["whisper-1"]
@@ -227,6 +228,12 @@ class UI:
         " \nThen enter the prompt")
 
     TTS_PROMPT_PLACEHOLDER = "Enter your text or select file"
+    TTS_FILE_NOT_FOUND = "The file was not found."
+    TTS_FILE_ERROR = "An error occurred:"
+    TTS_FILE_ENCODING_ERROR = "Could not decode the file with encoding"
+    TTS_CHARACTER_LIMIT_TITLE = "TTS 4096 characters limit"
+    TTS_CHARACTER_LIMIT_INFO_MESSAGE = "The maximum length for the TTS string is 4096 characters"
+
     VISION_PROMPT_PLACEHOLDER = ("Prompts can be very helpful for correcting specific words or "
                                  " acronyms that the model may misrecognize in the audio")
 

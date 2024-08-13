@@ -302,3 +302,16 @@ class Utility:
             temp_file.flush()
             temp_file_name = temp_file.name
         return temp_file_name
+
+    @staticmethod
+    def is_over_4k_limit(file_path: str) -> bool:
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
+                content = file.read()
+                return len(content) < Constants.TTS_4K_LIMIT
+        except FileNotFoundError:
+            print(f"{UI.TTS_FILE_NOT_FOUND} '{file_path}'")
+            return False
+        except Exception as e:
+            print(f"{UI.TTS_FILE_ERROR} {e}")
+            return False

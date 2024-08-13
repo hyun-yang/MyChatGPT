@@ -4,7 +4,7 @@ from functools import partial
 from PyQt6.QtCore import Qt, pyqtSignal, QFile, QTextStream
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout, QSizePolicy, QScrollArea, QSplitter, \
-    QTabWidget, QGroupBox, QFormLayout, QLabel, QComboBox, QFileDialog, QListWidget
+    QTabWidget, QGroupBox, QFormLayout, QLabel, QComboBox, QFileDialog, QListWidget, QMessageBox
 
 from chat.view.ChatWidget import ChatWidget
 from custom.CheckComboBox import CheckComboBox
@@ -360,10 +360,14 @@ class TTSView(QWidget):
     def select_text_file(self, llm, filetype):
         fileListWidget = self.findChild(QListWidget, f"{llm}_TTSList")
         selected_file = self.show_select_file_dialog(filetype)
-        if selected_file:
+        if selected_file and Utility.is_over_4k_limit(selected_file):
             fileListWidget.clear()
             fileListWidget.addItem(selected_file)
             self.update_submit_status(llm)
+        else:
+            QMessageBox.information(self, UI.TTS_CHARACTER_LIMIT_TITLE,
+                                    UI.TTS_CHARACTER_LIMIT_INFO_MESSAGE,
+                                    QMessageBox.StandardButton.Ok)
 
     def show_select_file_dialog(self, filetype):
         file_filter = None
