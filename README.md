@@ -77,7 +77,7 @@ python main.py
 
 4. Configure API Key
    * Open 'Setting' menu and set API key.  
-   * For Ollama, you can use any key and need to install [Ollama]https://ollama.com/ and download model you want to use.  
+   * For Ollama, you can use any key and need to install [Ollama](https://ollama.com/) and download model you want to use.  
 
 
 5. Re-run main.py
