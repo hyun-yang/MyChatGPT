@@ -104,6 +104,34 @@ python main.py
 * Support Open-source AI models using Ollama library
 * Support Chat, Image, Vision, TTS, and STT generation
 
+## Claude/Ollama Model List
+Claude and Ollama currently do not have a method to retrieve the list of supported models, 
+so you need to open the **settings.ini** file and add them manually as shown below.
+
+If you are using Ollama, make sure to check the following three things:
+
+1) Install [Ollama](https://ollama.com/).
+2) Download the model you wish to use.
+3) Open the settings.ini file and add the name of the model.
+
+```
+Open 'settings.ini' file then add model list.
+
+...
+[Claude_Model_List]
+claude-3-5-sonnet-20240620=true
+claude-3-opus-20240229=true
+claude-3-sonnet-20240229=true
+claude-3-haiku-20240307=true
+
+[Ollama_Model_List]
+llama3.1=true
+gemma2=true
+gemma2:27b=true
+codegemma=true
+...
+```
+
 ## Create executable file
 
 ```bash
