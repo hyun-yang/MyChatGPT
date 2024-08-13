@@ -4,7 +4,7 @@
 이 애플리케이션은 채팅, 이미지, 비전, 텍스트-음성 변환(TTS) 및 음성-텍스트 변환(STT) 기능을 지원합니다.
 
 ## 필수 조건
-시작하기 전에 다음 요구 사항을 충족했는지 확인하세요:
+시작하기 전에 다음 요구 사항을 확인하세요:
 
 1. Python:
 
@@ -26,7 +26,7 @@
 
 4. 가상 환경:
 
-   프로젝트 의존성을 관리하기 위해 가상 환경을 사용하는 것이 권장됩니다.
+   프로젝트 의존성을 관리하기 위해 가상 환경을 사용하는 것을 권장합니다.
    
    venv를 사용하여 가상 환경을 생성할 수 있습니다:
 
@@ -40,12 +40,12 @@
 
 5. IDE/코드 편집기:
 
-   원하는 IDE 또는 코드 편집기를 사용하세요. 인기 있는 옵션으로는 PyCharm, VSCode, Eclipse 등이 있습니다.
+   원하는 IDE 또는 코드 편집기를 사용하세요. PyCharm, VSCode, Eclipse 등이 있습니다.
 
 
 6. PlantUML: 
 
-    PlantUML은 UML 다이어그램을 생성하는 데 사용됩니다. 
+    PlantUML은 UML 다이어그램을 생성하는 데 사용합니다. 
 
     공식 PlantUML 웹사이트 또는 PyCharm 플러그인, Xcode 확장에서 PlantUML을 다운로드하세요.
 
@@ -210,7 +210,7 @@ sudo apt-get install -y libxcb-cursor-dev
 ### 해결 방법
 Use pyinstaller==6.5.0 
 
-requirements.txt를 참조하세요 
+requirements.txt를 참고하세요 
 
 ### 관련 링크
 [PyQT6.5.X fails with to start on macOS (segmentation fault)](https://github.com/pyinstaller/pyinstaller/issues/7789)
@@ -223,7 +223,7 @@ requirements.txt를 참조하세요
 ### 해결 방법
 Use grpcio==1.64.1
 
-requirements.txt를 참조하세요
+requirements.txt를 참고하세요
 
 ### 관련 링크
 [Suppress logs with google.cloud.workflows client instantiation](https://github.com/googleapis/google-cloud-python/issues/12902)
