@@ -141,6 +141,10 @@ After you generate the executable file on Windows, change the name of the .exe f
 
 ## Screenshots
 
+* First Run
+
+![first-run-screenshot](https://github.com/user-attachments/assets/317e3b12-980f-4946-9704-20cbcaa4f071)
+
 * Setting
 ![setting_screenshot](https://github.com/user-attachments/assets/856aebeb-38c0-44ae-914c-a729a037343b)
 

@@ -142,6 +142,10 @@ Windows에서 실행 파일을 생성한 후, .exe 파일의 이름을 변경하
 
 ## Screenshots
 
+* First Run
+
+![first-run-screenshot](https://github.com/user-attachments/assets/317e3b12-980f-4946-9704-20cbcaa4f071)
+
 * Setting
 ![setting_screenshot](https://github.com/user-attachments/assets/856aebeb-38c0-44ae-914c-a729a037343b)
 
