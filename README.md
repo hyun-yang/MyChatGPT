@@ -86,8 +86,8 @@ python main.py
 python main.py
 ```
 
-## Quick Demo - will update the demo shortly
-[MyChatGPT Demo - OpenAI, Gemini, Claude, Ollama](https://www.youtube.com/watch?v=KCdJH2MLwWM)
+## Quick Demo
+[MyChatGPT Demo - OpenAI, Gemini, Claude, Ollama](https://youtu.be/oLN8wS8gwwc)
 
 
 ## Requirements
