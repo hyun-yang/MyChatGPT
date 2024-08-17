@@ -162,7 +162,7 @@ class ChatPresenter(QWidget):
             self._database.insert_chat_detail(self.chat_main_id, ChatType.HUMAN.value, None, text, None, None)
 
     def update_chat(self, index, new_title):
-        self.chatViewModel.updateChat(index, new_title)
+        self.chatViewModel.update_chat(index, new_title)
 
     def read_chat(self, index):
         return self.chatViewModel.get_chat(index)

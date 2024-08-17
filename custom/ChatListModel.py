@@ -36,7 +36,7 @@ class ChatListModel(QAbstractListModel):
             self.endRemoveRows()
             self.remove_chat_signal.emit(chat_id)
 
-    def updateChat(self, index, new_title):
+    def update_chat(self, index, new_title):
         chat_id = self.chat_items[index.row()]['id']
         if self.database.update_chat_main(chat_id, new_title):
             self.chat_items[index.row()]['title'] = new_title

@@ -53,7 +53,7 @@ class ChatList(QWidget):
         title = UI.RENAME
         dialog = RenameDialog(title, text)
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            self.model.updateChat(index, dialog.text)
+            self.model.update_chat(index, dialog.text)
 
     def on_item_clicked(self, index):
         chat_item = self.model.get_chat(index)
