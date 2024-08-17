@@ -87,7 +87,9 @@ python main.py
 ```
 
 ## 데모
-[MyChatGPT Demo - OpenAI, Gemini, Claude, Ollama](https://youtu.be/oLN8wS8gwwc)
+[MyChatGPT Demo-ENG](https://youtu.be/oLN8wS8gwwc)
+
+[MyChatGPT Demo-KOR](https://youtu.be/HuFUf5ldb_Q)
 
 
 ## 요구 사항
