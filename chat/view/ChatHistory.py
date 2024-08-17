@@ -29,7 +29,7 @@ class ChatHistory(QWidget):
 
         self.filter_text = PromptTextEdit()
         self.filter_text.submitted_signal.connect(self.filter_list)
-        self.filter_text.setPlaceholderText(UI.CHAT_PROMPT_PLACEHOLDER)
+        self.filter_text.setPlaceholderText(UI.SEARCH_PROMPT_PLACEHOLDER)
         self.filter_text.setFixedHeight(self.add_button.sizeHint().height())
         self.filter_text.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
