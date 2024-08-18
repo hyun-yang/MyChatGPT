@@ -8,7 +8,7 @@
 
 1. Python:
 
-    Python 3.8 이상이 설치되어 있는지 확인하세요. 공식 Python 웹사이트에서 다운로드 할 수 있습니다. 
+    Python 3.10 이상이 설치되어 있는지 확인하세요. 공식 Python 웹사이트에서 다운로드 할 수 있습니다. 
 
 ```bash
   python --version
