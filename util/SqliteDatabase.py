@@ -378,8 +378,6 @@ class SqliteDatabase:
 
     def delete_image_main(self, id):
         try:
-            # if not self.delete_image_detail(id):
-            #     raise Exception(f"Failed to delete image details for id {id}")
             if not self.delete_image_main_entry(id):
                 raise Exception(f"Failed to delete image main entry for id {id}")
         except Exception as e:
@@ -643,8 +641,6 @@ class SqliteDatabase:
 
     def delete_vision_main(self, id):
         try:
-            # if not self.delete_vision_detail(id):
-            #     raise Exception(f"Failed to delete vision details for id {id}")
             if not self.delete_vision_main_entry(id):
                 raise Exception(f"Failed to delete vision main entry for id {id}")
         except Exception as e:
@@ -874,14 +870,7 @@ class SqliteDatabase:
         return True
 
     def delete_tts_main(self, id):
-        # if not self.delete_tts_detail(id):
-        #     return False
-        # if not self.delete_tts_main_entry(id):
-        #     return False
-        # return True
         try:
-            # if not self.delete_tts_detail(id):
-            #     raise Exception(f"Failed to delete tts details for id {id}")
             if not self.delete_tts_main_entry(id):
                 raise Exception(f"Failed to delete tts main entry for id {id}")
         except Exception as e:
@@ -1056,8 +1045,6 @@ class SqliteDatabase:
 
     def delete_stt_main(self, id):
         try:
-            # if not self.delete_stt_detail(id):
-            #     raise Exception(f"Failed to delete stt details for id {id}")
             if not self.delete_stt_main_entry(id):
                 raise Exception(f"Failed to delete stt main entry for id {id}")
         except Exception as e:
