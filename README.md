@@ -139,7 +139,7 @@ codegemma=true
 pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "splash/pyqt-small.png:splash" --icon="ico/app.ico" --windowed --onefile main.py
 ```
 ### Icon issue
-After you generate the executable file on Windows, change the name of the .exe file to make its icon show up properly.
+After generating the executable file on Windows, if the icon of the executable is not displayed correctly, please rename the executable to ensure that the icon is displayed properly.
 
 ## Screenshots
 

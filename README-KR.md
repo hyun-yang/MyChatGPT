@@ -139,7 +139,7 @@ codegemma=true
 pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "splash/pyqt-small.png:splash" --icon="ico/app.ico" --windowed --onefile main.py
 ```
 ### 실행 파일 아이콘 문제
-Windows에서 실행 파일을 생성한 후, .exe 파일의 이름을 변경하여 아이콘이 제대로 표시되도록 하세요.
+Windows에서 실행 파일을 생성한 후, 실행 파일의 아이콘의 제대로 표시되지 않는다면 실행 파일의 이름을 변경하여 아이콘이 제대로 표시되도록 하세요.
 
 
 ## Screenshots
@@ -191,7 +191,7 @@ Windows에서 실행 파일을 생성한 후, .exe 파일의 이름을 변경하
 
 ## 알려진 문제
 ## Ubuntu 문제
-### Ubuntu 운영 체제에서 프로그램을 실행/디버깅하는 동안 아래의 오류 메시지가 발생하면, [Fix] 섹션에 설명된 대로 해결하세요
+### Ubuntu 운영 체제에서 프로그램을 실행/디버깅하는 동안 아래의 오류 메시지가 발생하면, [해결 방법] 섹션에 설명된 대로 해결하세요
 
 qt.qpa.plugin: From 6.5.0, xcb-cursor0 or libxcb-cursor0 is needed to load the Qt xcb platform plugin.
 
