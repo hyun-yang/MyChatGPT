@@ -150,7 +150,7 @@ class ImagePresenter(QWidget):
                     self.view.update_ui(image_detail_file['image_detail_file_data'], image_detail['image_revised_prompt'])
                     self.view.get_last_ai_widget().set_model_name(
                         Constants.MODEL_PREFIX + image_detail['image_model']
-                        + " | Response Time : " + format(float(image_detail['elapsed_time']), ".2f"))
+                        + Constants.RESPONSE_TIME + format(float(image_detail['elapsed_time']), ".2f"))
 
     def delete_image(self, index):
         self.imageViewModel.remove_image(index)

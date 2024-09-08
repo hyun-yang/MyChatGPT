@@ -139,7 +139,7 @@ class TTSPresenter(QWidget):
                     self.view.add_ai_answer(ChatType.AI, tts_detail['tts_data'], tts_detail['tts_response_format'])
                     self.view.get_last_ai_widget().set_model_name(
                         Constants.MODEL_PREFIX + tts_detail['tts_model']
-                        + " | Response Time : " + format(float(tts_detail['elapsed_time']), ".2f"))
+                        + Constants.RESPONSE_TIME + format(float(tts_detail['elapsed_time']), ".2f"))
 
     def delete_tts(self, index):
         self.ttsViewModel.remove_tts(index)

@@ -141,7 +141,7 @@ class STTPresenter(QWidget):
                                             Constants.MODEL_PREFIX + stt_detail['stt_model'])
                     self.view.get_last_ai_widget().set_model_name(
                         Constants.MODEL_PREFIX + stt_detail['stt_model']
-                        + " | Response Time : " + format(float(stt_detail['elapsed_time']), ".2f"))
+                        + Constants.RESPONSE_TIME + format(float(stt_detail['elapsed_time']), ".2f"))
 
     def delete_stt(self, index):
         self.sttViewModel.remove_stt(index)

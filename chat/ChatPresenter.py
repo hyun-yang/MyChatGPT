@@ -146,7 +146,7 @@ class ChatPresenter(QWidget):
                 self.view.add_user_question(ChatType.AI, chat_detail['chat'])
                 self.view.get_last_ai_widget().set_model_name(
                     Constants.MODEL_PREFIX + chat_detail['chat_model']
-                    + " | Response Time : " + format(float(chat_detail['elapsed_time']), ".2f"))
+                    + Constants.RESPONSE_TIME + format(float(chat_detail['elapsed_time']), ".2f"))
 
     def delete_chat(self, index):
         self.chatViewModel.remove_chat(index)

@@ -18,6 +18,7 @@ class Constants:
 
     FORCE_STOP = "Force Stop"
     NORMAL_STOP = "stop"
+    RESPONSE_TIME = " | Response Time : "
 
     # Claude Model List
     CLAUDE_MODEL_LIST_SECTION = "Claude_Model_List"

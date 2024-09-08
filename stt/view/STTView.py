@@ -543,7 +543,7 @@ class STTView(QWidget):
 
         if chatWidget and chatWidget.get_chat_type() == ChatType.AI:
             chatWidget.set_model_name(
-                Constants.MODEL_PREFIX + model + " | Response Time : " + format(elapsed_time, ".2f"))
+                Constants.MODEL_PREFIX + model + Constants.RESPONSE_TIME + format(elapsed_time, ".2f"))
 
     def model_list_changed(self, model, llm):
         self._settings.setValue(f"{llm}_STT_Parameter/stt_model", model)

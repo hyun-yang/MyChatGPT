@@ -147,7 +147,7 @@ class VisionPresenter(QWidget):
                                             Constants.MODEL_PREFIX + vision_detail['vision_model'])
                     self.view.get_last_ai_widget().set_model_name(
                         Constants.MODEL_PREFIX + vision_detail['vision_model']
-                        + " | Response Time : " + format(float(vision_detail['elapsed_time']), ".2f"))
+                        + Constants.RESPONSE_TIME + format(float(vision_detail['elapsed_time']), ".2f"))
 
     def delete_vision(self, index):
         self.visionViewModel.remove_vision(index)

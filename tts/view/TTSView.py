@@ -505,7 +505,7 @@ class TTSView(QWidget):
         self.stop_widget.setVisible(False)
         if ttsWidget and ttsWidget.get_chat_type() == ChatType.AI:
             ttsWidget.set_model_name(
-                Constants.MODEL_PREFIX + model + " | Response Time : " + format(elapsed_time, ".2f"))
+                Constants.MODEL_PREFIX + model + Constants.RESPONSE_TIME + format(elapsed_time, ".2f"))
 
     def model_list_changed(self, model, llm):
         self._settings.setValue(f"{llm}_TTS_Parameter/tts_model", model)

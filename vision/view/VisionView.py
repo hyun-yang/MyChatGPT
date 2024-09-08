@@ -873,7 +873,7 @@ class VisionView(QWidget):
 
         if chatWidget and chatWidget.get_chat_type() == ChatType.AI:
             chatWidget.set_model_name(
-                Constants.MODEL_PREFIX + model + " | Response Time : " + format(elapsed_time, ".2f"))
+                Constants.MODEL_PREFIX + model + Constants.RESPONSE_TIME + format(elapsed_time, ".2f"))
 
     def set_default_tab(self, name):
         index = self.tabs.indexOf(self.tabs.findChild(QWidget, name))
