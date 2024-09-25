@@ -208,7 +208,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {table_name}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
@@ -372,7 +372,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {table_name}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
@@ -635,7 +635,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {table_name}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
@@ -865,7 +865,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {table_name}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
@@ -1039,7 +1039,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {table_name}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
