@@ -105,7 +105,8 @@ class Utility:
             response = openai.models.list().model_dump()
             response_data = response['data']
             gtp_ids = sorted([item['id'] for item in response_data if
-                              'instruct' not in item['id'] and item['id'].strip().startswith('gpt')],
+                              'instruct' not in item['id'] and (item['id'].strip().startswith('gpt') or
+                                                                item['id'].strip().startswith('o'))],
                              key=lambda x: ('gpt-3.5' in x, x))
             return gtp_ids
         except openai.AuthenticationError:

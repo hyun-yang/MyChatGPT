@@ -1165,8 +1165,15 @@ class ChatView(QWidget):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
 
+        if model.startswith("o1-mini") or model.startswith("o1-preview"):
+            system_role = "user"
+        elif model.startswith("o1") or model.startswith("o3"):
+            system_role = "developer"
+        else:
+            system_role = "system"
+
         messages = [
-            {"role": "system",
+            {"role": system_role,
              "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
             {"role": "assistant", "content": self.get_all_text()},
             {"role": "user", "content": text}
@@ -1207,13 +1214,18 @@ class ChatView(QWidget):
             'model': model,
             'messages': messages,
             'stream': stream,
-            'max_tokens': max_tokens,
-            'temperature': temperature,
-            'top_p': top_p,
-            'frequency_penalty': frequency_penalty,
-            'presence_penalty': presence_penalty,
-            'seed': seed
         }
+
+        # If the model name starts with 'o1' or 'o3' then remove max_tokens,  temperature, top_p, frequency_penalty
+        # presence_penalty, seed
+        o1_o3_model = model.lower().startswith(("o1", "o3"))
+        if not o1_o3_model:
+            ai_arg['max_tokens'] = max_tokens
+            ai_arg['temperature'] = temperature
+            ai_arg['top_p'] = top_p
+            ai_arg['frequency_penalty'] = frequency_penalty
+            ai_arg['presence_penalty'] = presence_penalty
+            ai_arg['seed'] = seed
 
         if stop:
             ai_arg['stop'] = [stop]
