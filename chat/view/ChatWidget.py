@@ -43,7 +43,10 @@ class ChatWidget(QWidget):
             self.user_text.setTextFormat(Qt.TextFormat.MarkdownText)
         self.user_text.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.user_text.setWordWrap(True)
-        self.user_text.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.user_text.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse |
+            Qt.TextInteractionFlag.LinksAccessibleByMouse
+        )
         self.user_text.setOpenExternalLinks(True)
 
         padding = Utility.get_settings_value(section="Common_Label_Style", prop="padding",
