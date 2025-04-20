@@ -1167,7 +1167,7 @@ class ChatView(QWidget):
 
         if model.startswith("o1-mini") or model.startswith("o1-preview"):
             system_role = "user"
-        elif model.startswith("o1") or model.startswith("o3"):
+        elif model.startswith("o1") or model.startswith("o3") or model.startswith("o4"):
             system_role = "developer"
         else:
             system_role = "system"
@@ -1216,10 +1216,10 @@ class ChatView(QWidget):
             'stream': stream,
         }
 
-        # If the model name starts with 'o1' or 'o3' then remove max_tokens,  temperature, top_p, frequency_penalty
+        # If the model name starts with 'o1' or 'o3' or 'o4' then remove max_tokens,  temperature, top_p, frequency_penalty
         # presence_penalty, seed
-        o1_o3_model = model.lower().startswith(("o1", "o3"))
-        if not o1_o3_model:
+        o1_o3_o4_model = model.lower().startswith(("o1", "o3", "o4"))
+        if not o1_o3_o4_model:
             ai_arg['max_tokens'] = max_tokens
             ai_arg['temperature'] = temperature
             ai_arg['top_p'] = top_p
