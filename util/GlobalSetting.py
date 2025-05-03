@@ -64,13 +64,21 @@ class GlobalSetting(QDialog):
     def create_ai_code_view_style_group(self, mainLayout):
         ai_code_view_group = QGroupBox('AI Code-View Style')
         ai_code_view_layout = QGridLayout()
-        self.ai_labels = ['Color', 'Background Color', 'Font-Family', 'Font-Size']
-        self.ai_keys = ['color', 'background-color', 'font-family', 'font-size']
+        self.ai_labels = [
+            'Color', 'Background Color', 'Font-Family', 'Font-Size', 'Think Color', 'Think Background'
+        ]
+        self.ai_keys = [
+            'color', 'background-color', 'font-family', 'font-size', 'think-color', 'think-background-color'
+        ]
         self.ai_values = [self._settings.value(f'AI_Code_Style/{self.ai_keys[i]}', '') for i in
                           range(len(self.ai_keys))]
 
         self.ai_editors = [QLineEdit(self.ai_values[i]) for i in range(len(self.ai_labels))]
-        self.ai_buttons = [QPushButton('...') if i != 3 else None for i in range(len(self.ai_labels))]
+        self.ai_buttons = [
+            QPushButton('...') if i in [0, 1, 4, 5, 2] else None
+            for i in range(len(self.ai_labels))
+        ]
+        self.ai_buttons[3] = None
 
         for i in range(len(self.ai_editors)):
             self.ai_editors[i].textChanged.connect(partial(self.handle_ai_code_view_text_change, i))
@@ -78,9 +86,9 @@ class GlobalSetting(QDialog):
         for i, button in enumerate(self.ai_buttons):
             if button is not None:
                 button.setMaximumWidth(30)
-                if i < 2:
+                if i in [0, 1, 4, 5]:  # Color, Background Color, Think Color, Think Background
                     button.clicked.connect(partial(self.ai_color_dialog, i))
-                else:
+                elif i == 2:  # Font-Family
                     button.clicked.connect(self.ai_font_dialog)
 
         for i, label in enumerate(self.ai_labels):
@@ -232,7 +240,6 @@ class GlobalSetting(QDialog):
         self._settings.setValue(f'AI_Provider/{self.qa_keys[index]}', text)
 
     def ai_color_dialog(self, i):
-        print(i)
         color = QColorDialog.getColor()
         if color.isValid():
             self.ai_editors[i].setText(color.name())

@@ -150,27 +150,73 @@ class ChatWidget(QWidget):
         return self.user_text.text()
 
     def format_code_snippet(self, text):
-        color = Utility.get_settings_value(section="AI_Code_Style", prop="color",
-                                           default="#ccc",
-                                           save=True)
-        background_color = Utility.get_settings_value(section="AI_Code_Style", prop="background-color",
-                                                      default="#333333",
-                                                      save=True)
-        font_size = Utility.get_settings_value(section="AI_Code_Style", prop="font-size",
-                                               default="14px",
-                                               save=True)
-        font_family = Utility.get_settings_value(section="AI_Code_Style", prop="font-family",
-                                                 default="monospace",
-                                                 save=True)
+        color = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="color",
+            default="#ccc",
+            save=True
+        )
+        background_color = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="background-color",
+            default="#333333",
+            save=True
+        )
+        font_size = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="font-size",
+            default="14px",
+            save=True
+        )
+        font_family = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="font-family",
+            default="monospace",
+            save=True
+        )
+
+        think_color = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="think-color",
+            default="#000000",
+            save=True
+        )
+
+        think_background_color = Utility.get_settings_value(
+            section="AI_Code_Style",
+            prop="think-background-color",
+            default="#ffffff",
+            save=True
+        )
 
         code_pattern = re.compile(r'```(\w+)\n(.*?)\n```', re.DOTALL)
+        think_pattern = re.compile(r'<think>(.*?)</think>', re.DOTALL)
+
         if text:
-            matches = code_pattern.findall(text)
-            for language, code in matches:
+            code_matches = code_pattern.findall(text)
+            for language, code in code_matches:
                 escaped_code = html.escape('\n' + code)
                 formatted_code = (
-                    f'<pre style="font-size: {font_size}; font-family: {font_family}; background-color: {background_color}; color: {color};"><code>{escaped_code}</code></pre>')
+                    f'<pre style="font-size: {font_size}; '
+                    f'font-family: {font_family}; '
+                    f'background-color: {background_color}; '
+                    f'white-space: pre-wrap; word-break: break-all;'
+                    f'color: {color};"><code>{escaped_code}</code></pre>'
+                )
                 text = text.replace(f'```{language}\n{code}\n```', formatted_code)
+
+            think_matches = think_pattern.findall(text)
+            for think_content in think_matches:
+                escaped_think = html.escape(think_content)
+                formatted_think = (
+                    f'<pre style="font-size: {font_size}; '
+                    f'font-family: {font_family}; '
+                    f'background-color: {think_background_color}; '
+                    f'white-space: pre-wrap; word-break: break-all;'
+                    f'color: {think_color};"><code>{escaped_think}</code></pre>'
+                )
+                text = text.replace(f'<think>{think_content}</think>', formatted_think)
+
         return text
 
     def highlight_search_text(self, target_text, search_text):
