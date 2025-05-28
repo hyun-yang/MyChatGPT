@@ -143,7 +143,7 @@ class Constants:
 
     ABOUT_TEXT = (
         "<b>MyChatGPT</b><br>"
-        "Version: 1.0.0<br><br>"
+        "Version: 1.1.0<br><br>"
         "Author: Hayden Yang(양 현석)<br>"
         "Github: <a href='https://github.com/hyun-yang'>https://github.com/hyun-yang</a><br><br>"
         "Contact: iamyhs@gmail.com<br>"
@@ -188,11 +188,22 @@ class UI:
     TTS_SRT = "srt"
     TTS_VTT = "vtt"
 
+    EO = "EO"
+    EO_TIP = "EO"
+    EO_LIST = "EO List"
+
+    MCP = "MCP"
+    MCP_TIP = "MCP"
+    MCP_LIST = "MCP List"
+
     SETTING = "Setting"
     SETTING_TIP = "Setting"
 
     CLOSE = "Close"
     CLOSE_TIP = "Exit App"
+
+    KILL = "Kill"
+    KILL_TIP = "Kill Process"
 
     ABOUT = "About..."
     ABOUT_TIP = "About"
@@ -221,7 +232,10 @@ class UI:
     FILE_READ_IN_BINARY_MODE = 'rb'
     UTF_8 = "utf-8"
 
-    CHAT_PROMPT_PLACEHOLDER = "Enter your prompt here."
+    CHAT_PROMPT_PLACEHOLDER = (
+        "Enter your query here."
+        "\nPress Shift+Enter to add a new line, then Enter to send."
+    )
     SEARCH_PROMPT_PLACEHOLDER = "Enter your search term."
     SEARCH_PROMPT_DB_PLACEHOLDER = "Search..."
     SELECT_FILE_AND_PROMPT_PLACEHOLDER = "Select file and enter your prompt(optional)"
@@ -260,6 +274,7 @@ class UI:
     STT_FILTER = "Speech (*.mp3 *.mp4 *.mpeg *.mpga *.m4a *.wav *.webm)"
     VISION_IMAGE_FILTER = "Images (*.png *.jpeg *.jpg *.webp *.gif)"
 
+    FILE_FILTER = "Files (*.*)"
     TEXT_FILTER = "Text (*.txt)"
     PDF_FILTER = "PDF (*.pdf)"
     WORD_FILTER = "Word (*.docx)"
@@ -314,6 +329,61 @@ class UI:
                 margin: 1px;
             }
             """
+
+    VIDEO_TYPE_MAPPING = {
+        'x-flv': 'video/x-flv',
+        'quicktime': 'video/quicktime',
+        'mpeg': 'video/mpeg',
+        'mpegs': 'video/mpegs',
+        'mpg': 'video/mpg',
+        'mp4': 'video/mp4',
+        'webm': 'video/webm',
+        'wmv': 'video/wmv',
+        '3gpp': 'video/3gpp'
+    }
+
+    AUDIO_TYPE_MAPPING = {
+        'x-aac': 'audio/x-aac',
+        'flac': 'audio/flac',
+        'mp3': 'audio/mp3',
+        'm4a': 'audio/m4a',
+        'mpeg': 'audio/mpeg',
+        'mpga': 'audio/mpga',
+        'mp4': 'audio/mp4',
+        'opus': 'audio/opus',
+        'pcm': 'audio/pcm',
+        'wav': 'audio/wav',
+        'webm': 'audio/webm'
+    }
+
+    IMAGE_TYPE_MAPPING = {
+        'jpeg': 'image/jpeg',
+        'jpg': 'image/jpg',
+        'png': 'image/png',
+        'gif': 'image/gif',
+        'webp': 'image/webp'
+    }
+
+    DOCUMENT_TYPE_MAPPING = {
+        'pdf': 'application/pdf',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'rtf': 'application/rtf',
+        'epub': 'application/epub+zip'
+    }
+
+    VIDEO_TYPE_EXTENSIONS = ['x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp']
+
+    AUDIO_TYPE_EXTENSIONS = ['x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm']
+
+    DOCUMENT_TYPE_EXTENSIONS = ['pdf', 'rtf', 'docx', 'epub']
+
+    IMAGE_TYPE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'gif', 'webp']
+
+    TEXT_FILE_EXTENSIONS = [
+        'txt', 'md', 'csv', 'py', 'ts', 'tsx', 'js', 'jsx', 'cs', 'java', 'kt', 'swift',
+        'html', 'xhtml', 'htm', 'css', 'scss', 'sass', 'less', 'json', 'xml', 'resx', 'ini', 'mjs', 'pcfproj', 'csproj',
+        'pbxproj', 'xcworkspacedata', 'plist', 'storyboard', 'svg', 'ipynb', 'bat', 'cmd', 'ps1'
+    ]
 
     def __setattr__(self, name, value):
         if name in self.__dict__:
@@ -452,6 +522,8 @@ class MainWidgetIndex(Enum):
     VISION_WIDGET = auto()
     TTS_WIDGET = auto()
     STT_WIDGET = auto()
+    EO_WIDGET = auto()
+    MCP_WIDGET = auto()
 
 
 def get_ai_provider_names():

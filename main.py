@@ -8,7 +8,9 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QMenu, QToolBar,
     QMessageBox, QLabel
 
 from chat.ChatPresenter import ChatPresenter
+from eo.EOPresenter import EOPresenter
 from image.ImagePresenter import ImagePresenter
+from mcp.MCPPresenter import MCPPresenter
 from stt.STTPresenter import STTPresenter
 from tts.TTSPresenter import TTSPresenter
 from util.AnimatedProgressBar import AnimatedProgressBar
@@ -74,6 +76,14 @@ class MainWindow(QMainWindow):
         self._stt.model.thread_started_signal.connect(self.show_result_info)
         self._stt.model.response_finished_signal.connect(self.show_result_info)
 
+        self._mcp = MCPPresenter()
+        # self._mcp.model.thread_started_signal.connect(self.show_result_info)
+        # self._mcp.model.response_finished_signal.connect(self.show_result_info)
+
+        self._eo = EOPresenter()
+        # self._eo.model.thread_started_signal.connect(self.show_result_info)
+        # self._eo.model.response_finished_signal.connect(self.show_result_info)
+
         self.set_main_widgets()
 
         self.show()
@@ -87,6 +97,8 @@ class MainWindow(QMainWindow):
             MainWidgetIndex.VISION_WIDGET: self._main_widget.addWidget(self._vision),
             MainWidgetIndex.TTS_WIDGET: self._main_widget.addWidget(self._tts),
             MainWidgetIndex.STT_WIDGET: self._main_widget.addWidget(self._stt),
+            MainWidgetIndex.EO_WIDGET: self._main_widget.addWidget(self._eo),
+            MainWidgetIndex.MCP_WIDGET: self._main_widget.addWidget(self._mcp),
         }
         self.setCentralWidget(self._main_widget)
         self.set_current_widget(MainWidgetIndex.CHAT_WIDGET)
@@ -124,6 +136,14 @@ class MainWindow(QMainWindow):
         self.tts_action = QAction("TTS", self)
         self.tts_action.setStatusTip(UI.TTS_TIP)
         self.tts_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.TTS_WIDGET))
+
+        # self.eo_action = QAction("EO", self)
+        # self.eo_action.setStatusTip(UI.EO_TIP)
+        # self.eo_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.EO_WIDGET))
+        #
+        # self.mcp_action = QAction("MCP", self)
+        # self.mcp_action.setStatusTip(UI.MCP_TIP)
+        # self.mcp_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.MCP_WIDGET))
 
         self.setting_action = QAction("Setting", self)
         self.setting_action.setStatusTip(UI.SETTING_TIP)
@@ -189,22 +209,36 @@ class MainWindow(QMainWindow):
         self.exit_button.setToolTip(UI.CLOSE_TIP)
         self.exit_button.clicked.connect(self.close)
 
+        self.kill_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'cross-shield.svg')), '')
+        self.kill_button.setFixedSize(40, 40)
+        self.kill_button.setIconSize(icon_size)
+        self.kill_button.setCheckable(True)
+        self.kill_button.setToolTip(UI.KILL_TIP)
+        # self.kill_button.clicked.connect(self.close)
+
         self.chat_button = self.create_button('chat.svg', UI.CHAT, MainWidgetIndex.CHAT_WIDGET)
         self.image_button = self.create_button('image.svg', UI.IMAGE, MainWidgetIndex.IMAGE_WIDGET)
         self.vision_button = self.create_button('vision.svg', UI.VISION, MainWidgetIndex.VISION_WIDGET)
         self.stt_button = self.create_button('stt.svg', UI.STT, MainWidgetIndex.STT_WIDGET)
         self.tts_button = self.create_button('tts.svg', UI.TTS, MainWidgetIndex.TTS_WIDGET)
+        self.eo_button = self.create_button('eo.svg', UI.EO, MainWidgetIndex.EO_WIDGET)
+        self.mcp_button = self.create_button('mcp.svg', UI.MCP, MainWidgetIndex.MCP_WIDGET)
 
         self.buttons.extend([self.chat_button, self.image_button, self.vision_button, self.stt_button,
-                             self.tts_button, self.setting_button, self.exit_button])
+                             self.tts_button, self.eo_button, self.mcp_button, self.setting_button,
+                             self.kill_button, self.exit_button])
 
         main_toolbar_layout.addWidget(self.chat_button)
         main_toolbar_layout.addWidget(self.image_button)
         main_toolbar_layout.addWidget(self.vision_button)
         main_toolbar_layout.addWidget(self.tts_button)
         main_toolbar_layout.addWidget(self.stt_button)
+        main_toolbar_layout.addWidget(self.eo_button)
+        main_toolbar_layout.addWidget(self.mcp_button)
         main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.setting_button)
+        main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        main_toolbar_layout.addWidget(self.kill_button)
         main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.exit_button)
 

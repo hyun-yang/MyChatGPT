@@ -1,9 +1,10 @@
 import time
 
-import google.generativeai as genai
+import google.genai as genai
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from util.Constants import Constants
+from google.genai import types
 
 
 class GeminiThread(QThread):
@@ -17,34 +18,28 @@ class GeminiThread(QThread):
         self.start_time = None
 
     def initialize_gemini(self, args):
-        genai.configure(api_key=args['api_key'])
-        ai_arg = args['ai_arg']
-        system = ai_arg['system']
-        config = genai.GenerationConfig(**ai_arg['config'])
-        safety_settings = ai_arg['safety_settings']
-        # REVIEW : 400 Developer instruction is not enabled for models/gemini-pro
-        #           400 Add an image to use models/gemini-pro-vision, or switch your model to a text model.
-        # gemini-1.5-pro-latest, gemini-1.5-flash-latest
-
-        self.gemini = genai.GenerativeModel(model_name=ai_arg['model'], generation_config=config,
-                                            safety_settings=safety_settings, system_instruction=system)
-        self.contents = ai_arg['messages']
-        self.stream = ai_arg['stream']
-        self.model = ai_arg['model']
+        self.client = genai.Client(api_key=args['api_key'])
+        self.ai_arg = args['ai_arg']
+        self.config = types.GenerateContentConfig(**self.ai_arg['config'])
+        self.contents = self.ai_arg['messages']
+        self.stream = self.ai_arg['stream']
+        self.model = self.ai_arg['model']
 
     def run(self):
         self.start_time = time.time()
         try:
-            response = self.get_response(self.contents, self.stream)
             if self.stream:
-                self.handle_stream_response(response)
+                self.handle_stream_response(
+                    self.client.models.generate_content_stream(model=self.model, contents=self.contents,
+                                                               config=self.config))
             else:
-                self.handle_response(response)
+                self.handle_response(
+                    self.client.models.generate_content(model=self.model, contents=self.contents, config=self.config))
         except Exception as e:
             self.response_signal.emit(str(e), self.stream)
 
     def get_response(self, contents, stream):
-        response = self.gemini.generate_content(contents=contents, stream=stream)
+        response = self.client.models.generate_content(model=self.model, contents=contents, config=self.config)
         return response
 
     def set_force_stop(self, force_stop):
@@ -56,7 +51,7 @@ class GeminiThread(QThread):
         else:
             result = response.text
             self.response_signal.emit(result, self.stream)
-            self.finish_run(self.model, response.candidates[0].finish_reason.name, self.stream)
+            self.finish_run(self.model, response.candidates[0].finish_reason, self.stream)
 
     def handle_stream_response(self, response):
         finish_reason = None
@@ -68,7 +63,7 @@ class GeminiThread(QThread):
                 result = chunk.text
                 if result:
                     self.response_signal.emit(result, self.stream)
-                    finish_reason = chunk.candidates[0].finish_reason.name
+                    finish_reason = chunk.candidates[0].finish_reason
         self.finish_run(self.model, finish_reason, self.stream)
 
     def finish_run(self, model, finish_reason, stream):

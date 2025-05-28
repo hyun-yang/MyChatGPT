@@ -1,7 +1,11 @@
+import logging
+from functools import partial
+
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QSizePolicy, QSplitter, QComboBox, QLabel, QTabWidget, \
-    QGroupBox, QFormLayout, QCheckBox, QPushButton, QHBoxLayout, QApplication, QTextEdit
+    QGroupBox, QFormLayout, QCheckBox, QPushButton, QHBoxLayout, QApplication, QTextEdit, QListWidget, QFileDialog, \
+    QMessageBox
 
 from chat.view.ChatHistory import ChatHistory
 from chat.view.ChatPromptListWidget import ChatPromptListWidget
@@ -15,6 +19,7 @@ from util.Constants import AIProviderName, UI
 from util.Constants import Constants
 from util.SettingsManager import SettingsManager
 from util.Utility import Utility
+from google.genai import types
 
 
 class ChatView(QWidget):
@@ -289,6 +294,45 @@ class ChatView(QWidget):
         groupModel.setLayout(modelLayout)
         layoutMain.addWidget(groupModel)
 
+        # Add QListWidget to show selected File list
+        listGroup = QGroupBox(f"{name} File List")
+        fileListLayout = QVBoxLayout()
+        listGroup.setLayout(fileListLayout)
+
+        fileListWidget = QListWidget()
+        fileListWidget.setObjectName(f"{name}_FileList")
+        fileListLayout.addWidget(fileListWidget)
+
+        # Add buttons
+        buttonLayout = QHBoxLayout()
+        selectButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), "Files")
+        selectButton.setObjectName(f"{name}_SelectButton")
+
+        deleteButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder--minus.png')), "Remove")
+        deleteButton.setObjectName(f"{name}_DeleteButton")
+        deleteButton.setEnabled(False)
+
+        buttonLayout.addWidget(selectButton)
+        buttonLayout.addWidget(deleteButton)
+
+        fileListLayout.addLayout(buttonLayout)
+
+        submitLayout = QHBoxLayout()
+        submitButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'inbox-document-text.png')), "Submit")
+        submitButton.setObjectName(f"{name}_SubmitButton")
+        submitButton.setEnabled(False)
+        submitLayout.addWidget(submitButton)
+
+        fileListLayout.addLayout(submitLayout)
+
+        selectButton.clicked.connect(partial(self.select_files, name))
+        deleteButton.clicked.connect(partial(self.delete_file_from_list, name))
+        submitButton.clicked.connect(partial(self.submit_file, name, None))
+
+        fileListWidget.itemSelectionChanged.connect(partial(self.on_item_selection_changed, name))
+
+        layoutMain.addWidget(listGroup)
+
         # Parameters Group
         groupParam = QGroupBox(f"{name} Parameters")
         paramLayout = QFormLayout()
@@ -439,6 +483,45 @@ class ChatView(QWidget):
         groupModel.setLayout(modelLayout)
         layoutMain.addWidget(groupModel)
 
+        # Add QListWidget to show selected File list
+        listGroup = QGroupBox(f"{name} File List")
+        fileListLayout = QVBoxLayout()
+        listGroup.setLayout(fileListLayout)
+
+        fileListWidget = QListWidget()
+        fileListWidget.setObjectName(f"{name}_FileList")
+        fileListLayout.addWidget(fileListWidget)
+
+        # Add buttons
+        buttonLayout = QHBoxLayout()
+        selectButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), "Files")
+        selectButton.setObjectName(f"{name}_SelectButton")
+
+        deleteButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder--minus.png')), "Remove")
+        deleteButton.setObjectName(f"{name}_DeleteButton")
+        deleteButton.setEnabled(False)
+
+        buttonLayout.addWidget(selectButton)
+        buttonLayout.addWidget(deleteButton)
+
+        fileListLayout.addLayout(buttonLayout)
+
+        submitLayout = QHBoxLayout()
+        submitButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'inbox-document-text.png')), "Submit")
+        submitButton.setObjectName(f"{name}_SubmitButton")
+        submitButton.setEnabled(False)
+        submitLayout.addWidget(submitButton)
+
+        fileListLayout.addLayout(submitLayout)
+
+        selectButton.clicked.connect(partial(self.select_files, name))
+        deleteButton.clicked.connect(partial(self.delete_file_from_list, name))
+        submitButton.clicked.connect(partial(self.submit_file, name, None))
+
+        fileListWidget.itemSelectionChanged.connect(partial(self.on_item_selection_changed, name))
+
+        layoutMain.addWidget(listGroup)
+
         # Parameters Group
         groupParam = QGroupBox(f"{name} Parameters")
         paramLayout = QFormLayout()
@@ -575,6 +658,45 @@ class ChatView(QWidget):
         groupModel.setLayout(modelLayout)
         layoutMain.addWidget(groupModel)
 
+        # Add QListWidget to show selected File list
+        listGroup = QGroupBox(f"{name} File List")
+        fileListLayout = QVBoxLayout()
+        listGroup.setLayout(fileListLayout)
+
+        fileListWidget = QListWidget()
+        fileListWidget.setObjectName(f"{name}_FileList")
+        fileListLayout.addWidget(fileListWidget)
+
+        # Add buttons
+        buttonLayout = QHBoxLayout()
+        selectButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), "Files")
+        selectButton.setObjectName(f"{name}_SelectButton")
+
+        deleteButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder--minus.png')), "Remove")
+        deleteButton.setObjectName(f"{name}_DeleteButton")
+        deleteButton.setEnabled(False)
+
+        buttonLayout.addWidget(selectButton)
+        buttonLayout.addWidget(deleteButton)
+
+        fileListLayout.addLayout(buttonLayout)
+
+        submitLayout = QHBoxLayout()
+        submitButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'inbox-document-text.png')), "Submit")
+        submitButton.setObjectName(f"{name}_SubmitButton")
+        submitButton.setEnabled(False)
+        submitLayout.addWidget(submitButton)
+
+        fileListLayout.addLayout(submitLayout)
+
+        selectButton.clicked.connect(partial(self.select_files, name))
+        deleteButton.clicked.connect(partial(self.delete_file_from_list, name))
+        submitButton.clicked.connect(partial(self.submit_file, name, None))
+
+        fileListWidget.itemSelectionChanged.connect(partial(self.on_item_selection_changed, name))
+
+        layoutMain.addWidget(listGroup)
+
         # Parameters Group
         groupParam = QGroupBox(f"{name} Parameters")
         paramLayout = QFormLayout()
@@ -692,6 +814,45 @@ class ChatView(QWidget):
         modelLayout.addRow(modelList)
         groupModel.setLayout(modelLayout)
         layoutMain.addWidget(groupModel)
+
+        # Add QListWidget to show selected File list
+        listGroup = QGroupBox(f"{name} File List")
+        fileListLayout = QVBoxLayout()
+        listGroup.setLayout(fileListLayout)
+
+        fileListWidget = QListWidget()
+        fileListWidget.setObjectName(f"{name}_FileList")
+        fileListLayout.addWidget(fileListWidget)
+
+        # Add buttons
+        buttonLayout = QHBoxLayout()
+        selectButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), "Files")
+        selectButton.setObjectName(f"{name}_SelectButton")
+
+        deleteButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder--minus.png')), "Remove")
+        deleteButton.setObjectName(f"{name}_DeleteButton")
+        deleteButton.setEnabled(False)
+
+        buttonLayout.addWidget(selectButton)
+        buttonLayout.addWidget(deleteButton)
+
+        fileListLayout.addLayout(buttonLayout)
+
+        submitLayout = QHBoxLayout()
+        submitButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'inbox-document-text.png')), "Submit")
+        submitButton.setObjectName(f"{name}_SubmitButton")
+        submitButton.setEnabled(False)
+        submitLayout.addWidget(submitButton)
+
+        fileListLayout.addLayout(submitLayout)
+
+        selectButton.clicked.connect(partial(self.select_files, name))
+        deleteButton.clicked.connect(partial(self.delete_file_from_list, name))
+        submitButton.clicked.connect(partial(self.submit_file, name, None))
+
+        fileListWidget.itemSelectionChanged.connect(partial(self.on_item_selection_changed, name))
+
+        layoutMain.addWidget(listGroup)
 
         # Parameters Group
         groupParam = QGroupBox(f"{name} Parameters")
@@ -815,7 +976,7 @@ class ChatView(QWidget):
                 llm_model = Utility.get_settings_value(
                     section=f"{name}_Model_Parameter",
                     prop="model_name",
-                    default='claude-3-opus-20240229',
+                    default='claude-3-7-sonnet-20250219',
                     save=True
                 )
                 modelList.setCurrentIndex(modelList.findText(llm_model))
@@ -833,6 +994,78 @@ class ChatView(QWidget):
                 )
                 modelList.setCurrentIndex(modelList.findText(llm_model))
                 modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
+
+    def select_files(self, llm):
+        fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
+        selected_files = self.show_file_explorer(llm)
+        for file in selected_files:
+            fileListWidget.addItem(file)
+        self.update_submit_status(llm)
+
+    def delete_file_from_list(self, llm):
+        fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
+        for item in fileListWidget.selectedItems():
+            fileListWidget.takeItem(fileListWidget.row(item))
+        self.update_submit_status(llm)
+
+    def update_submit_status(self, llm):
+        fileListWidget = self.findChild(QListWidget,
+                                        f"{llm}_FileList")
+        submitButton = self.findChild(QPushButton,
+                                      f"{llm}_SubmitButton")
+        submitButton.setEnabled(bool(fileListWidget.count()))
+
+    def on_item_selection_changed(self, llm):
+        self.reset_file_list(llm)
+
+    def show_file_explorer(self, llm=None):
+        file_filter = UI.FILE_FILTER
+
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        file_dialog.setNameFilter(file_filter)
+
+        if file_dialog.exec():
+            selected_files = file_dialog.selectedFiles()
+            return selected_files
+        else:
+            return [] if llm != AIProviderName.GEMINI.value else None
+
+    def get_selected_files(self, llm):
+        fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
+        return [fileListWidget.item(i).text() for i in range(fileListWidget.count())]
+
+    def reset_file_list(self, llm, clear: bool = False):
+        fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
+        deleteButton = self.findChild(QPushButton, f"{llm}_DeleteButton")
+        submitButton = self.findChild(QPushButton, f"{llm}_SubmitButton")
+
+        if clear:
+            fileListWidget.clear()
+
+        deleteButton.setEnabled(bool(fileListWidget.selectedItems()))
+        submitButton.setEnabled(bool(fileListWidget.count()))
+
+    def submit_file(self, llm, text):
+        if text is None:
+            text = self.prompt_text.toPlainText().strip()
+        file_list = self.get_selected_files(llm)
+        if file_list:
+            self.submitted_signal.emit(text)
+        else:
+            self.submitted_signal.emit(text)
+
+    def validate_input(self, text, file_list):
+        if not file_list:
+            self.show_warning(UI.WARNING_TITLE_SELECT_FILE_MESSAGE)
+            return False
+        if not text:
+            self.show_warning(UI.WARNING_TITLE_NO_PROMPT_MESSAGE)
+            return False
+        return True
+
+    def show_warning(self, message):
+        QMessageBox.warning(self, UI.WARNING_TITLE, message)
 
     def model_list_changed(self, current_text, name):
         self._settings.setValue(f"{name}_Model_Parameter/model_name", current_text)
@@ -984,7 +1217,7 @@ class ChatView(QWidget):
 
     def handle_submitted_signal(self, text):
         if text:
-            self.submitted_signal.emit(text)
+            self.submit_file(self._current_chat_llm, text)
 
     def start_chat(self):
         self.prompt_text.clear()
@@ -1019,6 +1252,28 @@ class ChatView(QWidget):
                 all_previous_qa.append(f'{answer}: {current_widget.get_text()}')
         return '\n'.join(all_previous_qa)
 
+    def get_all_text_gemini(self):
+        """
+        Gemini messages = {"role": "user"|"model", "parts": [types.Part.from_text(text=...)]}
+        """
+        messages = []
+        for i in range(self.result_layout.count()):
+            current_widget = self.result_layout.itemAt(i).widget()
+            text = current_widget.get_text()
+            if not text:
+                continue
+            if current_widget.get_chat_type() == ChatType.HUMAN:
+                role = "user"
+            elif current_widget.get_chat_type() == ChatType.AI:
+                role = "model"
+            else:
+                continue
+            messages.append({
+                "role": role,
+                "parts": [types.Part.from_text(text=text)]
+            })
+        return messages
+
     def create_args(self, text, chat_llm):
         method_name = f'create_args_{chat_llm.lower()}'
         method = getattr(self, method_name, None)
@@ -1030,13 +1285,6 @@ class ChatView(QWidget):
     def create_args_ollama(self, text, chat_llm):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
-
-        messages = [
-            {"role": "system",
-             "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
-            {"role": "assistant", "content": self.get_all_text()},
-            {"role": "user", "content": text}
-        ]
 
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
@@ -1073,6 +1321,53 @@ class ChatView(QWidget):
                                              f'{chat_llm}_seedSpinBox').spin_box
         seed = seed_check_spin_box.value() if seed_check_spin_box.isEnabled() else None
 
+        file_list = self.get_selected_files(chat_llm)
+
+        content = []
+        image_data_list = []
+
+        if file_list:
+            text_file_contents = ""
+
+            for index, file_name in enumerate(file_list):
+                file_extension = file_name.split('.')[-1].lower()
+
+                # Handle text files
+                if file_extension in UI.TEXT_FILE_EXTENSIONS:
+                    try:
+                        with open(file_name, 'r', encoding='utf-8') as file:
+                            file_content = file.read()
+                            if text_file_contents:
+                                text_file_contents += f"\n\n{file_name}\n{file_content}"
+                            else:
+                                text_file_contents = f"{file_name}\n{file_content}"
+                    except Exception as e:
+                        logging.error(f"Error reading text file {file_name}: {str(e)}")
+
+                # Handle image files
+                elif file_extension in UI.IMAGE_TYPE_EXTENSIONS:
+                    try:
+                        image_data = Utility.base64_encode_file(file_name)
+                        image_data_list.append(image_data)
+                    except Exception as e:
+                        logging.error(f"Error encoding image file {file_name}: {str(e)}")
+                else:
+                    logging.warning(f"Unsupported file type: {file_extension} for file {file_name}")
+
+            # Add collected text file contents to content
+            if text_file_contents:
+                content.append({
+                    'type': 'text',
+                    'text': text_file_contents.strip()
+                })
+
+        messages = [
+            {"role": "system",
+             "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
+            {"role": "assistant", "content": self.get_all_text()},
+            {"role": "user", "content": content, "images": image_data_list if image_data_list else None}
+        ]
+
         options = {
             'num_predict': num_predict,
             'temperature:': temperature,
@@ -1104,11 +1399,6 @@ class ChatView(QWidget):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
 
-        messages = [
-            {"role": "user", "content": text},
-            {"role": "assistant", "content": self.get_all_text()},
-        ]
-
         system = self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
 
         stream = self.findChild(QCheckBox,
@@ -1133,6 +1423,80 @@ class ChatView(QWidget):
         top_k_spin_box = self.findChild(CheckSpinBox,
                                         f'{chat_llm}_top_kSpinBox').spin_box
         top_k = top_k_spin_box.value() if top_k_spin_box.isEnabled() else None
+
+        file_list = self.get_selected_files(chat_llm)
+
+        content = []
+
+        if file_list:
+            text_file_contents = ""
+
+            for index, file_name in enumerate(file_list):
+                file_extension = file_name.split('.')[-1].lower()
+
+                # Handle text files
+                if file_extension in UI.TEXT_FILE_EXTENSIONS:
+                    try:
+                        with open(file_name, 'r', encoding='utf-8') as file:
+                            file_content = file.read()
+                            if text_file_contents:
+                                text_file_contents += f"\n\n{file_name}\n{file_content}"
+                            else:
+                                text_file_contents = f"{file_name}\n{file_content}"
+                    except Exception as e:
+                        logging.error(f"Error reading text file {file_name}: {str(e)}")
+
+                # Handle image files
+                elif file_extension in UI.IMAGE_TYPE_EXTENSIONS:
+                    media_type = UI.IMAGE_TYPE_MAPPING.get(file_extension)
+                    image_data = Utility.base64_encode_file(file_name)
+                    content.append({
+                        'type': 'text',
+                        'text': f'Image {index + 1}:'
+                    })
+                    content.append({
+                        'type': 'image',
+                        'source': {
+                            'type': 'base64',
+                            'media_type': media_type,
+                            'data': image_data
+                        }
+                    })
+
+                # Handle document files
+                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                    document_data = Utility.base64_encode_file(file_name)
+                    content.append({
+                        'type': 'text',
+                        'text': f'Document {index + 1}: {file_name}'
+                    })
+                    content.append({
+                        'type': 'document',
+                        'source': {
+                            'type': 'base64',
+                            'media_type': media_type,
+                            'data': document_data
+                        }
+                    })
+
+            # Add collected text file contents to content
+            if text_file_contents:
+                content.append({
+                    'type': 'text',
+                    'text': text_file_contents.strip()
+                })
+
+        # Add user's main text input
+        content.append({
+            'type': 'text',
+            'text': text
+        })
+
+        messages = [
+            {"role": "assistant", "content": self.get_all_text()},
+            {"role": "user", "content": content},
+        ]
 
         ai_arg = {
             'model': model,
@@ -1172,13 +1536,6 @@ class ChatView(QWidget):
         else:
             system_role = "system"
 
-        messages = [
-            {"role": system_role,
-             "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
-            {"role": "assistant", "content": self.get_all_text()},
-            {"role": "user", "content": text}
-        ]
-
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
 
@@ -1209,6 +1566,74 @@ class ChatView(QWidget):
         seed_check_spin_box = self.findChild(CheckSpinBox,
                                              f'{chat_llm}_seedSpinBox').spin_box
         seed = seed_check_spin_box.value() if seed_check_spin_box.isEnabled() else None
+
+        file_list = self.get_selected_files(chat_llm)
+
+        content = []
+
+        if file_list:
+            text_file_contents = ""
+
+            for index, file_name in enumerate(file_list):
+                file_extension = file_name.split('.')[-1].lower()
+
+                # Handle text files
+                if file_extension in UI.TEXT_FILE_EXTENSIONS:
+                    try:
+                        with open(file_name, 'r', encoding='utf-8') as file:
+                            file_content = file.read()
+                            if text_file_contents:
+                                text_file_contents += f"\n\n{file_name}\n{file_content}"
+                            else:
+                                text_file_contents = f"{file_name}\n{file_content}"
+                    except Exception as e:
+                        logging.error(f"Error reading text file {file_name}: {str(e)}")
+
+                # Handle image files
+                elif file_extension in UI.IMAGE_TYPE_EXTENSIONS:
+                    media_type = UI.IMAGE_TYPE_MAPPING.get(file_extension)
+                    image_data = Utility.base64_encode_file(file_name)
+                    content.append(
+                        {
+                            'type': 'image_url',
+                            'image_url': {
+                                'url': f'data:{media_type};base64,{image_data}',
+                                'detail': 'auto'
+                            }
+                        }
+                    )
+
+                # Handle document files
+                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                    document_data = Utility.base64_encode_file(file_name)
+                    content.append({
+                        'type': 'file',
+                        'file': {
+                            'filename': f'{file_name}',
+                            'file_data': f'data:{media_type};base64,{document_data}'
+                        }
+                    })
+
+            # Add collected text file contents to content
+            if text_file_contents:
+                content.append({
+                    'type': 'text',
+                    'text': text_file_contents.strip()
+                })
+
+        # Add user's main text input
+        content.append({
+            'type': 'text',
+            'text': text
+        })
+
+        messages = [
+            {"role": system_role,
+             "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
+            {"role": "assistant", "content": self.get_all_text()},
+            {"role": "user", "content": content}
+        ]
 
         ai_arg = {
             'model': model,
@@ -1241,11 +1666,6 @@ class ChatView(QWidget):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
 
-        messages = [
-            {"role": "model", "parts": self.get_all_text()},
-            {"role": "user", "parts": text}
-        ]
-
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
 
@@ -1272,27 +1692,109 @@ class ChatView(QWidget):
                                         f'{chat_llm}_top_kSpinBox').spin_box
         top_k = top_k_spin_box.value() if top_k_spin_box.isEnabled() else None
 
+        file_list = self.get_selected_files(chat_llm)
+
+        content = []
+
+        if file_list:
+            text_file_contents = ""
+
+            for index, file_name in enumerate(file_list):
+                file_extension = file_name.split('.')[-1].lower()
+
+                # Handle text files
+                if file_extension in UI.TEXT_FILE_EXTENSIONS:
+                    try:
+                        with open(file_name, 'r', encoding='utf-8') as file:
+                            file_content = file.read()
+                            if text_file_contents:
+                                text_file_contents += f"\n\n{file_name}\n{file_content}"
+                            else:
+                                text_file_contents = f"{file_name}\n{file_content}"
+                    except Exception as e:
+                        logging.error(f"Error reading text file {file_name}: {str(e)}")
+
+                # Handle image files
+                elif file_extension in UI.IMAGE_TYPE_EXTENSIONS:
+                    media_type = UI.IMAGE_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            image_bytes = f.read()
+                        part = types.Part.from_bytes(data=image_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading image file {file_name}: {str(e)}")
+
+                # Handle document files
+                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            doc_bytes = f.read()
+                        part = types.Part.from_bytes(data=doc_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading document file {file_name}: {str(e)}")
+
+                # Handle video files
+                elif file_extension in UI.VIDEO_TYPE_EXTENSIONS:
+                    media_type = UI.VIDEO_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            video_bytes = f.read()
+                        part = types.Part.from_bytes(data=video_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading video file {file_name}: {str(e)}")
+
+                # Handle audio files
+                elif file_extension in UI.AUDIO_TYPE_EXTENSIONS:
+                    media_type = UI.AUDIO_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            audio_bytes = f.read()
+                        part = types.Part.from_bytes(data=audio_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading audio file {file_name}: {str(e)}")
+
+            # Add collected text file contents to content
+            if text_file_contents:
+                content.append(types.Part.from_text(text=text_file_contents.strip()))
+
+        # Add user's main text input
+        content.append(types.Part.from_text(text=text.strip()))
+
+        messages = self.get_all_text_gemini()
+
+        # If last message is model, add user message
+        if not messages or messages[-1]["role"] == "model":
+            messages.append({"role": "user", "parts": content})
+        else:
+            # If last message is user, overwrite
+            messages[-1] = {"role": "user", "parts": content}
+
         config = {
             'candidate_count': candidate_count,
             'max_output_tokens': max_output_tokens,
             'temperature': temperature,
             'top_p': top_p,
             'top_k': top_k,
+            'tools': []
         }
 
         if stop_sequences:
             config['stop_sequences'] = [stop_sequences]
 
         # REVIEW : set BLOCK_NONE for all category
-        safety_settings = self.create_safety_settings()
+        config['safety_settings'] = self.create_safety_settings()
+        config['system_instruction'] = self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
 
         ai_arg = {
             'model': model,
             'messages': messages,
             'stream': stream,
             'config': config,
-            'safety_settings': safety_settings,
-            'system': self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
         }
 
         args = {

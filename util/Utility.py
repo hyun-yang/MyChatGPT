@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QMes
 
 from util.Constants import Constants, UI, MODEL_MESSAGE
 from util.SettingsManager import SettingsManager
-
+from typing import List, Optional, Tuple
 
 class Utility:
 
@@ -174,13 +174,61 @@ class Utility:
         settings.endGroup()
 
     @staticmethod
+    def parse_version_from_id(model_id: str) -> Optional[Tuple[int, int]]:
+        """
+        Handles:
+        - claude-3-5-sonnet-20240620 -> (3, 5)
+        - claude-4-opus-20240620 -> (4, 0)
+        - claude-3-haiku-20240307 -> (3, 0)
+        - claude-sonnet-4-20250514 -> (4, 0)
+        - claude-opus-4-20250514 -> (4, 0)
+        """
+        # Pattern 1: claude-3-5-sonnet-20240620, claude-3-haiku-20240307, etc.
+        m = re.match(r"claude-(\d+)(?:-(\d+))?", model_id)
+        if m:
+            major = int(m.group(1))
+            minor = int(m.group(2)) if m.group(2) else 0
+            return (major, minor)
+        # Pattern 2: claude-sonnet-4-20250514, claude-opus-4-20250514, etc.
+        m2 = re.match(r"claude-(?:[a-z]+)-(\d+)(?:-(\d+))?", model_id)
+        if m2:
+            major = int(m2.group(1))
+            minor = int(m2.group(2)) if m2.group(2) else 0
+            return (major, minor)
+        return None
+
+    @staticmethod
+    def is_version_gte(version: Tuple[int, int], base_version: Tuple[int, int]) -> bool:
+        """(3, 5) >= (3, 5)"""
+        return version >= base_version
+
+    @staticmethod
+    def filter_models(models: List, min_version=(3, 5)):
+        """
+        models: List[ModelInfo]
+        min_version: tuple, e.g. (3, 5)
+        """
+        filtered = []
+        for m in models:
+            version = Utility.parse_version_from_id(m.id)
+            if version and Utility.is_version_gte(version, min_version):
+                filtered.append(m.id)
+        return filtered
+
+    @staticmethod
     def get_claude_ai_model_list(api_key):
-        Utility.add_claude_model_list()
-        settings = SettingsManager.get_settings()
-        settings.beginGroup(Constants.CLAUDE_MODEL_LIST_SECTION)
-        model_list = [key for key in settings.childKeys()]
-        settings.endGroup()
-        return model_list
+        claude = anthropic.Anthropic(api_key=api_key)
+
+        try:
+            response = claude.models.list()
+            model_list = Utility.filter_models(response.data, min_version=(3, 5))
+            return model_list
+        except anthropic.AuthenticationError:
+            print(f"{MODEL_MESSAGE.AUTHENTICATION_FAILED_CLAUDE}")
+            return []
+        except Exception as exception:
+            print(f"{MODEL_MESSAGE.UNEXPECTED_ERROR} {str(exception)}")
+            return []
 
     @staticmethod
     def add_ollama_model_list():

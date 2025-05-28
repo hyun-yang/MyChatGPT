@@ -14,6 +14,6 @@ class PromptTextEdit(QTextEdit):
             if event.modifiers() == Qt.KeyboardModifier.ShiftModifier:
                 return super().keyPressEvent(event)
             else:
-                self.submitted_signal.emit(self.toPlainText())
+                self.submitted_signal.emit(self.toPlainText().strip())
         else:
             return super().keyPressEvent(event)

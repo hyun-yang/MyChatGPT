@@ -792,7 +792,7 @@ class VisionView(QWidget):
             modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
         elif name == AIProviderName.GEMINI.value:
             api_key = self._settings.value(f'AI_Provider/{name}')
-            modelList.addItems(Utility.get_gemini_vision_model_list(api_key))
+            modelList.addItems(Utility.get_gemini_model_list(api_key))
             current_model = Utility.get_settings_value(section=f"{name}_Vision_Parameter", prop="vision_model",
                                                        default="gemini-1.5-pro", save=True)
             modelList.setCurrentText(current_model)
