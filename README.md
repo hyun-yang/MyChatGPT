@@ -14,6 +14,112 @@ It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS
   - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 
 
+### Evaluator-Optimizer and Orchestrator-Worker Workflows Prompt Sample
+
+- Evaluator-Optimizer Prompt sample
+
+```markdown
+1) Evaluator Prompt
+
+Evaluate this following code implementation for:
+1. code correctness
+2. time complexity
+3. style and best practices
+
+You should be evaluating only and not attemping to solve the task.
+Only output "PASS" if all criteria are met and you have no further suggestions for improvements.
+Output your evaluation concisely in the following format.
+
+<evaluation>PASS, NEEDS_IMPROVEMENT, or FAIL</evaluation>
+<feedback>
+What needs improvement and why.
+</feedback>
+
+
+2) Generator Prompt
+
+Your goal is to complete the task based on <user input>. If there are feedback 
+from your previous generations, you should reflect on them to improve your solution
+
+Output your answer concisely in the following format: 
+
+It MUST have <thoughts> and <response> Tag.
+
+<thoughts>
+[Your understanding of the task and feedback and how you plan to improve]
+</thoughts>
+
+<response>
+[Your code implementation here]
+</response>
+
+
+3) Task Prompt
+
+<user input>
+Implement a Stack with:
+1. push(x)
+2. pop()
+3. getMin()
+All operations should be O(1).
+</user input>
+```
+
+
+- Orchestrator-Worker Prompt sample
+
+```markdown
+1) Orchestrator Prompt
+
+Analyze the following user question and break it down into 2 or 3 related sub-questions:
+
+Respond in the following format:
+{
+    "analysis": "Provide a detailed explanation of your understanding of the user question and the rationale behind the sub-questions you created.",
+    "tasks": [
+        {
+            "task": "Sub-question 1",
+            "description": "Explain the intent and main point of this sub-question."
+        },
+        {
+            "task": "Sub-question 2",
+            "description": "Explain the intent and main point of this sub-question."
+        }
+        // Include additional sub-questions as necessary
+    ]
+}
+Generate a maximum of 2 or 3 sub-questions.
+
+User question: {user_query}
+
+
+2) Worker Prompt
+
+Addressing the sub-questions derived from the following user question.
+
+Original question: {user_query}  
+Sub-question: {task}
+
+Explanation: {description}
+
+Provide a thorough and detailed response that addresses the sub-question.
+
+
+3) Aggregator Prompt
+
+Provide a final response that summarize the questions and responses below.
+
+- The responses to the sub-questions should be as comprehensive and detailed as possible.
+- The final report should be presented in a comprehensive manner using Markdown format.
+
+User's original question:
+{user_query}
+
+Sub-questions and final responses:
+
+```
+
+
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
 
