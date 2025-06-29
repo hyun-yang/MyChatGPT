@@ -1,7 +1,7 @@
 from PyQt6.QtCore import pyqtSlot
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QDialog, QMessageBox
 
-from stt.model.STTListModel import STTListModel
+from stt.view.STTListModel import STTListModel
 from stt.model.STTModel import STTModel
 from stt.view.STTView import STTView
 from util.ChatType import ChatType

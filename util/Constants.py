@@ -18,17 +18,56 @@ class Constants:
 
     FORCE_STOP = "Force Stop"
     NORMAL_STOP = "stop"
+    ERROR_STOP = "Error"
     RESPONSE_TIME = " | Response Time : "
 
-    # Claude Model List
-    CLAUDE_MODEL_LIST_SECTION = "Claude_Model_List"
-    CLAUDE_MODEL_LIST = [
-        "claude-3-7-sonnet-20250219",
-        "claude-3-5-sonnet-20241022",
-        "claude-3-opus-20240229",
-        "claude-3-sonnet-20240229",
-        "claude-3-haiku-20240307"
-    ]
+    ORCHESTRATOR_ANALYSIS = "Orchestrator Analysis"
+    ORCHESTRATOR_ANALYSIS_TASK = "=== Analyzing Task ===\n"
+    ORCHESTRATOR_EXECUTING_TASKS = "\n=== Executing Tasks ===\n"
+    ORCHESTRATOR_GENERATING_FINAL_RESULTS = "\n=== Generating Final Results ===\n"
+
+    ORCHESTRATOR_TASK = "Task"
+    ORCHESTRATOR_SUBTASK = "Subtask"
+    ORCHESTRATOR_WORKER = "Worker"
+    ORCHESTRATOR_TASK_QUESTION = "Task : "
+    ORCHESTRATOR_ORIGINAL_RESPONSE  = "Original Response:"
+    ORCHESTRATOR_RESPONSE  = "Response: "
+    ORCHESTRATOR_COMPLETED  = "Completed "
+    ORCHESTRATOR_ERROR  = "Error: "
+    ORCHESTRATOR_FINAL_ANSWER  = "Final Answer"
+    ORCHESTRATOR_ERROR_OCCURRED  = "Error occurred: "
+
+    ORCHESTRATOR_JSON_PARSING_ERROR  = "JSON Parsing Error: "
+    ORCHESTRATOR_ERROR_PROCESSING  = "Error during processing: "
+    ORCHESTRATOR_ERROR_PARALLEL  = "Parallel task error: "
+    ORCHESTRATOR_ERROR_PARALLEL_PROCESSING  = "Error during parallel task processing: "
+    ORCHESTRATOR_ERROR_SEQUENTIAL_PROCESSING  = "Error during sequential streaming task processing: "
+
+    EVALUATION_PASS = "PASS"
+    EVALUATION_PREVIOUS_ATTEMPTS = "Previous attempts:"
+    EVALUATION_FEEDBACK = "Feedback"
+    EVALUATION_STATUS = "Status"
+
+    THOUGHTS_TAG = "thoughts"
+    RESULT_TAG = "result"
+    RESPONSE_TAG = "response"
+    EVALUATION_TAG = "evaluation"
+    FEEDBACK_TAG = "feedback"
+
+    GENERATION_START = "=== GENERATION START ==="
+    GENERATION_END = "=== GENERATION END ==="
+    EVALUATION_START = "=== EVALUATION START ==="
+    EVALUATION_END = "=== EVALUATION END ==="
+
+    GENERATION_THOUGHTS = "Thoughts:"
+    GENERATION_GENERATED = "Generated:"
+    EVALUATION_STATUS_EX = "Status:"
+    EVALUATION_FEEDBACK_EX = "Feedback:"
+
+    EVALUATION_TASK = "Task:"
+
+    ORIGINAL_TASK = "Original task: "
+    CONTENT_TO_EVALUATE = "Content to evaluate: "
 
     # Ollama Model List
     OLLAMA_MODEL_LIST_SECTION = "Ollama_Model_List"
@@ -62,13 +101,24 @@ class Constants:
     STT_MAIN_TABLE = "stt_main"
     STT_DETAIL_TABLE = "stt_detail"
 
-    CHAT_PROMPT_TABLE = "prompt"
+    MCP_MAIN_TABLE = "mcp_main"
+    MCP_DETAIL_TABLE = "mcp_detail"
 
+    AGENT_MAIN_TABLE = "agent_main"
+    AGENT_DETAIL_TABLE = "agent_detail"
+
+    CHAT_PROMPT_TABLE = "chat_prompt"
+    AGENT_PROMPT_TABLE = "agent_prompt"
+    MCP_PROMPT_TABLE = "mcp_prompt"
+
+    FILES = "Files"
     NEW_CHAT = "New Chat"
     NEW_IMAGE = "New Image"
     NEW_VISION = "New Vision"
     NEW_TTS = "New TTS"
     NEW_STT = "New STT"
+    NEW_AGENT = "New Agent"
+    NEW_MCP = "New MCP"
 
     # Image
     DALLE2 = "dall-e-2"
@@ -141,9 +191,16 @@ class Constants:
         'Russian': 'ru'
     }
 
+    THREAD_TERMINATION_TITLE = "Thread Termination"
+    THREAD_TERMINATION_MESSAGE = "All running processes have been terminated."
+
+    SIGNAL_ERROR = "Signal Error"
+    ERROR_EMIT_SIGNAL = "Error emitting finish signal: "
+    ERROR_UI_SIGNAL = "Error updating UI finish: "
+
     ABOUT_TEXT = (
         "<b>MyChatGPT</b><br>"
-        "Version: 1.1.0<br><br>"
+        "Version: 2.0.0<br><br>"
         "Author: Hayden Yang(양 현석)<br>"
         "Github: <a href='https://github.com/hyun-yang'>https://github.com/hyun-yang</a><br><br>"
         "Contact: iamyhs@gmail.com<br>"
@@ -188,9 +245,9 @@ class UI:
     TTS_SRT = "srt"
     TTS_VTT = "vtt"
 
-    EO = "EO"
-    EO_TIP = "EO"
-    EO_LIST = "EO List"
+    AGENT = "Agent"
+    AGENT_TIP = "Agent"
+    AGENT_LIST = "Agent List"
 
     MCP = "MCP"
     MCP_TIP = "MCP"
@@ -203,7 +260,7 @@ class UI:
     CLOSE_TIP = "Exit App"
 
     KILL = "Kill"
-    KILL_TIP = "Kill Process"
+    KILL_TIP = "Terminate Thread"
 
     ABOUT = "About..."
     ABOUT_TIP = "About"
@@ -284,6 +341,8 @@ class UI:
     CONFIRM_DELETION_CHAT_MESSAGE = "Are you sure you want to delete this chat?"
     CONFIRM_DELETION_IMAGE_MESSAGE = "Are you sure you want to delete this image?"
     CONFIRM_DELETION_VISION_MESSAGE = "Are you sure you want to delete this vision?"
+    CONFIRM_DELETION_AGENT_MESSAGE = "Are you sure you want to delete this agent?"
+    CONFIRM_DELETION_MCP_MESSAGE = "Are you sure you want to delete this mcp?"
     CONFIRM_DELETION_TTS_MESSAGE = "Are you sure you want to delete this tts?"
     CONFIRM_DELETION_STT_MESSAGE = "Are you sure you want to delete this stt?"
     CONFIRM_CHOOSE_CHAT_MESSAGE = "Choose chat first to delete"
@@ -291,6 +350,8 @@ class UI:
     CONFIRM_CHOOSE_VISION_MESSAGE = "Choose vision first to delete"
     CONFIRM_CHOOSE_TTS_MESSAGE = "Choose tts first to delete"
     CONFIRM_CHOOSE_STT_MESSAGE = "Choose stt first to delete"
+    CONFIRM_CHOOSE_AGENT_MESSAGE = "Choose agent first to delete"
+    CONFIRM_CHOOSE_MCP_MESSAGE = "Choose mcp first to delete"
 
     LABEL_ENTER_NEW_NAME = "Enter new name:"
 
@@ -358,7 +419,7 @@ class UI:
 
     IMAGE_TYPE_MAPPING = {
         'jpeg': 'image/jpeg',
-        'jpg': 'image/jpg',
+        'jpg': 'image/jpeg',
         'png': 'image/png',
         'gif': 'image/gif',
         'webp': 'image/webp'
@@ -384,6 +445,9 @@ class UI:
         'html', 'xhtml', 'htm', 'css', 'scss', 'sass', 'less', 'json', 'xml', 'resx', 'ini', 'mjs', 'pcfproj', 'csproj',
         'pbxproj', 'xcworkspacedata', 'plist', 'storyboard', 'svg', 'ipynb', 'bat', 'cmd', 'ps1'
     ]
+
+    BUDGET_TOKENS_ERROR_TITLE = "Budget Token Error"
+    BUDGET_TOKENS_ERROR_MESSAGE = "Budget Token must be less than the Max Tokens"
 
     def __setattr__(self, name, value):
         if name in self.__dict__:
@@ -497,6 +561,28 @@ class DATABASE_MESSAGE:
     DATABASE_STT_DETAIL_DELETE_ERROR = "Failed to delete stt detail table "
     DATABASE_STT_DETAIL_FETCH_ERROR = "Failed to fetch stt details for stt_main_id"
 
+    DATABASE_MCP_CREATE_TABLE_ERROR = "Failed to create mcp_main table: "
+    DATABASE_MCP_ADD_ERROR = "Failed to add mcp main: "
+    DATABASE_MCP_UPDATE_ERROR = "Failed to update mcp main: "
+    DATABASE_MCP_MAIN_ENTRY_SUCCESS = "Successfully deleted mcp main entry with id: "
+    DATABASE_MCP_MAIN_ENTRY_FAIL = "Failed to delete mcp main entry with id "
+
+    DATABASE_MCP_DETAIL_CREATE_TABLE_ERROR = "Failed to create mcp detail table for mcp_main_id "
+    DATABASE_MCP_DETAIL_INSERT_ERROR = "Failed to insert mcp detail: "
+    DATABASE_MCP_DETAIL_DELETE_ERROR = "Failed to delete mcp detail table "
+    DATABASE_MCP_DETAIL_FETCH_ERROR = "Failed to fetch mcp details for mcp_main_id"
+
+    DATABASE_AGENT_CREATE_TABLE_ERROR = "Failed to create agent_main table: "
+    DATABASE_AGENT_ADD_ERROR = "Failed to add agent main: "
+    DATABASE_AGENT_UPDATE_ERROR = "Failed to update agent main: "
+    DATABASE_AGENT_MAIN_ENTRY_SUCCESS = "Successfully deleted agent main entry with id: "
+    DATABASE_AGENT_MAIN_ENTRY_FAIL = "Failed to delete agent main entry with id "
+
+    DATABASE_AGENT_DETAIL_CREATE_TABLE_ERROR = "Failed to create agent detail table for agent_main_id "
+    DATABASE_AGENT_DETAIL_INSERT_ERROR = "Failed to insert agent detail: "
+    DATABASE_AGENT_DETAIL_DELETE_ERROR = "Failed to delete agent detail table "
+    DATABASE_AGENT_DETAIL_FETCH_ERROR = "Failed to fetch agent details for agent_main_id"
+
     DATABASE_RETRIEVE_DATA_FAIL = "Failed to retrieve data from "
     DATABASE_DELETE_TABLE_SUCCESS = "Successfully deleted table: "
     DATABASE_EXECUTE_QUERY_ERROR = "Failed to execute query: "
@@ -516,13 +602,29 @@ class AIProviderName(Enum):
     OLLAMA = 'Ollama'
 
 
+class MCPProviderName(Enum):
+    OPENAI_MCP = 'OpenAI_MCP'
+    CLAUDE_MCP = 'Claude_MCP'
+    GEMINI_MCP = 'Gemini_MCP'
+    OLLAMA_MCP = 'Ollama_MCP'
+
+
+class AgentPattern(Enum):
+    ORCHESTRATOR = 'Orchestrator'
+    WORKER = 'Worker'
+    AGGREGATOR = 'Aggregator'
+    EVALUATOR = 'Evaluator'
+    GENERATOR = 'Generator'
+    TASK = 'Task'
+
+
 class MainWidgetIndex(Enum):
     CHAT_WIDGET = auto()
     IMAGE_WIDGET = auto()
     VISION_WIDGET = auto()
     TTS_WIDGET = auto()
     STT_WIDGET = auto()
-    EO_WIDGET = auto()
+    AGENT_WIDGET = auto()
     MCP_WIDGET = auto()
 
 

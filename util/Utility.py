@@ -1,4 +1,6 @@
+import asyncio
 import base64
+import json
 import os
 import re
 import sys
@@ -12,8 +14,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QDialogButtonBox, QMessageBox
 
 from util.Constants import Constants, UI, MODEL_MESSAGE
+from util.MCPServerCheck import MCPServerCheck
 from util.SettingsManager import SettingsManager
 from typing import List, Optional, Tuple
+
 
 class Utility:
 
@@ -166,14 +170,6 @@ class Utility:
             return []
 
     @staticmethod
-    def add_claude_model_list():
-        settings = SettingsManager.get_settings()
-        settings.beginGroup(Constants.CLAUDE_MODEL_LIST_SECTION)
-        for model in Constants.CLAUDE_MODEL_LIST:
-            settings.setValue(model, True)
-        settings.endGroup()
-
-    @staticmethod
     def parse_version_from_id(model_id: str) -> Optional[Tuple[int, int]]:
         """
         Handles:
@@ -199,7 +195,6 @@ class Utility:
 
     @staticmethod
     def is_version_gte(version: Tuple[int, int], base_version: Tuple[int, int]) -> bool:
-        """(3, 5) >= (3, 5)"""
         return version >= base_version
 
     @staticmethod
@@ -364,3 +359,129 @@ class Utility:
         except Exception as e:
             print(f"{UI.TTS_FILE_ERROR} {e}")
             return False
+
+    @staticmethod
+    async def get_available_tools_count_ex(config_path):
+        mcp_service_check = MCPServerCheck(config_path)
+
+        try:
+            init_success = await mcp_service_check.initialize()
+            if not init_success:
+                return 0
+            tools = mcp_service_check.get_available_tools()
+            tool_count = len(tools)
+            return tool_count
+        except Exception as e:
+            print(f"Error getting MCP tools: {e}")
+            return 0
+
+        finally:
+            await mcp_service_check.cleanup()
+
+    @staticmethod
+    def check_mcp_tools_ex(config_path, parent_widget=None):
+        try:
+            with open(config_path, "r") as file:
+                json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            QMessageBox.critical(
+                parent_widget,
+                'MCP Configuration Error',
+                f'Invalid configuration file: {str(e)}',
+                QMessageBox.StandardButton.Ok
+            )
+            return
+
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        tool_count = loop.run_until_complete(Utility.get_available_tools_count(config_path))
+        loop.close()
+
+        if tool_count > 0:
+            QMessageBox.information(
+                parent_widget,
+                'MCP Tools',
+                f'There are {tool_count} tools available.',
+                QMessageBox.StandardButton.Ok
+            )
+        else:
+            QMessageBox.warning(
+                parent_widget,
+                'MCP Tools',
+                'No MCP tools are available. Make sure the configuration is correct.',
+                QMessageBox.StandardButton.Ok
+            )
+
+    @staticmethod
+    async def get_available_tools_count(config_path):
+        """Get the count of available MCP tools."""
+        server_check = MCPServerCheck(config_path)
+        try:
+            await server_check.initialize()
+            tool_count = len(server_check.get_available_tools())
+            # Ensure cleanup happens before returning
+            await server_check.cleanup()
+            return tool_count
+        except Exception as e:
+            print(f"Error checking MCP tools: {e}")
+            # Make sure to clean up even if there's an error
+            await server_check.cleanup()
+            return 0
+
+    @staticmethod
+    def check_mcp_tools(config_path, parent_widget=None):
+        try:
+            with open(config_path, "r") as file:
+                json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            QMessageBox.critical(
+                parent_widget,
+                'MCP Configuration Error',
+                f'Invalid configuration file: {str(e)}',
+                QMessageBox.StandardButton.Ok
+            )
+            return
+
+        # Safer way to get or create an event loop
+        try:
+            # Try to get the current event loop
+            loop = asyncio.get_event_loop()
+            if loop.is_closed():
+                raise RuntimeError("Event loop is closed")
+            should_close = False
+        except RuntimeError:
+            # Create a new event loop if one isn't available
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            should_close = True
+
+        try:
+            tool_count = loop.run_until_complete(Utility.get_available_tools_count(config_path))
+
+            if tool_count > 0:
+                QMessageBox.information(
+                    parent_widget,
+                    'MCP Tools',
+                    f'There are {tool_count} tools available.',
+                    QMessageBox.StandardButton.Ok
+                )
+            else:
+                QMessageBox.warning(
+                    parent_widget,
+                    'MCP Tools',
+                    'No MCP tools are available. Make sure the configuration is correct.',
+                    QMessageBox.StandardButton.Ok
+                )
+        finally:
+            # Ensure all pending tasks are completed
+            try:
+                pending = asyncio.all_tasks(loop)
+                if pending:
+                    loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+            except RuntimeError:
+                # Handle case where loop might already be closed
+                pass
+
+            # Only close the loop if we created it
+            if should_close and not loop.is_closed():
+                loop.close()

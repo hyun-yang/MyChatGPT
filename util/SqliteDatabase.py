@@ -19,6 +19,7 @@ class SqliteDatabase:
         # Chat
         self.chat_main_table_name = Constants.CHAT_MAIN_TABLE
         self.chat_detail_table_name = Constants.CHAT_DETAIL_TABLE
+        self.chat_prompt_table_name = Constants.CHAT_PROMPT_TABLE
 
         # Image
         self.image_main_table_name = Constants.IMAGE_MAIN_TABLE
@@ -42,8 +43,18 @@ class SqliteDatabase:
         self.stt_main_table_name = Constants.STT_MAIN_TABLE
         self.stt_detail_table_name = Constants.STT_DETAIL_TABLE
 
+        # AGENT
+        self.agent_main_table_name = Constants.AGENT_MAIN_TABLE
+        self.agent_detail_table_name = Constants.AGENT_DETAIL_TABLE
+        self.agent_prompt_table_name = Constants.AGENT_PROMPT_TABLE
+
+        # MCP
+        self.mcp_main_table_name = Constants.MCP_MAIN_TABLE
+        self.mcp_detail_table_name = Constants.MCP_DETAIL_TABLE
+        self.mcp_prompt_table_name = Constants.MCP_PROMPT_TABLE
+
         # Prompt
-        self.prompt_table_name = Constants.CHAT_PROMPT_TABLE
+        # self.prompt_table_name = Constants.CHAT_PROMPT_TABLE
 
     def initialize_db(self):
         self.db = QSqlDatabase.addDatabase(Constants.SQLITE_DATABASE)
@@ -77,7 +88,14 @@ class SqliteDatabase:
         self.create_stt_main()
         self.create_vision_main()
         self.create_vision_file()
-        self.create_prompt()
+
+        # Create prompt tables for Chat, Agent, and MCP
+        self.create_prompt_table(self.chat_prompt_table_name)
+        self.create_prompt_table(self.agent_prompt_table_name)
+        self.create_prompt_table(self.mcp_prompt_table_name)
+
+        self.create_agent_main()
+        self.create_mcp_main()
 
     def create_chat_main(self):
         query = QSqlQuery()
@@ -241,14 +259,15 @@ class SqliteDatabase:
 
         return chat_details_list
 
-    def create_prompt(self):
+    def create_prompt_table(self, table_name):
+        """Create a prompt table with the given name"""
         query = QSqlQuery()
         query_string = f"""
-                        CREATE TABLE IF NOT EXISTS {self.prompt_table_name} 
+                        CREATE TABLE IF NOT EXISTS {table_name}
                          (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             title TEXT NOT NULL,
-                            prompt TEXT NOT NULL, 
+                            prompt TEXT NOT NULL,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
                         )
                         """
@@ -256,6 +275,62 @@ class SqliteDatabase:
             query.exec(query_string)
         except Exception as e:
             print(f"{DATABASE_MESSAGE.DATABASE_PROMPT_CREATE_TABLE_ERROR} {e}")
+
+    def add_prompt(self, table_name, title, prompt):
+        """Add a prompt to the specified table"""
+        query = QSqlQuery()
+        query_string = f"""
+                        INSERT INTO {table_name} (title, prompt)
+                        VALUES (:title, :prompt)
+                        """
+        try:
+            query.prepare(query_string)
+            query.bindValue(":title", title)
+            query.bindValue(":prompt", prompt)
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            return query.lastInsertId()
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_PROMPT_ADD_ERROR} {e}")
+        return None
+
+    def update_prompt(self, table_name, id, title, prompt):
+        """Update a prompt in the specified table"""
+        query = QSqlQuery()
+        query_string = f"""
+                        UPDATE {table_name}
+                        SET title = :title, prompt = :prompt
+                        WHERE id = :id
+                        """
+        try:
+            query.prepare(query_string)
+            query.bindValue(":title", title)
+            query.bindValue(":prompt", prompt)
+            query.bindValue(":id", id)
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            return True
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_PROMPT_UPDATE_ERROR} {e}")
+        return False
+
+    def delete_prompt(self, table_name, id):
+        """Delete a prompt from the specified table"""
+        query = QSqlQuery()
+        query_string = f"""
+                        DELETE FROM {table_name}
+                        WHERE id = :id
+                        """
+        try:
+            query.prepare(query_string)
+            query.bindValue(":id", id)
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            logging.info(f"{DATABASE_MESSAGE.DATABASE_PROMPT_DELETE_SUCCESS} {id}")
+            return True
+        except Exception as e:
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_PROMPT_DELETE_FAIL} {id}: {e}")
+        return False
 
     def add_prompt(self, title, prompt):
         query = QSqlQuery()
@@ -1039,7 +1114,7 @@ class SqliteDatabase:
                 raise Exception(query.lastError().text())
             logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
         except Exception as e:
-            logging.error(f"{DATABASE_MESSAGE.DATABASE_CHAT_DETAIL_DELETE_ERROR} {id}: {e}")
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_STT_DETAIL_DELETE_ERROR} {id}: {e}")
             return False
         return True
 
@@ -1149,3 +1224,326 @@ class SqliteDatabase:
             print(f"{DATABASE_MESSAGE.DATABASE_STT_DETAIL_INSERT_ERROR} {e}")
             return False
 
+    def create_agent_main(self):
+        query = QSqlQuery()
+        query_string = f"""
+                        CREATE TABLE IF NOT EXISTS {self.agent_main_table_name} 
+                         (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            title TEXT NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+                        )
+                        """
+        try:
+            query.exec(query_string)
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_AGENT_CREATE_TABLE_ERROR} {e}")
+
+    def add_agent_main(self, title):
+        query = QSqlQuery()
+        query.prepare(f"INSERT INTO {self.agent_main_table_name} (title) VALUES (:title)")
+        query.bindValue(":title", title)
+        try:
+            if query.exec():
+                agent_main_id = query.lastInsertId()
+                self.create_agent_detail(agent_main_id)
+                return agent_main_id
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_AGENT_ADD_ERROR} {e}")
+        return None
+
+    def update_agent_main(self, id, title):
+        query = QSqlQuery()
+        query.prepare(f"UPDATE {self.agent_main_table_name} SET title = :title WHERE id = :id")
+        query.bindValue(":title", title)
+        query.bindValue(":id", id)
+        try:
+            if query.exec():
+                return True
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_AGENT_UPDATE_ERROR} {e}")
+        return False
+
+    def delete_agent_main_entry(self, id):
+        try:
+            query = QSqlQuery()
+            query.prepare(f"DELETE FROM {self.agent_main_table_name} WHERE id = :id")
+            query.bindValue(":id", id)
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            logging.info(f"{DATABASE_MESSAGE.DATABASE_AGENT_MAIN_ENTRY_SUCCESS} {id}")
+        except Exception as e:
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_AGENT_MAIN_ENTRY_FAIL} {id}: {e}")
+            return False
+        return True
+
+    def delete_agent_main(self, id):
+        try:
+            if not self.delete_agent_detail(id):
+                raise Exception(f"Failed to delete agent details for id {id}")
+            if not self.delete_agent_main_entry(id):
+                raise Exception(f"Failed to delete agent main entry for id {id}")
+        except Exception as e:
+            logging.error(f"Error deleting agent main for id {id}: {e}")
+            return False
+        return True
+
+    def get_all_agent_main_list(self):
+        query = QSqlQuery()
+        query.prepare(f"SELECT * FROM {self.agent_main_table_name} ORDER BY created_at DESC")
+        try:
+            if query.exec():
+                results = []
+                while query.next():
+                    id = query.value(0)
+                    title = query.value(1)
+                    created_at = query.value(2)
+                    results.append({'id': id, 'title': title, 'created_at': created_at})
+                return results
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_RETRIEVE_DATA_FAIL} {self.agent_main_table_name}: {e}")
+        return []
+
+    def create_agent_detail(self, agent_main_id):
+        query = QSqlQuery()
+        agent_detail_table = f"{self.agent_detail_table_name}_{agent_main_id}"
+        query_string = f"""
+          CREATE TABLE IF NOT EXISTS {agent_detail_table}
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_main_id INTEGER,
+                agent_type TEXT,
+                agent_model TEXT,   
+                agent TEXT,     
+                elapsed_time TEXT, 
+                finish_reason TEXT,            
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(agent_main_id) REFERENCES {self.agent_main_table_name}(id) ON DELETE CASCADE 
+            )
+         """
+        try:
+            query.exec(query_string)
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_AGENT_DETAIL_CREATE_TABLE_ERROR} {agent_main_id}: {e}")
+
+    def insert_agent_detail(self, agent_main_id, agent_type, agent_model, agent, elapsed_time, finish_reason):
+        agent_detail_table = f"{self.agent_detail_table_name}_{agent_main_id}"
+        query = QSqlQuery()
+        query.prepare(
+            f"INSERT INTO {agent_detail_table} (agent_main_id, agent_type, agent_model, agent, elapsed_time, finish_reason) "
+            f" VALUES (:agent_main_id, :agent_type, :agent_model, :agent, :elapsed_time, :finish_reason)")
+        query.bindValue(":agent_main_id", agent_main_id)
+        query.bindValue(":agent_type", agent_type)
+        query.bindValue(":agent_model", agent_model)
+        query.bindValue(":agent", agent)
+        query.bindValue(":elapsed_time", elapsed_time)
+        query.bindValue(":finish_reason", finish_reason)
+        try:
+            return query.exec()
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_AGENT_DETAIL_INSERT_ERROR} {e}")
+            return False
+
+    def delete_agent_detail(self, id):
+        try:
+            query = QSqlQuery()
+            table_name = f"{self.agent_detail_table_name}_{id}"
+            query.prepare(f"DROP TABLE IF EXISTS {table_name}")
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
+        except Exception as e:
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_AGENT_DETAIL_DELETE_ERROR} {id}: {e}")
+            return False
+        return True
+
+    def get_all_agent_details_list(self, agent_main_id):
+        agent_detail_table = f"{self.agent_detail_table_name}_{agent_main_id}"
+        query = QSqlQuery()
+        query.prepare(f"SELECT * FROM {agent_detail_table}")
+
+        try:
+            if not query.exec():
+                print(f"{DATABASE_MESSAGE.DATABASE_AGENT_DETAIL_FETCH_ERROR} {agent_main_id}: {query.lastError().text()}")
+                return []
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_EXECUTE_QUERY_ERROR} {e}")
+            return []
+
+        agent_details_list = []
+        while query.next():
+            agent_detail = {
+                "id": query.value("id"),
+                "agent_main_id": query.value("agent_main_id"),
+                "agent_type": query.value("agent_type"),
+                "agent_model": query.value("agent_model"),
+                "agent": query.value("agent"),
+                "elapsed_time": query.value("elapsed_time"),
+                "finish_reason": query.value("finish_reason"),
+                "created_at": query.value("created_at")
+            }
+            agent_details_list.append(agent_detail)
+
+        return agent_details_list
+
+    def create_mcp_main(self):
+        query = QSqlQuery()
+        query_string = f"""
+                        CREATE TABLE IF NOT EXISTS {self.mcp_main_table_name} 
+                         (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            title TEXT NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+                        )
+                        """
+        try:
+            query.exec(query_string)
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_MCP_CREATE_TABLE_ERROR} {e}")
+
+    def add_mcp_main(self, title):
+        query = QSqlQuery()
+        query.prepare(f"INSERT INTO {self.mcp_main_table_name} (title) VALUES (:title)")
+        query.bindValue(":title", title)
+        try:
+            if query.exec():
+                mcp_main_id = query.lastInsertId()
+                self.create_mcp_detail(mcp_main_id)
+                return mcp_main_id
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_MCP_ADD_ERROR} {e}")
+        return None
+
+    def update_mcp_main(self, id, title):
+        query = QSqlQuery()
+        query.prepare(f"UPDATE {self.mcp_main_table_name} SET title = :title WHERE id = :id")
+        query.bindValue(":title", title)
+        query.bindValue(":id", id)
+        try:
+            if query.exec():
+                return True
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_MCP_UPDATE_ERROR} {e}")
+        return False
+
+    def delete_mcp_main_entry(self, id):
+        try:
+            query = QSqlQuery()
+            query.prepare(f"DELETE FROM {self.mcp_main_table_name} WHERE id = :id")
+            query.bindValue(":id", id)
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            logging.info(f"{DATABASE_MESSAGE.DATABASE_MCP_MAIN_ENTRY_SUCCESS} {id}")
+        except Exception as e:
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_MCP_MAIN_ENTRY_FAIL} {id}: {e}")
+            return False
+        return True
+
+    def delete_mcp_main(self, id):
+        try:
+            if not self.delete_mcp_detail(id):
+                raise Exception(f"Failed to delete mcp details for id {id}")
+            if not self.delete_mcp_main_entry(id):
+                raise Exception(f"Failed to delete mcp main entry for id {id}")
+        except Exception as e:
+            logging.error(f"Error deleting mcp main for id {id}: {e}")
+            return False
+        return True
+
+    def get_all_mcp_main_list(self):
+        query = QSqlQuery()
+        query.prepare(f"SELECT * FROM {self.mcp_main_table_name} ORDER BY created_at DESC")
+        try:
+            if query.exec():
+                results = []
+                while query.next():
+                    id = query.value(0)
+                    title = query.value(1)
+                    created_at = query.value(2)
+                    results.append({'id': id, 'title': title, 'created_at': created_at})
+                return results
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_RETRIEVE_DATA_FAIL} {self.mcp_main_table_name}: {e}")
+        return []
+
+    def create_mcp_detail(self, mcp_main_id):
+        query = QSqlQuery()
+        mcp_detail_table = f"{self.mcp_detail_table_name}_{mcp_main_id}"
+        query_string = f"""
+          CREATE TABLE IF NOT EXISTS {mcp_detail_table}
+            (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                mcp_main_id INTEGER,
+                mcp_type TEXT,
+                mcp_model TEXT,   
+                mcp TEXT,     
+                elapsed_time TEXT, 
+                finish_reason TEXT,            
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(mcp_main_id) REFERENCES {self.mcp_main_table_name}(id) ON DELETE CASCADE 
+            )
+         """
+        try:
+            query.exec(query_string)
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_MCP_DETAIL_CREATE_TABLE_ERROR} {mcp_main_id}: {e}")
+
+    def insert_mcp_detail(self, mcp_main_id, mcp_type, mcp_model, mcp, elapsed_time, finish_reason):
+        mcp_detail_table = f"{self.mcp_detail_table_name}_{mcp_main_id}"
+        query = QSqlQuery()
+        query.prepare(
+            f"INSERT INTO {mcp_detail_table} (mcp_main_id, mcp_type, mcp_model, mcp, elapsed_time, finish_reason) "
+            f" VALUES (:mcp_main_id, :mcp_type, :mcp_model, :mcp, :elapsed_time, :finish_reason)")
+        query.bindValue(":mcp_main_id", mcp_main_id)
+        query.bindValue(":mcp_type", mcp_type)
+        query.bindValue(":mcp_model", mcp_model)
+        query.bindValue(":mcp", mcp)
+        query.bindValue(":elapsed_time", elapsed_time)
+        query.bindValue(":finish_reason", finish_reason)
+        try:
+            return query.exec()
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_MCP_DETAIL_INSERT_ERROR} {e}")
+            return False
+
+    def delete_mcp_detail(self, id):
+        try:
+            query = QSqlQuery()
+            table_name = f"{self.mcp_detail_table_name}_{id}"
+            query.prepare(f"DROP TABLE IF EXISTS {table_name}")
+            if not query.exec():
+                raise Exception(query.lastError().text())
+            logging.info(f"{DATABASE_MESSAGE.DATABASE_DELETE_TABLE_SUCCESS} {table_name}")
+        except Exception as e:
+            logging.error(f"{DATABASE_MESSAGE.DATABASE_MCP_DETAIL_DELETE_ERROR} {id}: {e}")
+            return False
+        return True
+
+    def get_all_mcp_details_list(self, mcp_main_id):
+        mcp_detail_table = f"{self.mcp_detail_table_name}_{mcp_main_id}"
+        query = QSqlQuery()
+        query.prepare(f"SELECT * FROM {mcp_detail_table}")
+
+        try:
+            if not query.exec():
+                print(f"{DATABASE_MESSAGE.DATABASE_MCP_DETAIL_FETCH_ERROR} {mcp_main_id}: {query.lastError().text()}")
+                return []
+        except Exception as e:
+            print(f"{DATABASE_MESSAGE.DATABASE_EXECUTE_QUERY_ERROR} {e}")
+            return []
+
+        mcp_details_list = []
+        while query.next():
+            mcp_detail = {
+                "id": query.value("id"),
+                "mcp_main_id": query.value("mcp_main_id"),
+                "mcp_type": query.value("mcp_type"),
+                "mcp_model": query.value("mcp_model"),
+                "mcp": query.value("mcp"),
+                "elapsed_time": query.value("elapsed_time"),
+                "finish_reason": query.value("finish_reason"),
+                "created_at": query.value("created_at")
+            }
+            mcp_details_list.append(mcp_detail)
+
+        return mcp_details_list

@@ -1,4 +1,6 @@
+import logging
 import sys
+import time
 from os import path
 
 from PyQt6.QtCore import QSize, QFile
@@ -7,10 +9,10 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QMenu, QToolBar,
     QPushButton, QWidgetAction, QSpacerItem, QSizePolicy, QStackedWidget, QStyleFactory, QSplashScreen, \
     QMessageBox, QLabel
 
+from agent.AgentPresenter import AgentPresenter
 from chat.ChatPresenter import ChatPresenter
-from eo.EOPresenter import EOPresenter
 from image.ImagePresenter import ImagePresenter
-from mcp.MCPPresenter import MCPPresenter
+from mcp_mvp.MCPPresenter import MCPPresenter
 from stt.STTPresenter import STTPresenter
 from tts.TTSPresenter import TTSPresenter
 from util.AnimatedProgressBar import AnimatedProgressBar
@@ -22,8 +24,6 @@ from util.SettingsManager import SettingsManager
 from util.Utility import Utility
 from util.VerticalLine import VerticalLine
 from vision.VisionPresenter import VisionPresenter
-
-import logging
 
 httpx_logger = logging.getLogger("httpx")
 httpx_logger.setLevel(logging.WARNING)
@@ -76,13 +76,13 @@ class MainWindow(QMainWindow):
         self._stt.model.thread_started_signal.connect(self.show_result_info)
         self._stt.model.response_finished_signal.connect(self.show_result_info)
 
-        self._mcp = MCPPresenter()
-        # self._mcp.model.thread_started_signal.connect(self.show_result_info)
-        # self._mcp.model.response_finished_signal.connect(self.show_result_info)
+        self._agent = AgentPresenter()
+        self._agent.model.thread_started_signal.connect(self.show_result_info)
+        self._agent.model.response_finished_signal.connect(self.show_result_info)
 
-        self._eo = EOPresenter()
-        # self._eo.model.thread_started_signal.connect(self.show_result_info)
-        # self._eo.model.response_finished_signal.connect(self.show_result_info)
+        self._mcp = MCPPresenter()
+        self._mcp.model.thread_started_signal.connect(self.show_result_info)
+        self._mcp.model.response_finished_signal.connect(self.show_result_info)
 
         self.set_main_widgets()
 
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
             MainWidgetIndex.VISION_WIDGET: self._main_widget.addWidget(self._vision),
             MainWidgetIndex.TTS_WIDGET: self._main_widget.addWidget(self._tts),
             MainWidgetIndex.STT_WIDGET: self._main_widget.addWidget(self._stt),
-            MainWidgetIndex.EO_WIDGET: self._main_widget.addWidget(self._eo),
+            MainWidgetIndex.AGENT_WIDGET: self._main_widget.addWidget(self._agent),
             MainWidgetIndex.MCP_WIDGET: self._main_widget.addWidget(self._mcp),
         }
         self.setCentralWidget(self._main_widget)
@@ -137,13 +137,13 @@ class MainWindow(QMainWindow):
         self.tts_action.setStatusTip(UI.TTS_TIP)
         self.tts_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.TTS_WIDGET))
 
-        # self.eo_action = QAction("EO", self)
-        # self.eo_action.setStatusTip(UI.EO_TIP)
-        # self.eo_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.EO_WIDGET))
-        #
-        # self.mcp_action = QAction("MCP", self)
-        # self.mcp_action.setStatusTip(UI.MCP_TIP)
-        # self.mcp_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.MCP_WIDGET))
+        self.agent_action = QAction("AGENT", self)
+        self.agent_action.setStatusTip(UI.AGENT_TIP)
+        self.agent_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.AGENT_WIDGET))
+
+        self.mcp_action = QAction("MCP", self)
+        self.mcp_action.setStatusTip(UI.MCP_TIP)
+        self.mcp_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.MCP_WIDGET))
 
         self.setting_action = QAction("Setting", self)
         self.setting_action.setStatusTip(UI.SETTING_TIP)
@@ -181,6 +181,8 @@ class MainWindow(QMainWindow):
         view_menu.addAction(self.vision_action)
         view_menu.addAction(self.tts_action)
         view_menu.addAction(self.stt_action)
+        view_menu.addAction(self.agent_action)
+        view_menu.addAction(self.mcp_action)
         menubar.addMenu(view_menu)
 
         help_menu = QMenu(UI.HELP, self)
@@ -214,18 +216,18 @@ class MainWindow(QMainWindow):
         self.kill_button.setIconSize(icon_size)
         self.kill_button.setCheckable(True)
         self.kill_button.setToolTip(UI.KILL_TIP)
-        # self.kill_button.clicked.connect(self.close)
+        self.kill_button.clicked.connect(self.kill_all_threads)
 
         self.chat_button = self.create_button('chat.svg', UI.CHAT, MainWidgetIndex.CHAT_WIDGET)
         self.image_button = self.create_button('image.svg', UI.IMAGE, MainWidgetIndex.IMAGE_WIDGET)
         self.vision_button = self.create_button('vision.svg', UI.VISION, MainWidgetIndex.VISION_WIDGET)
         self.stt_button = self.create_button('stt.svg', UI.STT, MainWidgetIndex.STT_WIDGET)
         self.tts_button = self.create_button('tts.svg', UI.TTS, MainWidgetIndex.TTS_WIDGET)
-        self.eo_button = self.create_button('eo.svg', UI.EO, MainWidgetIndex.EO_WIDGET)
+        self.agent_button = self.create_button('a.svg', UI.AGENT, MainWidgetIndex.AGENT_WIDGET)
         self.mcp_button = self.create_button('mcp.svg', UI.MCP, MainWidgetIndex.MCP_WIDGET)
 
         self.buttons.extend([self.chat_button, self.image_button, self.vision_button, self.stt_button,
-                             self.tts_button, self.eo_button, self.mcp_button, self.setting_button,
+                             self.tts_button, self.agent_button, self.mcp_button, self.setting_button,
                              self.kill_button, self.exit_button])
 
         main_toolbar_layout.addWidget(self.chat_button)
@@ -233,7 +235,7 @@ class MainWindow(QMainWindow):
         main_toolbar_layout.addWidget(self.vision_button)
         main_toolbar_layout.addWidget(self.tts_button)
         main_toolbar_layout.addWidget(self.stt_button)
-        main_toolbar_layout.addWidget(self.eo_button)
+        main_toolbar_layout.addWidget(self.agent_button)
         main_toolbar_layout.addWidget(self.mcp_button)
         main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.setting_button)
@@ -366,6 +368,95 @@ class MainWindow(QMainWindow):
         else:
             event.ignore()
 
+    def kill_all_threads(self):
+        presenters = [
+            getattr(self, '_chat', None),
+            getattr(self, '_image', None),
+            getattr(self, '_vision', None),
+            getattr(self, '_tts', None),
+            getattr(self, '_stt', None),
+            getattr(self, '_agent', None),
+            getattr(self, '_mcp', None)
+        ]
+
+        for presenter in presenters:
+            if not presenter:
+                continue
+
+            if hasattr(presenter.model, 'force_stop'):
+                presenter.model.force_stop()
+
+            thread_obj = self._get_thread_from_presenter(presenter)
+
+            if thread_obj and thread_obj.isRunning():
+                if hasattr(thread_obj, 'set_force_stop'):
+                    thread_obj.set_force_stop(True)
+
+                self._emit_thread_finish_signal(thread_obj, presenter)
+
+        # Clean up UI elements
+        self._cleanup_ui_elements(presenters)
+
+        # Stop progress bar
+        if self.progress_bar:
+            self.progress_bar.stop_animation()
+            self.progress_bar = None
+
+        # Clear status
+        if hasattr(self, 'status_bar'):
+            self.status_bar.clearMessage()
+        self.show_result_info("Threads Killed", Constants.FORCE_STOP, 0.0, False)
+
+        QMessageBox.information(self, Constants.THREAD_TERMINATION_TITLE, Constants.THREAD_TERMINATION_MESSAGE)
+
+    def _get_thread_from_presenter(self, presenter):
+        thread_attrs = ['chat_thread', 'agent_thread', 'image_thread', 'mcp_thread',
+                        'vision_thread', 'tts_thread', 'stt_thread']
+
+        for attr_name in thread_attrs:
+            if hasattr(presenter.model, attr_name):
+                return getattr(presenter.model, attr_name)
+        return None
+
+    def _emit_thread_finish_signal(self, thread_obj, presenter):
+        try:
+            current_time = time.time()
+            elapsed_time = 0.0
+            if hasattr(thread_obj, 'start_time') and thread_obj.start_time:
+                elapsed_time = current_time - thread_obj.start_time
+
+            model_name = getattr(thread_obj, 'model', "Unknown")
+            presenter.model.response_finished_signal.emit(
+                model_name, Constants.FORCE_STOP, elapsed_time, False
+            )
+        except Exception as e:
+            print(f"Error emitting finish signal: {e}")
+            QMessageBox.warning(self, Constants.SIGNAL_ERROR, f"{Constants.ERROR_EMIT_SIGNAL}\n{str(e)}")
+
+    def _cleanup_ui_elements(self, presenters):
+        for presenter in presenters:
+            if not presenter:
+                continue
+
+            # Find view attribute
+            view = None
+            for view_attr in ['chatView', 'agentView', 'imageView', 'mcpView', 'visionView', 'ttsView', 'sttView']:
+                if hasattr(presenter, view_attr):
+                    view = getattr(presenter, view_attr)
+                    break
+
+            if view:
+                # Hide stop widget
+                if hasattr(view, 'stop_widget') and view.stop_widget:
+                    view.stop_widget.setVisible(False)
+
+                # Update UI
+                if hasattr(view, 'update_ui_finish'):
+                    try:
+                        view.update_ui_finish("Cancelled", Constants.FORCE_STOP, 0.0, False)
+                    except Exception as e:
+                        QMessageBox.warning(self, Constants.SIGNAL_ERROR, f"{Constants.ERROR_UI_SIGNAL}\n{str(e)}")
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -384,6 +475,7 @@ if __name__ == '__main__':
     screen_width = sg.width()
 
     mainWindow = MainWindow()
+
     app_splash.finish(mainWindow)
 
     if screen_width < 1450:

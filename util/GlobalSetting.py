@@ -1,7 +1,7 @@
 from functools import partial
 
 from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QLineEdit, \
-    QPushButton, QGroupBox, QGridLayout, QColorDialog, QFontDialog, QMessageBox, QHBoxLayout
+    QPushButton, QGroupBox, QGridLayout, QColorDialog, QFontDialog, QMessageBox, QHBoxLayout, QFileDialog
 
 from util.Constants import get_ai_provider_names, UI
 from util.SettingsManager import SettingsManager
@@ -18,9 +18,11 @@ class GlobalSetting(QDialog):
 
         row1Layout = QHBoxLayout()
         row2Layout = QHBoxLayout()
+        row3Layout = QHBoxLayout()
 
         mainLayout.addLayout(row1Layout)
         mainLayout.addLayout(row2Layout)
+        mainLayout.addLayout(row3Layout)
 
         self.create_ai_provider_group(row1Layout)
         self.create_chat_title_bar_style_group(row1Layout)
@@ -28,6 +30,7 @@ class GlobalSetting(QDialog):
         self.create_ai_code_view_style_group(row2Layout)
         self.create_info_label_style_group(row2Layout)
         self.create_qa_info_group(row2Layout)
+        self.create_mcp_group(row3Layout)
 
     def create_info_label_style_group(self, layout):
         info_label_window_group = QGroupBox('Info Label Style')
@@ -287,3 +290,64 @@ class GlobalSetting(QDialog):
             font_size = font.pointSize()
             self.common_font_display.setText(f"{font_family}, {font_size}")
             print(font_family, font_size)
+
+    def create_mcp_group(self, layout):
+        mcp_group = QGroupBox('MCP Sever')
+        mcp_layout = QGridLayout()
+
+        mcp_layout.addWidget(QLabel('Config json'), 0, 0)
+
+        self.mcp_json_path_editor = QLineEdit()
+        mcp_layout.addWidget(self.mcp_json_path_editor, 0, 1)
+
+        self.mcp_json_browse_button = QPushButton('...')
+        self.mcp_json_browse_button.setMaximumWidth(30)
+        self.mcp_json_browse_button.clicked.connect(self.select_mcp_json_file)
+        mcp_layout.addWidget(self.mcp_json_browse_button, 0, 2)
+
+        mcp_json_path = self._settings.value('MCP/config_path')
+        if mcp_json_path:
+            self.mcp_json_path_editor.setText(mcp_json_path)
+
+        self.mcp_json_path_editor.textChanged.connect(self.handle_mcp_json_path_change)
+
+        button_layout = QHBoxLayout()
+
+        self.mcp_check_button = QPushButton('Check')
+        self.mcp_check_button.setFixedWidth(100)
+        self.mcp_check_button.clicked.connect(self.check_mcp_tools)
+
+        # Add the button to the horizontal layout with stretches on both sides
+        button_layout.addStretch(1)
+        button_layout.addWidget(self.mcp_check_button)
+        button_layout.addStretch(1)
+
+        mcp_layout.addLayout(button_layout, 1, 0, 1, 3)
+        mcp_group.setLayout(mcp_layout)
+        layout.addWidget(mcp_group)
+
+    def select_mcp_json_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select MCP Configuration File",
+            "",
+            "JSON Files (*.json)"
+        )
+
+        if file_path:
+            self.mcp_json_path_editor.setText(file_path)
+
+    def handle_mcp_json_path_change(self, text):
+        self._settings.setValue('MCP/config_path', text)
+
+    def check_mcp_tools(self):
+        config_path = self.mcp_json_path_editor.text()
+        if not config_path:
+            QMessageBox.warning(
+                self,
+                'MCP Configuration',
+                'Please select an MCP configuration file first.',
+                QMessageBox.StandardButton.Ok
+            )
+            return
+        Utility.check_mcp_tools(config_path, self)

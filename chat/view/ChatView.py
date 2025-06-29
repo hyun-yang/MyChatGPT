@@ -6,20 +6,20 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QSizePolicy, QSplitter, QComboBox, QLabel, QTabWidget, \
     QGroupBox, QFormLayout, QCheckBox, QPushButton, QHBoxLayout, QApplication, QTextEdit, QListWidget, QFileDialog, \
     QMessageBox
+from google.genai import types
 
 from chat.view.ChatHistory import ChatHistory
-from chat.view.ChatPromptListWidget import ChatPromptListWidget
 from chat.view.ChatWidget import ChatWidget
 from custom.CheckDoubleSpinBox import CheckDoubleSpinBox
 from custom.CheckLineEdit import CheckLineEdit
 from custom.CheckSpinBox import CheckSpinBox
+from custom.PromptListWidget import PromptListWidget
 from custom.PromptTextEdit import PromptTextEdit
 from util.ChatType import ChatType
 from util.Constants import AIProviderName, UI
 from util.Constants import Constants
 from util.SettingsManager import SettingsManager
 from util.Utility import Utility
-from google.genai import types
 
 
 class ChatView(QWidget):
@@ -27,6 +27,7 @@ class ChatView(QWidget):
     stop_signal = pyqtSignal()
     chat_llm_signal = pyqtSignal(str)
     reload_chat_detail_signal = pyqtSignal(int)
+    new_chat_signal = pyqtSignal()
 
     def __init__(self, model):
         super().__init__()
@@ -35,40 +36,107 @@ class ChatView(QWidget):
         self._current_chat_llm = Utility.get_settings_value(section="AI_Provider", prop="llm",
                                                             default="OpenAI", save=True)
         self.found_text_positions = []
+        self.current_position_index = -1
 
         self.initialize_ui()
 
     def initialize_ui(self):
+        self.create_all_ui_components()
+        self.setup_layouts()
+        self.initialize_data()
+        self.connect_signals()
 
+    def create_all_ui_components(self):
+        self.create_top_control_components()
+        self.create_chat_display_components()
+        self.create_user_input_components()
+        self.create_config_tab_components()
+        self.create_bottom_control_components()
+
+    def create_top_control_components(self):
         # Top layout
         self.top_layout = QVBoxLayout()
         self.top_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         # Create buttons
         self.clear_all_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'bin.png')), UI.CLEAR_ALL)
-        self.clear_all_button.clicked.connect(lambda: self.clear_all())
-
         self.copy_all_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'cards-stack.png')), UI.COPY_ALL)
-        self.copy_all_button.clicked.connect(lambda: QApplication.clipboard().setText(self.get_all_text()))
-
         self.reload_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'cards-address.png')), UI.RELOAD_ALL)
-        self.reload_button.clicked.connect(lambda: self.reload_chat_detail_signal.emit(-1))
 
+        # Search components
         self.search_text = PromptTextEdit()
-        self.search_text.submitted_signal.connect(self.search)
         self.search_text.setPlaceholderText(UI.SEARCH_PROMPT_PLACEHOLDER)
-
         self.search_text.setFixedHeight(self.clear_all_button.sizeHint().height())
         self.search_text.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.search_result = QLabel()
 
-        # Create navigation buttons
+        # Navigation buttons
         self.prev_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'arrow-180.png')), '')
-        self.prev_button.clicked.connect(self.scroll_to_previous_match_widget)
         self.next_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'arrow.png')), '')
-        self.next_button.clicked.connect(self.scroll_to_next_match_widget)
 
-        # Create a horizontal layout and add the buttons
+        # Create the top widget container
+        self.top_widget = QWidget()
+        self.top_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+
+    def create_chat_display_components(self):
+        # Result layout for chat messages
+        self.result_layout = QVBoxLayout()
+        self.result_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.result_layout.setSpacing(0)
+        self.result_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.result_widget = QWidget()
+
+        # Scroll area for chat messages
+        self.ai_answer_scroll_area = QScrollArea()
+        self.ai_answer_scroll_area.setWidgetResizable(True)
+
+        # Stop button and its container
+        self.stop_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'minus-circle.png')), UI.STOP)
+
+        self.stop_widget = QWidget()
+        self.stop_widget.setVisible(False)
+
+    def create_user_input_components(self):
+        # Prompt text input
+        self.prompt_text = PromptTextEdit()
+        self.prompt_text.setPlaceholderText(UI.CHAT_PROMPT_PLACEHOLDER)
+
+        # Prompt container
+        self.prompt_widget = QWidget()
+        self.prompt_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+
+    def create_bottom_control_components(self):
+        # File button
+        self.file_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), Constants.FILES)
+
+        # Model selector components
+        self.main_model_combo = QComboBox()
+        self.main_model_combo.setMinimumWidth(150)
+
+        # New chat button
+        self.new_chat_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'plus.png')), Constants.NEW_CHAT)
+
+        # Container for bottom controls
+        self.bottom_control_widget = QWidget()
+        self.bottom_control_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
+
+    def create_config_tab_components(self):
+        # Config tabs
+        self.config_tabs = QTabWidget()
+
+        # Tab for LLM providers
+        self.tabs = QTabWidget()
+
+    def setup_layouts(self):
+        self.setup_top_control_layout()
+        self.setup_chat_display_layout()
+        self.setup_user_input_layout()
+        self.setup_config_tabs_layout()
+        self.setup_bottom_control_layout()
+        self.setup_main_layout()
+
+    def setup_top_control_layout(self):
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.search_text)
         button_layout.addWidget(self.search_result)
@@ -79,89 +147,159 @@ class ChatView(QWidget):
         button_layout.addWidget(self.reload_button)
         button_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        # Add the button layout to the result layout
         self.top_layout.addLayout(button_layout)
-
-        self.top_widget = QWidget()
         self.top_widget.setLayout(self.top_layout)
-        self.top_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
-        # Result View
-        self.result_layout = QVBoxLayout()
-        self.result_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.result_layout.setSpacing(0)
-        self.result_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.result_widget = QWidget()
+    def setup_chat_display_layout(self):
         self.result_widget.setLayout(self.result_layout)
-
-        # Scroll Area
-        self.ai_answer_scroll_area = QScrollArea()
-        self.ai_answer_scroll_area.setWidgetResizable(True)
         self.ai_answer_scroll_area.setWidget(self.result_widget)
-
-        # Stop Button
-        self.stop_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'minus-circle.png')), 'Stop')
-        self.stop_button.clicked.connect(self.force_stop)
 
         stop_layout = QHBoxLayout()
         stop_layout.setContentsMargins(0, 0, 0, 0)
         stop_layout.setSpacing(0)
         stop_layout.addWidget(self.stop_button)
         stop_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.stop_widget = QWidget()
         self.stop_widget.setLayout(stop_layout)
-        self.stop_widget.setVisible(False)
 
-        # Prompt View
-        self.prompt_text = PromptTextEdit()
-        self.prompt_text.submitted_signal.connect(self.handle_submitted_signal)
-        self.prompt_text.setPlaceholderText(UI.CHAT_PROMPT_PLACEHOLDER)
-
+    def setup_user_input_layout(self):
         prompt_layout = QVBoxLayout()
         prompt_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         prompt_layout.addWidget(self.prompt_text)
         prompt_layout.setSpacing(0)
         prompt_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.prompt_widget = QWidget()
         self.prompt_widget.setLayout(prompt_layout)
-        self.prompt_widget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
-        chat_layout = QVBoxLayout()
+    def setup_bottom_control_layout(self):
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 5, 0, 0)
 
-        chat_layout.addWidget(self.top_widget)
-        chat_layout.addWidget(self.ai_answer_scroll_area)
-        chat_layout.addWidget(self.stop_widget)
-        chat_layout.addWidget(self.prompt_widget)
+        model_label = QLabel("Model")
 
-        chatWidget = QWidget()
-        chatWidget.setLayout(chat_layout)
+        layout.addWidget(self.file_button)
+        layout.addWidget(model_label)
+        layout.addWidget(self.main_model_combo)
+        layout.addStretch()
+        layout.addWidget(self.new_chat_button)
 
-        config_layout = QVBoxLayout()
+        self.bottom_control_widget.setLayout(layout)
 
-        self.config_tabs = QTabWidget()
+    def setup_config_tabs_layout(self):
         chat_icon = QIcon(Utility.get_icon_path('ico', 'users.png'))
         self.config_tabs.addTab(self.create_parameters_tab(), chat_icon, UI.CHAT)
         self.config_tabs.addTab(self.create_chatdb_tab(), chat_icon, UI.CHAT_LIST)
         self.config_tabs.addTab(self.create_prompt_tab(), chat_icon, UI.PROMPT)
 
+    def setup_main_layout(self):
+        # Chat section layout
+        chat_layout = QVBoxLayout()
+        chat_layout.addWidget(self.top_widget)
+        chat_layout.addWidget(self.ai_answer_scroll_area)
+        chat_layout.addWidget(self.stop_widget)
+        chat_layout.addWidget(self.prompt_widget)
+        chat_layout.addWidget(self.bottom_control_widget)
+
+        chatWidget = QWidget()
+        chatWidget.setLayout(chat_layout)
+
+        # Config section layout
+        config_layout = QVBoxLayout()
         config_layout.addWidget(self.config_tabs)
 
         configWidget = QWidget()
         configWidget.setLayout(config_layout)
 
+        # Main splitter
         mainWidget = QSplitter(Qt.Orientation.Horizontal)
         mainWidget.addWidget(configWidget)
         mainWidget.addWidget(chatWidget)
         mainWidget.setSizes([UI.QSPLITTER_LEFT_WIDTH, UI.QSPLITTER_RIGHT_WIDTH])
         mainWidget.setHandleWidth(UI.QSPLITTER_HANDLEWIDTH)
 
+        # Main layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(mainWidget)
-
         self.setLayout(main_layout)
+
+    def initialize_data(self):
+        self.set_initial_llm_tab()
+        self.update_main_model_list()
+        self.reset_search_bar()
+
+    def set_initial_llm_tab(self):
+        index = self.tabs.indexOf(self.tabs.findChild(QWidget, self._current_chat_llm))
+        if index != -1:
+            self.tabs.setCurrentIndex(index)
+
+    def connect_signals(self):
+        self.connect_top_control_signals()
+        self.connect_chat_display_signals()
+        self.connect_user_input_signals()
+        self.connect_config_tab_signals()
+        self.connect_bottom_control_signals()
+
+    def connect_top_control_signals(self):
+        self.clear_all_button.clicked.connect(lambda: self.clear_all())
+        self.copy_all_button.clicked.connect(lambda: QApplication.clipboard().setText(self.get_all_text()))
+        self.reload_button.clicked.connect(lambda: self.reload_chat_detail_signal.emit(-1))
+
+        self.search_text.submitted_signal.connect(self.search)
+        self.prev_button.clicked.connect(self.scroll_to_previous_match_widget)
+        self.next_button.clicked.connect(self.scroll_to_next_match_widget)
+
+    def connect_chat_display_signals(self):
+        self.stop_button.clicked.connect(self.force_stop)
+
+    def connect_user_input_signals(self):
+        self.prompt_text.submitted_signal.connect(self.handle_submitted_signal)
+
+    def connect_config_tab_signals(self):
+        self.tabs.currentChanged.connect(self.on_tab_change)
+
+    def connect_bottom_control_signals(self):
+        self.file_button.clicked.connect(lambda: self.select_files(self._current_chat_llm))
+        self.main_model_combo.currentTextChanged.connect(self.sync_model_selection)
+        self.new_chat_button.clicked.connect(self.create_new_chat)
+
+    def update_main_model_list(self):
+        self.main_model_combo.clear()
+
+        current_model_combo = self.findChild(QComboBox, f"{self._current_chat_llm}_ModelList")
+        if current_model_combo:
+            for i in range(current_model_combo.count()):
+                self.main_model_combo.addItem(current_model_combo.itemText(i))
+
+            saved_model = Utility.get_settings_value(
+                section=f"{self._current_chat_llm}_Model_Parameter",
+                prop="model_name",
+                default=self.get_default_model_for_provider(self._current_chat_llm),
+                save=True
+            )
+
+            saved_model_index = self.main_model_combo.findText(saved_model)
+            if saved_model_index >= 0:
+                self.main_model_combo.setCurrentIndex(saved_model_index)
+
+    def sync_model_selection(self, model_name):
+        if not model_name:
+            return
+
+        current_model_combo = self.findChild(QComboBox, f"{self._current_chat_llm}_ModelList")
+        if current_model_combo and current_model_combo.count() > 0:
+            # Block signals to prevent recursive calls
+            current_model_combo.blockSignals(True)
+            index = current_model_combo.findText(model_name)
+            if index >= 0:
+                current_model_combo.setCurrentIndex(index)
+            current_model_combo.blockSignals(False)
+
+    def on_tab_change(self, index):
+        self._current_chat_llm = self.tabs.tabText(index)
+        self._settings.setValue('AI_Provider/llm', self._current_chat_llm)
+        self.chat_llm_signal.emit(self._current_chat_llm)
+        self.update_main_model_list()
+
+    def create_new_chat(self):
+        self.new_chat_signal.emit()
 
     def reset_search_bar(self):
         self.found_text_positions = []
@@ -220,6 +358,7 @@ class ChatView(QWidget):
     def create_parameters_tab(self):
         layoutWidget = QWidget()
         layout = QVBoxLayout()
+        layout.setContentsMargins(5, 5, 5, 5)
 
         # Tabs for LLM
         self.tabs = QTabWidget()
@@ -228,15 +367,22 @@ class ChatView(QWidget):
         self.tabs.addTab(self.create_claude_tabcontent(AIProviderName.CLAUDE.value), AIProviderName.CLAUDE.value)
         self.tabs.addTab(self.create_ollama_tabcontent(AIProviderName.OLLAMA.value), AIProviderName.OLLAMA.value)
         self.tabs.currentChanged.connect(self.on_tab_change)
+
         layout.addWidget(self.tabs)
-
         layoutWidget.setLayout(layout)
-        return layoutWidget
 
-    def on_tab_change(self, index):
-        self._current_chat_llm = self.tabs.tabText(index)
-        self._settings.setValue('AI_Provider/llm', self._current_chat_llm)
-        self.chat_llm_signal.emit(self._current_chat_llm)
+        layoutWidget.setMinimumWidth(300)
+        layoutWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(layoutWidget)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        scroll_area.setMinimumWidth(320)
+
+        return scroll_area
 
     def set_default_tab(self, name):
         index = self.tabs.indexOf(self.tabs.findChild(QWidget, name))
@@ -276,6 +422,8 @@ class ChatView(QWidget):
         tabWidget = QWidget()
         tabWidget.setObjectName(name)
         layoutMain = QVBoxLayout()
+        layoutMain.setContentsMargins(10, 10, 10, 10)
+        layoutMain.setSpacing(10)
 
         groupSystem = self.create_system_layout(name)
         layoutMain.addWidget(groupSystem)
@@ -359,7 +507,6 @@ class ChatView(QWidget):
                                            default="2048", save=True)))
         num_predictSpinBox.check_box.setChecked(True)
         num_predictSpinBox.valueChanged.connect(lambda value: self.numpredict_changed(value, name))
-        # Maximum number of tokens to predict when generating text. (Default: 128, -1 = infinite generation, -2 = fill context)
         paramLayout.addRow('Max Tokens', num_predictSpinBox)
 
         temperatureSpinBox = CheckDoubleSpinBox()
@@ -456,8 +603,10 @@ class ChatView(QWidget):
         optionGroup.setLayout(optionLayout)
 
         layoutMain.addWidget(optionGroup)
+        layoutMain.addStretch()
 
         tabWidget.setLayout(layoutMain)
+        tabWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
 
         return tabWidget
 
@@ -465,6 +614,8 @@ class ChatView(QWidget):
         tabWidget = QWidget()
         tabWidget.setObjectName(name)
         layoutMain = QVBoxLayout()
+        layoutMain.setContentsMargins(10, 10, 10, 10)
+        layoutMain.setSpacing(10)
 
         groupSystem = self.create_system_layout(name)
         layoutMain.addWidget(groupSystem)
@@ -631,8 +782,10 @@ class ChatView(QWidget):
         optionGroup.setLayout(optionLayout)
 
         layoutMain.addWidget(optionGroup)
+        layoutMain.addStretch()
 
         tabWidget.setLayout(layoutMain)
+        tabWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
 
         return tabWidget
 
@@ -640,6 +793,8 @@ class ChatView(QWidget):
         tabWidget = QWidget()
         tabWidget.setObjectName(name)
         layoutMain = QVBoxLayout()
+        layoutMain.setContentsMargins(10, 10, 10, 10)
+        layoutMain.setSpacing(10)
 
         groupSystem = self.create_system_layout(name)
         layoutMain.addWidget(groupSystem)
@@ -724,7 +879,7 @@ class ChatView(QWidget):
         max_output_tokensSpinBox = CheckSpinBox()
         max_output_tokensSpinBox.setObjectName(f"{name}_max_output_tokensSpinBox")
         max_output_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        max_output_tokensSpinBox.spin_box.setRange(0, 2048)
+        max_output_tokensSpinBox.spin_box.setRange(0, 128000)
         max_output_tokensSpinBox.spin_box.setAccelerated(True)
         max_output_tokensSpinBox.spin_box.setSingleStep(1)
         max_output_tokensSpinBox.spin_box.setValue(
@@ -788,8 +943,10 @@ class ChatView(QWidget):
         optionGroup.setLayout(optionLayout)
 
         layoutMain.addWidget(optionGroup)
+        layoutMain.addStretch()
 
         tabWidget.setLayout(layoutMain)
+        tabWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
 
         return tabWidget
 
@@ -797,6 +954,8 @@ class ChatView(QWidget):
         tabWidget = QWidget()
         tabWidget.setObjectName(name)
         layoutMain = QVBoxLayout()
+        layoutMain.setContentsMargins(10, 10, 10, 10)
+        layoutMain.setSpacing(10)
 
         groupSystem = self.create_system_layout(name)
         layoutMain.addWidget(groupSystem)
@@ -872,7 +1031,7 @@ class ChatView(QWidget):
         max_tokensSpinBox = CheckSpinBox()
         max_tokensSpinBox.setObjectName(f"{name}_max_tokensSpinBox")
         max_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        max_tokensSpinBox.spin_box.setRange(0, 4096)
+        max_tokensSpinBox.spin_box.setRange(0, 128000)
         max_tokensSpinBox.spin_box.setAccelerated(True)
         max_tokensSpinBox.spin_box.setSingleStep(1)
         max_tokensSpinBox.spin_box.setValue(
@@ -894,6 +1053,27 @@ class ChatView(QWidget):
                                              save=True)))
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
+
+        budget_tokens_label = QLabel('Budget Tokens')
+        budget_tokensSpinBox = CheckSpinBox()
+        budget_tokensSpinBox.setObjectName(f"{name}_budget_tokensSpinBox")
+        budget_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        budget_tokensSpinBox.spin_box.setRange(0, 128000)
+        budget_tokensSpinBox.spin_box.setAccelerated(True)
+        budget_tokensSpinBox.spin_box.setSingleStep(1)
+        budget_tokensSpinBox.spin_box.setValue(
+            int(
+                Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="budget_tokens",
+                                           default="2048", save=True)))
+        budget_tokensSpinBox.check_box.setChecked(True)
+        budget_tokensSpinBox.valueChanged.connect(lambda value: self.budget_tokens_changed(value, name))
+        budget_tokensSpinBox.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        budget_tokens_label.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        paramLayout.addRow(budget_tokens_label, budget_tokensSpinBox)
 
         top_pSpinBox = CheckDoubleSpinBox()
         top_pSpinBox.setObjectName(f"{name}_top_pSpinBox")
@@ -921,6 +1101,16 @@ class ChatView(QWidget):
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
+        thinkingCheckbox = QCheckBox()
+        thinkingCheckbox.setObjectName(f"{name}_thinkingCheckbox")
+        thinkingCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                        save=True)) == "True")
+        thinkingCheckbox.toggled.connect(
+            lambda checked: self.thinking_changed(checked, name, budget_tokens_label, budget_tokensSpinBox)
+        )
+        paramLayout.addRow('Thinking', thinkingCheckbox)
+
         groupParam.setLayout(paramLayout)
         layoutMain.addWidget(groupParam)
 
@@ -937,10 +1127,24 @@ class ChatView(QWidget):
         optionGroup.setLayout(optionLayout)
 
         layoutMain.addWidget(optionGroup)
+        layoutMain.addStretch()
 
         tabWidget.setLayout(layoutMain)
+        tabWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
 
         return tabWidget
+
+    def get_default_model_for_provider(self, provider_name):
+        if provider_name == AIProviderName.OPENAI.value:
+            return 'gpt-4.0-mini'
+        elif provider_name == AIProviderName.GEMINI.value:
+            return 'gemini-2.0-flash'
+        elif provider_name == AIProviderName.CLAUDE.value:
+            return 'claude-3-7-sonnet-20250219'
+        elif provider_name == AIProviderName.OLLAMA.value:
+            return ''
+        else:
+            return ''
 
     def set_model_list(self, modelList, name):
         if name == AIProviderName.OPENAI.value:
@@ -953,7 +1157,18 @@ class ChatView(QWidget):
                     default='gpt-3.5-turbo',
                     save=True
                 )
+                # Block signals during initial setup
+                modelList.blockSignals(True)
                 modelList.setCurrentIndex(modelList.findText(llm_model))
+                modelList.blockSignals(False)
+
+                # Disconnect any existing connections to avoid multiple connections
+                try:
+                    modelList.currentTextChanged.disconnect()
+                except:
+                    pass
+
+                # Connect the signal
                 modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
 
         elif name == AIProviderName.GEMINI.value:
@@ -966,7 +1181,18 @@ class ChatView(QWidget):
                     default='gemini-pro',
                     save=True
                 )
+                # Block signals during initial setup
+                modelList.blockSignals(True)
                 modelList.setCurrentIndex(modelList.findText(llm_model))
+                modelList.blockSignals(False)
+
+                # Disconnect any existing connections to avoid multiple connections
+                try:
+                    modelList.currentTextChanged.disconnect()
+                except:
+                    pass
+
+                # Connect the signal
                 modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
 
         elif name == AIProviderName.CLAUDE.value:
@@ -979,7 +1205,18 @@ class ChatView(QWidget):
                     default='claude-3-7-sonnet-20250219',
                     save=True
                 )
+                # Block signals during initial setup
+                modelList.blockSignals(True)
                 modelList.setCurrentIndex(modelList.findText(llm_model))
+                modelList.blockSignals(False)
+
+                # Disconnect any existing connections to avoid multiple connections
+                try:
+                    modelList.currentTextChanged.disconnect()
+                except:
+                    pass
+
+                # Connect the signal
                 modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
 
         elif name == AIProviderName.OLLAMA.value:
@@ -992,7 +1229,18 @@ class ChatView(QWidget):
                     default='llama3:8b',
                     save=True
                 )
+                # Block signals during initial setup
+                modelList.blockSignals(True)
                 modelList.setCurrentIndex(modelList.findText(llm_model))
+                modelList.blockSignals(False)
+
+                # Disconnect any existing connections to avoid multiple connections
+                try:
+                    modelList.currentTextChanged.disconnect()
+                except:
+                    pass
+
+                # Connect the signal
                 modelList.currentTextChanged.connect(lambda current_text: self.model_list_changed(current_text, name))
 
     def select_files(self, llm):
@@ -1069,6 +1317,13 @@ class ChatView(QWidget):
 
     def model_list_changed(self, current_text, name):
         self._settings.setValue(f"{name}_Model_Parameter/model_name", current_text)
+        # Sync with main model combo box if the current provider is active
+        if name == self._current_chat_llm and hasattr(self, 'main_model_combo'):
+            self.main_model_combo.blockSignals(True)  # Prevent recursive signal calls
+            index = self.main_model_combo.findText(current_text)
+            if index >= 0:
+                self.main_model_combo.setCurrentIndex(index)
+            self.main_model_combo.blockSignals(False)
 
     def stopsequences_changed(self, value, name):
         if name == AIProviderName.OPENAI.value or name == AIProviderName.OLLAMA.value:
@@ -1102,6 +1357,22 @@ class ChatView(QWidget):
 
     def seed_changed(self, value, name):
         self._settings.setValue(f"{name}_Model_Parameter/seed", value)
+
+    def budget_tokens_changed(self, value, name):
+        max_tokens = self.findChild(CheckSpinBox,
+                                    f'{name}_max_tokensSpinBox').spin_box.value()
+
+        if value >= max_tokens:
+            QMessageBox.warning(self, UI.BUDGET_TOKENS_ERROR_TITLE, UI.BUDGET_TOKENS_ERROR_MESSAGE)
+            new_value = max_tokens - 1 if max_tokens > 1 else 0
+            self._settings.setValue(f"{name}_Model_Parameter/budget_tokens", new_value)
+        else:
+            self._settings.setValue(f"{name}_Model_Parameter/budget_tokens", value)
+
+    def thinking_changed(self, checked, name, budget_tokens_label, budget_tokensSpinBox):
+        self._settings.setValue(f"{name}_Model_Parameter/thinking", 'True' if checked else 'False')
+        budget_tokens_label.setVisible(checked)
+        budget_tokensSpinBox.setVisible(checked)
 
     def stream_changed(self, checked, name):
         if checked:
@@ -1150,7 +1421,8 @@ class ChatView(QWidget):
         layoutWidget = QWidget()
         layout = QVBoxLayout()
 
-        self._prompt_list = ChatPromptListWidget()
+        self._prompt_list = PromptListWidget(table_name=Constants.CHAT_PROMPT_TABLE,
+                                             db_connection_name='ChatPromptDBConnection')
         layout.addWidget(self.prompt_list)
 
         layoutWidget.setLayout(layout)
@@ -1192,8 +1464,17 @@ class ChatView(QWidget):
             ai_answer = ChatWidget(ChatType.AI, result)
             self.result_layout.addWidget(ai_answer)
 
+    def disconnect_scroll_range_changed(self):
+        try:
+            scroll_bar = self.ai_answer_scroll_area.verticalScrollBar()
+            if scroll_bar.receivers(scroll_bar.rangeChanged) > 0:
+                scroll_bar.rangeChanged.disconnect()
+        except (TypeError, RuntimeError):
+            print("Scrollbar error")
+            pass
+
     def update_ui_finish(self, model, finish_reason, elapsed_time, stream):
-        self.ai_answer_scroll_area.verticalScrollBar().rangeChanged.disconnect()
+        self.disconnect_scroll_range_changed()
         chatWidget = self.get_last_ai_widget()
         if stream:
             if chatWidget:
@@ -1323,9 +1604,8 @@ class ChatView(QWidget):
 
         file_list = self.get_selected_files(chat_llm)
 
-        content = []
         image_data_list = []
-
+        text_content = ""
         if file_list:
             text_file_contents = ""
 
@@ -1354,23 +1634,35 @@ class ChatView(QWidget):
                 else:
                     logging.warning(f"Unsupported file type: {file_extension} for file {file_name}")
 
-            # Add collected text file contents to content
+            # Store text file contents as a string
             if text_file_contents:
-                content.append({
-                    'type': 'text',
-                    'text': text_file_contents.strip()
-                })
+                text_content = text_file_contents.strip()
+
+        # Combine the input text with any text from files
+        if text:
+            if text_content:
+                text_content = f"{text}\n\n{text_content}"
+            else:
+                text_content = text
 
         messages = [
             {"role": "system",
              "content": self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()},
             {"role": "assistant", "content": self.get_all_text()},
-            {"role": "user", "content": content, "images": image_data_list if image_data_list else None}
+            {"role": "user", "content": text_content}
         ]
+
+        if image_data_list:
+            for i, img_data in enumerate(image_data_list):
+                messages.append({
+                    "role": "user",
+                    "content": f"[Image {i + 1}]",
+                    "images": [img_data]
+                })
 
         options = {
             'num_predict': num_predict,
-            'temperature:': temperature,
+            'temperature': temperature,
             'top_p': top_p,
             'top_k': top_k,
             'frequency_penalty': frequency_penalty,
@@ -1423,6 +1715,12 @@ class ChatView(QWidget):
         top_k_spin_box = self.findChild(CheckSpinBox,
                                         f'{chat_llm}_top_kSpinBox').spin_box
         top_k = top_k_spin_box.value() if top_k_spin_box.isEnabled() else None
+
+        budget_tokens_spin_box = self.findChild(CheckSpinBox,
+                                                f'{chat_llm}_budget_tokensSpinBox').spin_box
+
+        thinking = self.findChild(QCheckBox,
+                                  f'{chat_llm}_thinkingCheckbox').isChecked()
 
         file_list = self.get_selected_files(chat_llm)
 
@@ -1517,6 +1815,16 @@ class ChatView(QWidget):
 
         if top_k:
             ai_arg['top_k'] = top_k
+
+        if thinking:
+            max_tokens = max_tokens_spin_box.value()
+            budget_tokens = budget_tokens_spin_box.value()
+
+            ai_arg['max_tokens'] = max_tokens
+            ai_arg['thinking'] = {
+                "type": "enabled",
+                "budget_tokens": budget_tokens
+            }
 
         args = {
             'api_key': api_key,
@@ -1786,7 +2094,6 @@ class ChatView(QWidget):
         if stop_sequences:
             config['stop_sequences'] = [stop_sequences]
 
-        # REVIEW : set BLOCK_NONE for all category
         config['safety_settings'] = self.create_safety_settings()
         config['system_instruction'] = self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
 

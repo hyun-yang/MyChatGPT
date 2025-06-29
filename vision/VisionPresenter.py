@@ -7,7 +7,7 @@ from util.Constants import Constants, UI
 from util.DataManager import DataManager
 from util.SettingsManager import SettingsManager
 from util.Utility import Utility
-from vision.model.VisionListModel import VisionListModel
+from vision.view.VisionListModel import VisionListModel
 from vision.model.VisionModel import VisionModel
 from vision.view.VisionView import VisionView
 

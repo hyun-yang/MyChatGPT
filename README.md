@@ -3,6 +3,17 @@ The ultimate PyQt6 application featuring the power of OpenAI, Google Gemini, Cla
 
 It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS) and Speech-To-Text(STT).
 
+
+## What's New 
+
+- Updated Chat Feature
+  - Supports various documents, images, audio, and video files (Note: The selected model must support these file formats.)
+- MCP (Model Context Protocol) Feature
+  - Claude/OpenAI 
+- Support for Orchestrator-Worker and Evaluator-Optimizer Workflows 
+  - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+
+
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
 
@@ -169,10 +180,6 @@ After generating the executable file on Windows, if the icon of the executable i
 
 * STT
 ![stt_screenshot](https://github.com/user-attachments/assets/73ba987a-1c9e-4be6-9c10-cfe79f279a19)
-
-
-* Claude Model List (You need to manually add models)
-![claude_model_list_screenshot](https://github.com/user-attachments/assets/af60844d-0db3-4f33-a22b-cbe291f2ba31)
 
 
 * Ollama Model List (You need to manually add models and make sure to download the model you wish to use beforehand)

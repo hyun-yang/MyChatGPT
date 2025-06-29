@@ -2,7 +2,7 @@ from PyQt6.QtCore import QByteArray
 from PyQt6.QtCore import pyqtSlot
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QDialog, QMessageBox
 
-from tts.model.TTSListModel import TTSListModel
+from tts.view.TTSListModel import TTSListModel
 from tts.model.TTSModel import TTSModel
 from tts.view.TTSView import TTSView
 from util.ChatType import ChatType

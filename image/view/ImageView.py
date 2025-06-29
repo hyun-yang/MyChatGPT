@@ -929,7 +929,17 @@ class ImageView(QWidget):
         ai_answer = ImageWidget(ChatType.AI, image_data, revised_prompt)
         self.result_layout.addWidget(ai_answer)
 
+    def disconnect_scroll_range_changed(self):
+        try:
+            scroll_bar = self.ai_answer_scroll_area.verticalScrollBar()
+            if scroll_bar.receivers(scroll_bar.rangeChanged) > 0:
+                scroll_bar.rangeChanged.disconnect()
+        except (TypeError, RuntimeError):
+            print("Scrollbar error")
+            pass
+
     def update_ui_finish(self, model, finish_reason, elapsed_time, stream):
+        self.disconnect_scroll_range_changed()
         chatWidget = self.get_last_ai_widget()
         self.stop_widget.setVisible(False)
 

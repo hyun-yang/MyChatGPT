@@ -42,6 +42,7 @@ class ChatPresenter(QWidget):
         self.chatView.stop_signal.connect(self.chatModel.force_stop)
         self.chatView.chat_llm_signal.connect(self.set_current_llm_signal)
         self.chatView.reload_chat_detail_signal.connect(self.show_chat_detail)
+        self.chatView.new_chat_signal.connect(self.create_new_chat)
 
         self.chatView.prompt_list.sendPromptSignal.connect(self.chatView.set_prompt)
 

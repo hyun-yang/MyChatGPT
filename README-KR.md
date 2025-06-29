@@ -3,6 +3,17 @@
 
 이 애플리케이션은 채팅, 이미지, 비전, 텍스트-음성 변환(TTS) 및 음성-텍스트 변환(STT) 기능을 지원합니다.
 
+
+## 주요 기능 업데이트 
+
+- Chat 기능 추가
+  - 일반 문서, 이미지, 오디오, 비디오 파일 첨부 가능 ( 단, 선택한 모델이 이 파일 포맷을 지원해야 합니다.) 
+- MCP(Model Context Protocol) 지원 
+  - Claude/OpenAI 지원
+- Orchestrator-Worker, Evaluator-Optimizer 워크플로우 지원 
+  - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+
+
 ## 필수 조건
 시작하기 전에 다음 요구 사항을 확인하세요:
 
@@ -138,6 +149,11 @@ codegemma=true
 ```bash
 pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "splash/pyqt-small.png:splash" --icon="ico/app.ico" --windowed --onefile main.py
 ```
+
+```bash
+cxfreeze main.py --base-name=Win32GUI --icon="ico/app.ico" --target-dir dist
+```
+
 ### 실행 파일 아이콘 문제
 Windows에서 실행 파일을 생성한 후, 실행 파일의 아이콘의 제대로 표시되지 않는다면 실행 파일의 이름을 변경하여 아이콘이 제대로 표시되도록 하세요.
 
@@ -170,10 +186,6 @@ Windows에서 실행 파일을 생성한 후, 실행 파일의 아이콘의 제�
 
 * STT
 ![stt_screenshot](https://github.com/user-attachments/assets/73ba987a-1c9e-4be6-9c10-cfe79f279a19)
-
-
-* Claude 모델 리스트 (모델 정보를 직접 추가해야 합니다.)
-![claude_model_list_screenshot](https://github.com/user-attachments/assets/af60844d-0db3-4f33-a22b-cbe291f2ba31)
 
 
 * Ollama 모델 리스트 (모델 정보를 직접 추가해야 합니다. 그리고 사용하고 싶은 모델은 미리 다운로드해야 합니다.)

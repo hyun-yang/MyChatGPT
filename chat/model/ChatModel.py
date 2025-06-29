@@ -30,25 +30,25 @@ class ChatModel(QObject):
 
     def __init__(self):
         super().__init__()
-        self.ai_thread = None
+        self.chat_thread = None
 
     def send_user_input(self, args, chat_llm):
-        if self.ai_thread is not None and self.ai_thread.isRunning():
+        if self.chat_thread is not None and self.chat_thread.isRunning():
             print(f"{MODEL_MESSAGE.THREAD_RUNNING}")
-            self.ai_thread.wait()
+            self.chat_thread.wait()
 
-        self.ai_thread = AIThreadFactory.create_thread(args, chat_llm)
-        self.ai_thread.started.connect(self.thread_started_signal.emit)
-        self.ai_thread.finished.connect(self.handle_thread_finished)
-        self.ai_thread.response_signal.connect(self.response_signal.emit)
-        self.ai_thread.response_finished_signal.connect(self.response_finished_signal.emit)
-        self.ai_thread.start()
+        self.chat_thread = AIThreadFactory.create_thread(args, chat_llm)
+        self.chat_thread.started.connect(self.thread_started_signal.emit)
+        self.chat_thread.finished.connect(self.handle_thread_finished)
+        self.chat_thread.response_signal.connect(self.response_signal.emit)
+        self.chat_thread.response_finished_signal.connect(self.response_finished_signal.emit)
+        self.chat_thread.start()
 
     def handle_thread_finished(self):
         print(f"{MODEL_MESSAGE.THREAD_FINISHED}")
         self.thread_finished_signal.emit()
-        self.ai_thread = None
+        self.chat_thread = None
 
     def force_stop(self):
-        if self.ai_thread is not None:
-            self.ai_thread.set_force_stop(True)
+        if self.chat_thread is not None:
+            self.chat_thread.set_force_stop(True)
