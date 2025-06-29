@@ -149,8 +149,6 @@ codegemma=true
 ```bash
 pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "splash/pyqt-small.png:splash" --icon="ico/app.ico" --windowed --onefile main.py
 ```
-### Icon issue
-After generating the executable file on Windows, if the icon of the executable is not displayed correctly, please rename the executable to ensure that the icon is displayed properly.
 
 ## Screenshots
 
@@ -160,6 +158,23 @@ After generating the executable file on Windows, if the icon of the executable i
 
 * Setting
 ![setting_screenshot](https://github.com/user-attachments/assets/856aebeb-38c0-44ae-914c-a729a037343b)
+
+
+* MCP 
+
+![mcp_tools](https://github.com/user-attachments/assets/a42a0249-16dd-4d4c-86a4-cc68f05627fb)
+
+![mcp_tools1](https://github.com/user-attachments/assets/026a875d-70eb-42d8-91f9-dbe9a0084aaa)
+
+![mcp_tools2](https://github.com/user-attachments/assets/6dcb6b63-48c0-4cfd-b260-5037923d7766)
+
+![openai_mcp1](https://github.com/user-attachments/assets/49aa4c5d-63fb-4123-9ae0-5c41dc2bf490)
+
+![openai_mcp2](https://github.com/user-attachments/assets/0bb4372a-4ccf-4c5a-b379-7d00ac0e59a3)
+
+
+* Evaluator / Orchestrator
+![evaluator](https://github.com/user-attachments/assets/178507ab-d3e8-470b-8ffe-49e9a363fa66)
 
 
 * Chat
