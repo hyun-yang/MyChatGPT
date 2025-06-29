@@ -280,6 +280,7 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 * Evaluator / Orchestrator
 ![evaluator](https://github.com/user-attachments/assets/178507ab-d3e8-470b-8ffe-49e9a363fa66)
 
+![orchestrator](https://github.com/user-attachments/assets/77d803cc-ef3c-4de8-bb5a-18c091cb7ad7)
 
 
 * Chat
