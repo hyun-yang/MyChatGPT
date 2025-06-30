@@ -220,8 +220,8 @@ python main.py
 * Ollama 라이브러리를 사용한 오픈 소스 AI 모델 지원
 * 채팅, 이미지, 비전, TTS 및 STT 생성 지원
 
-## Claude/Ollama 모델 리스트
-Claude와 Ollama 는, 현재 지원하는 모델 리스트를 가져오는 메소드가 존재하지 않습니다, 
+## Ollama 모델 리스트
+Ollama 는, 현재 지원하는 모델 리스트를 가져오는 메소드가 존재하지 않습니다, 
 그래서 아래처럼 **settings.ini** 파일을 열고 직접 추가해야 합니다.
 
 Ollama를 이용하는 경우, 다음 세가지 사항을 확인해야 합니다:
@@ -234,12 +234,6 @@ Ollama를 이용하는 경우, 다음 세가지 사항을 확인해야 합니다
 'settings.ini' 파일을 열고 모델 이름을 추가합니다.
 
 ...
-[Claude_Model_List]
-claude-3-5-sonnet-20240620=true
-claude-3-opus-20240229=true
-claude-3-sonnet-20240229=true
-claude-3-haiku-20240307=true
-
 [Ollama_Model_List]
 llama3.1=true
 gemma2=true
