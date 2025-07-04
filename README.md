@@ -264,8 +264,6 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 
 ![mcp_tools](https://github.com/user-attachments/assets/a42a0249-16dd-4d4c-86a4-cc68f05627fb)
 
-![mcp_tools1](https://github.com/user-attachments/assets/026a875d-70eb-42d8-91f9-dbe9a0084aaa)
-
 ![mcp_claude](https://github.com/user-attachments/assets/ec6bacd0-9233-4ace-a126-a9bd96fbe953)
 
 ![mcp_openai](https://github.com/user-attachments/assets/e1c632ab-7e22-49b6-8b48-a1333b10adbf)
