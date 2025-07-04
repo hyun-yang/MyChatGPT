@@ -262,11 +262,11 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 
 ![mcp_tools](https://github.com/user-attachments/assets/a42a0249-16dd-4d4c-86a4-cc68f05627fb)
 
-![mcp_tools1](https://github.com/user-attachments/assets/026a875d-70eb-42d8-91f9-dbe9a0084aaa)
+![mcp_claude](https://github.com/user-attachments/assets/ec6bacd0-9233-4ace-a126-a9bd96fbe953)
 
-![mcp_tools2](https://github.com/user-attachments/assets/6dcb6b63-48c0-4cfd-b260-5037923d7766)
+![mcp_openai](https://github.com/user-attachments/assets/e1c632ab-7e22-49b6-8b48-a1333b10adbf)
 
-![openai_mcp1](https://github.com/user-attachments/assets/49aa4c5d-63fb-4123-9ae0-5c41dc2bf490)
+![mcp_gemini](https://github.com/user-attachments/assets/f24cf775-0bf6-4b65-b3f6-512024414896)
 
 ![openai_mcp2](https://github.com/user-attachments/assets/0bb4372a-4ccf-4c5a-b379-7d00ac0e59a3)
 
@@ -304,11 +304,11 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 ## UML Diagram
 
 * Main Class Diagram
-![main_class_screenshot_small](https://github.com/user-attachments/assets/a2d90e47-65ac-440c-8ff1-7f419b211ac6)
+![main_class_screenshot_small](https://github.com/user-attachments/assets/53bfc538-121b-4d06-9448-3a941b12bf2b)
 
 
 * Main Sequence Diagram
-![main_sequence_screenshot_small](https://github.com/user-attachments/assets/89073c70-59e3-4cbf-b3d1-97d7c59e981c)
+![main_sequence_screenshot_small](https://github.com/user-attachments/assets/ea1f084e-1d38-4b10-8ce2-c15a5434ac34)
 
 ## 알려진 문제
 ## Ubuntu 문제
