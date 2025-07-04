@@ -280,6 +280,8 @@ class UI:
     RELOAD_ALL = "Reload All"
     OK = "Ok"
     CANCEL = "Cancel"
+    SHOW_ORIGINAL_OR_FORMATTED = "Show original or formatted text"
+    SHOW_OR_HIDE = "Show/Hide text"
 
     IMAGE_FILTER = "Images (*.png)"
     IMAGE_PNG_EXTENSION = ".png"

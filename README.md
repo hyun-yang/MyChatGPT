@@ -9,7 +9,7 @@ It delivers outstanding capabilities for Chat, Image, Vision, Text-To-Speech(TTS
 - Enhanced Chat Capabilities: 
 Utilize a variety of file formats, including documents, images, audio, and video files. (Please note: Ensure the selected model supports these formats for optimal performance.)
 - MCP (Model Context Protocol) Integration: 
-Experience the power of advanced AI with the integration of Claude and OpenAI, enabling richer and more context-aware conversations.
+Experience the power of advanced AI with the integration of Claude, OpenAI and Gemini, enabling richer and more context-aware conversations.
 - Powerful Workflows: 
 Unlock new possibilities with the Orchestrator-Worker and Evaluator-Optimizer workflows, designed to streamline processes and enhance efficiency in interactions.
   - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)

@@ -1,8 +1,11 @@
 from PyQt6.QtCore import QObject, pyqtSignal
 
 from chat.model.ClaudeThread import ClaudeThread
+from chat.model.GeminiThread import GeminiThread
+from chat.model.OllamaThread import OllamaThread
 from chat.model.OpenAIThread import OpenAIThread
 from mcp_mvp.model.MCPClaudeThread import MCPClaudeThread
+from mcp_mvp.model.MCPGeminiThread import MCPGeminiThread
 from mcp_mvp.model.MCPOpenAIThread import MCPOpenAIThread
 from util.Constants import MODEL_MESSAGE, AIProviderName
 from util.SettingsManager import SettingsManager
@@ -16,6 +19,8 @@ class MCPThreadFactory:
                 return MCPClaudeThread(args)
             elif llm == AIProviderName.OPENAI.value:
                 return MCPOpenAIThread(args)
+            elif llm == AIProviderName.GEMINI.value:
+                return MCPGeminiThread(args)
             else:
                 raise ValueError(f"{MODEL_MESSAGE.MODEL_UNSUPPORTED} {llm}")
         else:
@@ -23,6 +28,10 @@ class MCPThreadFactory:
                 return ClaudeThread(args)
             elif llm == AIProviderName.OPENAI.value:
                 return OpenAIThread(args)
+            elif llm == AIProviderName.GEMINI.value:
+                return GeminiThread(args)
+            elif llm == AIProviderName.OLLAMA.value:
+                return OllamaThread(args)
             else:
                 raise ValueError(f"{MODEL_MESSAGE.MODEL_UNSUPPORTED} {llm}")
 

@@ -81,7 +81,7 @@ class AgentPresenter(QWidget):
 
     @pyqtSlot(str, str, float, bool)
     def handle_response_finished_signal(self, model, finish_reason, elapsed_time, stream):
-        # self.view.reset_file_list(self.llm, True)
+        self.view.reset_file_list(self.llm, True)
         last_ai_widget = self.view.get_last_ai_widget()
         if last_ai_widget:
             self.agentView.update_ui_finish(model, finish_reason, elapsed_time, stream)

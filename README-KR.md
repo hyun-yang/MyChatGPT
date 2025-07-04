@@ -7,7 +7,7 @@
 ## 주요 기능 업데이트 
 
 - 향상된 채팅 기능: 문서, 이미지, 오디오 및 비디오 파일을 포함한 다양한 파일 형식을 사용할 수 있습니다. (참고: 최적의 성능을 위해 선택한 모델이 이러한 형식을 지원하는지 확인하세요.)
-- MCP (모델 컨텍스트 프로토콜) 통합: Claude와 OpenAI의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.
+- MCP (모델 컨텍스트 프로토콜) 통합: Claude, OpenAI, Gemini의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.
 - 강력한 워크플로우: 프로세스를 간소화하고 상호작용의 효율성을 높이기 위해 설계된 Orchestrator-Worker 및 Evaluator-Optimizer 워크플로우를 경험해 보세요.
   - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 

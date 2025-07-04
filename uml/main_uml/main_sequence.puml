@@ -2,6 +2,8 @@
 actor User
 participant MainWindow
 participant ChatPresenter
+participant MCPPresenter
+participant AgentPresenter
 participant ImagePresenter
 participant VisionPresenter
 participant TTSPresenter
@@ -31,6 +33,22 @@ MainWindow -> ChatPresenter: Initialize ChatPresenter
 ChatPresenter -> MainWindow: thread_started_signal
 MainWindow -> MainWindow: show_result_info()
 MainWindow -> ChatPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "MCP" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.MCP_WIDGET)
+MainWindow -> MCPPresenter: Initialize MCPPresenter
+MCPPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> MCPPresenter: response_finished_signal
+MainWindow -> MainWindow: show_result_info()
+
+User -> MainWindow: Select "Agent" action
+MainWindow -> MainWindow: set_current_widget(MainWidgetIndex.AGENT_WIDGET)
+MainWindow -> AgentPresenter: Initialize AgentPresenter
+AgentPresenter -> MainWindow: thread_started_signal
+MainWindow -> MainWindow: show_result_info()
+MainWindow -> AgentPresenter: response_finished_signal
 MainWindow -> MainWindow: show_result_info()
 
 User -> MainWindow: Select "Image" action

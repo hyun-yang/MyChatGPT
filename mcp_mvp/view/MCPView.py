@@ -263,23 +263,26 @@ class MCPView(QWidget):
         self.new_mcp_button.clicked.connect(self.create_new_mcp)
 
     def update_main_model_list(self):
-        self.main_model_combo.clear()
+        saved_model = Utility.get_settings_value(
+            section=f"{self._current_llm_mcp}_Model_Parameter",
+            prop="model_name",
+            default=self.get_default_model_for_provider(self._current_llm_mcp),
+            save=True
+        )
 
-        current_model_combo = self.findChild(QComboBox, f"{self._current_llm_mcp}_ModelList")
-        if current_model_combo:
-            for i in range(current_model_combo.count()):
-                self.main_model_combo.addItem(current_model_combo.itemText(i))
+        self.main_model_combo.blockSignals(True)
+        try:
+            self.main_model_combo.clear()
+            current_model_combo = self.findChild(QComboBox, f"{self._current_llm_mcp}_ModelList")
+            if current_model_combo:
+                for i in range(current_model_combo.count()):
+                    self.main_model_combo.addItem(current_model_combo.itemText(i))
 
-            saved_model = Utility.get_settings_value(
-                section=f"{self._current_llm_mcp}_Model_Parameter",
-                prop="model_name",
-                default=self.get_default_model_for_provider(self._current_llm_mcp),
-                save=True
-            )
-
-            saved_model_index = self.main_model_combo.findText(saved_model)
-            if saved_model_index >= 0:
-                self.main_model_combo.setCurrentIndex(saved_model_index)
+                saved_model_index = self.main_model_combo.findText(saved_model)
+                if saved_model_index >= 0:
+                    self.main_model_combo.setCurrentIndex(saved_model_index)
+        finally:
+            self.main_model_combo.blockSignals(False)
 
     def sync_model_selection(self, model_name):
         if not model_name:
@@ -309,8 +312,8 @@ class MCPView(QWidget):
                 base_llm = tab_name.replace("_MCP", "")
                 self._current_llm = base_llm
                 self._settings.setValue('MCP/llm', self._current_llm)
-                self.update_main_model_list()
                 self.current_llm_signal.emit(self._current_llm)
+                self.update_main_model_list()
 
     def create_new_mcp(self):
         self.new_mcp_signal.emit()
@@ -390,6 +393,8 @@ class MCPView(QWidget):
                          MCPProviderName.CLAUDE_MCP.value)
         self.tabs.addTab(self.create_openai_tabcontent(MCPProviderName.OPENAI_MCP.value),
                          MCPProviderName.OPENAI_MCP.value)
+        self.tabs.addTab(self.create_gemini_tabcontent(MCPProviderName.GEMINI_MCP.value),
+                         MCPProviderName.GEMINI_MCP.value)
         self.tabs.currentChanged.connect(self.on_tab_change)
 
         layout.addWidget(self.tabs)
@@ -713,6 +718,121 @@ class MCPView(QWidget):
 
         return tabWidget
 
+    def create_gemini_tabcontent(self, name):
+        tabWidget = QWidget()
+        tabWidget.setObjectName(name)
+        layoutMain = QVBoxLayout()
+        layoutMain.setContentsMargins(10, 10, 10, 10)
+        layoutMain.setSpacing(10)
+
+        groupSystem = self.create_system_layout(name)
+        layoutMain.addWidget(groupSystem)
+
+        groupModel = QGroupBox(f"{name} Model")
+        modelLayout = QFormLayout()
+        modelLabel = QLabel(f"{name} Model List")
+        modelList = QComboBox()
+        modelList.setObjectName(f"{name}_ModelList")
+        modelList.clear()
+
+        self.set_model_list(modelList, name)
+
+        modelLayout.addRow(modelLabel)
+        modelLayout.addRow(modelList)
+        groupModel.setLayout(modelLayout)
+        layoutMain.addWidget(groupModel)
+
+        # Add QListWidget to show selected File list
+        listGroup = QGroupBox(f"{name} File List")
+        fileListLayout = QVBoxLayout()
+        listGroup.setLayout(fileListLayout)
+
+        fileListWidget = QListWidget()
+        fileListWidget.setObjectName(f"{name}_FileList")
+        fileListLayout.addWidget(fileListWidget)
+
+        # Add buttons
+        buttonLayout = QHBoxLayout()
+        selectButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder-open-image.png')), "Files")
+        selectButton.setObjectName(f"{name}_SelectButton")
+
+        deleteButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'folder--minus.png')), "Remove")
+        deleteButton.setObjectName(f"{name}_DeleteButton")
+        deleteButton.setEnabled(False)
+
+        buttonLayout.addWidget(selectButton)
+        buttonLayout.addWidget(deleteButton)
+
+        fileListLayout.addLayout(buttonLayout)
+
+        submitLayout = QHBoxLayout()
+        submitButton = QPushButton(QIcon(Utility.get_icon_path('ico', 'inbox-document-text.png')), "Submit")
+        submitButton.setObjectName(f"{name}_SubmitButton")
+        submitButton.setEnabled(False)
+        submitLayout.addWidget(submitButton)
+
+        fileListLayout.addLayout(submitLayout)
+
+        selectButton.clicked.connect(partial(self.select_files, name))
+        deleteButton.clicked.connect(partial(self.delete_file_from_list, name))
+        submitButton.clicked.connect(partial(self.submit_file, name, None))
+
+        fileListWidget.itemSelectionChanged.connect(partial(self.on_item_selection_changed, name))
+
+        layoutMain.addWidget(listGroup)
+
+        # Parameters Group
+        groupParam = QGroupBox(f"{name} Parameters")
+        paramLayout = QFormLayout()
+
+        max_output_tokensSpinBox = CheckSpinBox()
+        max_output_tokensSpinBox.setObjectName(f"{name}_max_output_tokensSpinBox")
+        max_output_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        max_output_tokensSpinBox.spin_box.setRange(0, 128000)
+        max_output_tokensSpinBox.spin_box.setAccelerated(True)
+        max_output_tokensSpinBox.spin_box.setSingleStep(1)
+        max_output_tokensSpinBox.spin_box.setValue(
+            int(
+                Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_output_tokens",
+                                           default="2048", save=True)))
+        max_output_tokensSpinBox.valueChanged.connect(lambda value: self.maxoutputtokens_changed(value, name))
+        paramLayout.addRow('Max Tokens', max_output_tokensSpinBox)
+
+        temperatureSpinBox = CheckDoubleSpinBox()
+        temperatureSpinBox.setObjectName(f"{name}_temperatureSpinBox")
+        temperatureSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        temperatureSpinBox.spin_box.setRange(0, 2)
+        temperatureSpinBox.spin_box.setAccelerated(True)
+        temperatureSpinBox.spin_box.setSingleStep(0.1)
+        temperatureSpinBox.spin_box.setValue(
+            float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
+                                             save=True)))
+        temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
+        paramLayout.addRow('Temperature', temperatureSpinBox)
+
+        groupParam.setLayout(paramLayout)
+        layoutMain.addWidget(groupParam)
+
+        optionGroup = QGroupBox(f"{name} Options")
+        optionLayout = QVBoxLayout()
+
+        streamCheckbox = QCheckBox("Stream")
+        streamCheckbox.setObjectName(f"{name}_streamCheckbox")
+        streamCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stream", default="True",
+                                        save=True)) == "True")
+        streamCheckbox.toggled.connect(lambda value: self.stream_changed(value, name))
+        optionLayout.addWidget(streamCheckbox)
+        optionGroup.setLayout(optionLayout)
+
+        layoutMain.addWidget(optionGroup)
+        layoutMain.addStretch()
+
+        tabWidget.setLayout(layoutMain)
+        tabWidget.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+
+        return tabWidget
+
     def set_model_list(self, modelList, name):
         if name == MCPProviderName.OPENAI_MCP.value:
             api_key = self._settings.value('AI_Provider/OpenAI')
@@ -878,7 +998,6 @@ class MCPView(QWidget):
 
     def model_list_changed(self, current_text, name):
         self._settings.setValue(f"{name}_Model_Parameter/model_name", current_text)
-        # Sync with main model combo box if the current provider is active
         if name == self._current_llm_mcp and hasattr(self, 'main_model_combo'):
             self.main_model_combo.blockSignals(True)  # Prevent recursive signal calls
             index = self.main_model_combo.findText(current_text)
@@ -891,6 +1010,12 @@ class MCPView(QWidget):
 
     def maxtokens_changed(self, value, name):
         self._settings.setValue(f"{name}_Model_Parameter/max_tokens", value)
+
+    def maxoutputtokens_changed(self, value, name):
+        self._settings.setValue(f"{name}_Model_Parameter/max_output_tokens", value)
+
+    def numpredict_changed(self, value, name):
+        self._settings.setValue(f"{name}_Model_Parameter/num_predict", value)
 
     def budget_tokens_changed(self, value, name):
         max_tokens = self.findChild(CheckSpinBox,
@@ -1342,6 +1467,149 @@ class MCPView(QWidget):
         }
 
         return args
+
+    def create_args_gemini_mcp(self, text, llm_mcp, llm):
+        api_key = self._settings.value(f'AI_Provider/{llm}')
+        model = self.findChild(QComboBox, f'{llm_mcp}_ModelList').currentText()
+
+        stream = self.findChild(QCheckBox,
+                                f'{llm_mcp}_streamCheckbox').isChecked()
+
+        max_output_tokens_spin_box = self.findChild(CheckSpinBox,
+                                                    f'{llm_mcp}_max_output_tokensSpinBox').spin_box
+        max_output_tokens = max_output_tokens_spin_box.value() if max_output_tokens_spin_box.isEnabled() else None
+
+        temperatue_spin_box = self.findChild(CheckDoubleSpinBox,
+                                             f'{llm_mcp}_temperatureSpinBox').spin_box
+        temperature = temperatue_spin_box.value() if temperatue_spin_box.isEnabled() else None
+
+        file_list = self.get_selected_files(llm_mcp)
+
+        content = []
+
+        if file_list:
+            text_file_contents = ""
+
+            for index, file_name in enumerate(file_list):
+                file_extension = file_name.split('.')[-1].lower()
+
+                # Handle text files
+                if file_extension in UI.TEXT_FILE_EXTENSIONS:
+                    try:
+                        with open(file_name, 'r', encoding='utf-8') as file:
+                            file_content = file.read()
+                            if text_file_contents:
+                                text_file_contents += f"\n\n{file_name}\n{file_content}"
+                            else:
+                                text_file_contents = f"{file_name}\n{file_content}"
+                    except Exception as e:
+                        logging.error(f"Error reading text file {file_name}: {str(e)}")
+
+                # Handle image files
+                elif file_extension in UI.IMAGE_TYPE_EXTENSIONS:
+                    media_type = UI.IMAGE_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            image_bytes = f.read()
+                        part = types.Part.from_bytes(data=image_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading image file {file_name}: {str(e)}")
+
+                # Handle document files
+                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            doc_bytes = f.read()
+                        part = types.Part.from_bytes(data=doc_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading document file {file_name}: {str(e)}")
+
+                # Handle video files
+                elif file_extension in UI.VIDEO_TYPE_EXTENSIONS:
+                    media_type = UI.VIDEO_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            video_bytes = f.read()
+                        part = types.Part.from_bytes(data=video_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading video file {file_name}: {str(e)}")
+
+                # Handle audio files
+                elif file_extension in UI.AUDIO_TYPE_EXTENSIONS:
+                    media_type = UI.AUDIO_TYPE_MAPPING.get(file_extension)
+                    try:
+                        with open(file_name, 'rb') as f:
+                            audio_bytes = f.read()
+                        part = types.Part.from_bytes(data=audio_bytes, mime_type=media_type)
+                        content.append(part)
+                    except Exception as e:
+                        logging.error(f"Error reading audio file {file_name}: {str(e)}")
+
+            # Add collected text file contents to content
+            if text_file_contents:
+                content.append(types.Part.from_text(text=text_file_contents.strip()))
+
+        # Add user's main text input
+        content.append(types.Part.from_text(text=text.strip()))
+
+        messages = self.get_all_text_gemini()
+
+        # If last message is model, add user message
+        if not messages or messages[-1]["role"] == "model":
+            messages.append({"role": "user", "parts": content})
+        else:
+            # If last message is user, overwrite
+            messages[-1] = {"role": "user", "parts": content}
+
+        config = {
+            'candidate_count': 1,
+            'max_output_tokens': max_output_tokens,
+            'temperature': temperature,
+            # 'tools': []
+        }
+
+        config['safety_settings'] = self.create_safety_settings()
+        config['system_instruction'] = self.findChild(QTextEdit, f'{llm_mcp}_current_system').toPlainText()
+
+        ai_arg = {
+            'model': model,
+            'messages': messages,
+            'stream': stream,
+            'config': config,
+        }
+
+        args = {
+            'api_key': api_key,
+            'ai_arg': ai_arg,
+            'mcp_json': self._settings.value('MCP/config_path')
+        }
+
+        return args
+
+    def create_safety_settings(self):
+        safety_settings = [
+            {
+                'category': 'HARM_CATEGORY_HARASSMENT',
+                'threshold': 'BLOCK_NONE'
+            },
+            {
+                'category': 'HARM_CATEGORY_HATE_SPEECH',
+                'threshold': 'BLOCK_NONE'
+            },
+            {
+                'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                'threshold': 'BLOCK_NONE'
+            },
+            {
+                'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                'threshold': 'BLOCK_NONE'
+            },
+        ]
+        return safety_settings
 
     def clear_all(self):
         target_layout = self.result_layout

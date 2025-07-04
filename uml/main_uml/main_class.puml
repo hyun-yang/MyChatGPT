@@ -1,6 +1,8 @@
 @startuml
 class MainWindow {
     - _chat
+    - _mcp
+    - _agent
     - _image
     - _vision
     - _tts
@@ -31,6 +33,14 @@ class ChatPresenter {
     - model: Model
 }
 
+class MCPPresenter {
+    - model: Model
+}
+
+class AgentPresenter {
+    - model: Model
+}
+
 class ImagePresenter {
     - model: Model
 }
@@ -52,6 +62,8 @@ class QStackedWidget {
 }
 class MainWidgetIndex {
     + CHAT_WIDGET
+    + MCP_WIDGET
+    + AGENT_WIDGET
     + IMAGE_WIDGET
     + VISION_WIDGET
     + TTS_WIDGET
@@ -65,6 +77,8 @@ class Model {
 }
 
 MainWindow --> ChatPresenter
+MainWindow --> MCPPresenter
+MainWindow --> AgentPresenter
 MainWindow --> ImagePresenter
 MainWindow --> VisionPresenter
 MainWindow --> TTSPresenter
@@ -74,6 +88,8 @@ MainWindow --> DataManager
 MainWindow --> QStackedWidget
 MainWindow --> MainWidgetIndex
 ChatPresenter --> Model
+MCPPresenter --> Model
+AgentPresenter --> Model
 ImagePresenter --> Model
 VisionPresenter --> Model
 TTSPresenter --> Model

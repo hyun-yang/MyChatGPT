@@ -255,23 +255,26 @@ class AgentView(QWidget):
         self.new_chat_button.clicked.connect(self.create_new_agent)
 
     def update_main_model_list(self):
-        self.main_model_combo.clear()
+        saved_model = Utility.get_settings_value(
+            section=f"{self._current_agent_pattern}_Model_Parameter",
+            prop="model_name",
+            default=self.get_default_model_for_provider(self._current_llm),
+            save=True
+        )
 
-        current_model_combo = self.findChild(QComboBox, f"{self._current_agent_pattern}_ModelList")
-        if current_model_combo:
-            for i in range(current_model_combo.count()):
-                self.main_model_combo.addItem(current_model_combo.itemText(i))
+        self.main_model_combo.blockSignals(True)
+        try:
+            self.main_model_combo.clear()
+            current_model_combo = self.findChild(QComboBox, f"{self._current_agent_pattern}_ModelList")
+            if current_model_combo:
+                for i in range(current_model_combo.count()):
+                    self.main_model_combo.addItem(current_model_combo.itemText(i))
 
-            saved_model = Utility.get_settings_value(
-                section=f"{self._current_agent_pattern}_Model_Parameter",
-                prop="model_name",
-                default=self.get_default_model_for_provider(self._current_llm),
-                save=True
-            )
-
-            saved_model_index = self.main_model_combo.findText(saved_model)
-            if saved_model_index >= 0:
-                self.main_model_combo.setCurrentIndex(saved_model_index)
+                saved_model_index = self.main_model_combo.findText(saved_model)
+                if saved_model_index >= 0:
+                    self.main_model_combo.setCurrentIndex(saved_model_index)
+        finally:
+            self.main_model_combo.blockSignals(False)
 
     def sync_model_selection(self, model_name):
         if not model_name:

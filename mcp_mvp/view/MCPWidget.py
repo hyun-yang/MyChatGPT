@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
 )
 
 from util import Utility
+from util.Constants import UI
 from util.SettingsManager import SettingsManager
 from util.ChatType import ChatType
 from util.Utility import Utility
@@ -44,7 +45,8 @@ class MCPWidget(QWidget):
         self.user_text.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.user_text.setWordWrap(True)
         self.user_text.setTextInteractionFlags(
-            Qt.TextInteractionFlag.TextSelectableByMouse
+            Qt.TextInteractionFlag.TextSelectableByMouse |
+            Qt.TextInteractionFlag.LinksAccessibleByMouse
         )
         self.user_text.setOpenExternalLinks(True)
 
@@ -111,12 +113,15 @@ class MCPWidget(QWidget):
         self.model_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         copy_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'card--plus.png')), "")
+        copy_button.setToolTip(UI.COPY)
         copy_button.clicked.connect(lambda: QApplication.clipboard().setText(self.get_original_text()))
 
         show_original_text_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'chat.svg')), "")
+        show_original_text_button.setToolTip(UI.SHOW_ORIGINAL_OR_FORMATTED)
         show_original_text_button.clicked.connect(self.show_original_text)
 
         clear_button = QPushButton(QIcon(Utility.get_icon_path('ico', 'erase.svg')), "")
+        clear_button.setToolTip(UI.SHOW_OR_HIDE)
         clear_button.clicked.connect(self.clear_text)
 
         # Create layouts for label and buttons
