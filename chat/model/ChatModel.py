@@ -8,7 +8,6 @@ from mcp_mvp.model.MCPClaudeThread import MCPClaudeThread
 from mcp_mvp.model.MCPGeminiThread import MCPGeminiThread
 from mcp_mvp.model.MCPOpenAIThread import MCPOpenAIThread
 from util.Constants import AIProviderName, MODEL_MESSAGE
-from util.SettingsManager import SettingsManager
 
 
 class AIThreadFactory:
@@ -45,15 +44,14 @@ class ChatModel(QObject):
     def __init__(self):
         super().__init__()
         self.chat_thread = None
-        self._settings = SettingsManager.get_settings()
 
     def send_user_input(self, args, chat_llm):
         if self.chat_thread is not None and self.chat_thread.isRunning():
             print(f"{MODEL_MESSAGE.THREAD_RUNNING}")
             self.chat_thread.wait()
 
-        mcp_check = self._settings.value(f"{chat_llm}_Model_Parameter/mcp", type=bool)
-        mcp_json = bool(self._settings.value('MCP/config_path'))
+        mcp_check = args['mcp']
+        mcp_json = args['mcp_json']
         self.chat_thread = AIThreadFactory.create_thread(args, chat_llm, mcp_check and mcp_json)
         self.chat_thread.started.connect(self.thread_started_signal.emit)
         self.chat_thread.finished.connect(self.handle_thread_finished)

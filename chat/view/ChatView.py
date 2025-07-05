@@ -1729,6 +1729,9 @@ class ChatView(QWidget):
 
         system = self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
 
+        mcp = self.findChild(QCheckBox,
+                             f'{chat_llm}_mcpCheckbox').isChecked()
+
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
 
@@ -1865,7 +1868,8 @@ class ChatView(QWidget):
         args = {
             'api_key': api_key,
             'ai_arg': ai_arg,
-            'mcp_json': self._settings.value('MCP/config_path')
+            'mcp_json': self._settings.value('MCP/config_path'),
+            'mcp': mcp
         }
 
         return args
@@ -1880,6 +1884,9 @@ class ChatView(QWidget):
             system_role = "developer"
         else:
             system_role = "system"
+
+        mcp = self.findChild(QCheckBox,
+                             f'{chat_llm}_mcpCheckbox').isChecked()
 
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
@@ -2003,7 +2010,8 @@ class ChatView(QWidget):
         args = {
             'api_key': api_key,
             'ai_arg': ai_arg,
-            'mcp_json': self._settings.value('MCP/config_path')
+            'mcp_json': self._settings.value('MCP/config_path'),
+            'mcp': mcp
         }
 
         return args
@@ -2011,6 +2019,9 @@ class ChatView(QWidget):
     def create_args_gemini(self, text, chat_llm):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
+
+        mcp = self.findChild(QCheckBox,
+                             f'{chat_llm}_mcpCheckbox').isChecked()
 
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
@@ -2144,7 +2155,8 @@ class ChatView(QWidget):
         args = {
             'api_key': api_key,
             'ai_arg': ai_arg,
-            'mcp_json': self._settings.value('MCP/config_path')
+            'mcp_json': self._settings.value('MCP/config_path'),
+            'mcp': mcp
         }
 
         return args
