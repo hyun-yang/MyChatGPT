@@ -257,18 +257,16 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 ![first-run-screenshot](https://github.com/user-attachments/assets/317e3b12-980f-4946-9704-20cbcaa4f071)
 
 * Setting
-![setting_screenshot](https://github.com/user-attachments/assets/856aebeb-38c0-44ae-914c-a729a037343b)
+![setting_screenshot](https://github.com/user-attachments/assets/c035a534-d58e-45d5-a2b7-6c3aa6c8a95e)
 
 
 * MCP 
 
-![mcp_tools](https://github.com/user-attachments/assets/a42a0249-16dd-4d4c-86a4-cc68f05627fb)
+![mcp_claude](https://github.com/user-attachments/assets/508767de-2e8a-4034-ad7c-e91676359f4c)
 
-![mcp_claude](https://github.com/user-attachments/assets/ec6bacd0-9233-4ace-a126-a9bd96fbe953)
+![mcp_openai](https://github.com/user-attachments/assets/bddbead2-6d82-4363-8477-ed51d872d13b)
 
-![mcp_openai](https://github.com/user-attachments/assets/e1c632ab-7e22-49b6-8b48-a1333b10adbf)
-
-![mcp_gemini](https://github.com/user-attachments/assets/f24cf775-0bf6-4b65-b3f6-512024414896)
+![mcp_gemini](https://github.com/user-attachments/assets/fc481e42-ce76-4db4-a3ed-a853e2108f91)
 
 ![openai_mcp2](https://github.com/user-attachments/assets/0bb4372a-4ccf-4c5a-b379-7d00ac0e59a3)
 
@@ -306,11 +304,11 @@ pyinstaller --add-data "ico/*.svg:ico" --add-data "ico/*.png:ico" --add-data "sp
 ## UML Diagram
 
 * Main Class Diagram
-![main_class_screenshot_small](https://github.com/user-attachments/assets/53bfc538-121b-4d06-9448-3a941b12bf2b)
+![main_class_screenshot_small](https://github.com/user-attachments/assets/73ccd686-8480-41dd-9288-41f01bc5cff2)
 
 
 * Main Sequence Diagram
-![main_sequence_screenshot_small](https://github.com/user-attachments/assets/ea1f084e-1d38-4b10-8ce2-c15a5434ac34)
+![main_sequence_screenshot_small](https://github.com/user-attachments/assets/f239d07f-db05-4b79-ac21-40f992a72e13)
 
 
 ## Known Issue

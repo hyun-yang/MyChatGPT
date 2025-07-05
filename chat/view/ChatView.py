@@ -781,6 +781,15 @@ class ChatView(QWidget):
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stream", default="True",
                                         save=True)) == "True")
         streamCheckbox.toggled.connect(lambda value: self.stream_changed(value, name))
+
+        mcpCheckbox = QCheckBox("MCP")
+        mcpCheckbox.setObjectName(f"{name}_mcpCheckbox")
+        mcpCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="mcp", default="False",
+                                        save=True)) == "True")
+        mcpCheckbox.toggled.connect(lambda value: self.mcp_changed(value, name))
+
+        optionLayout.addWidget(mcpCheckbox)
         optionLayout.addWidget(streamCheckbox)
         optionGroup.setLayout(optionLayout)
 
@@ -942,6 +951,15 @@ class ChatView(QWidget):
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stream", default="True",
                                         save=True)) == "True")
         streamCheckbox.toggled.connect(lambda value: self.stream_changed(value, name))
+
+        mcpCheckbox = QCheckBox("MCP")
+        mcpCheckbox.setObjectName(f"{name}_mcpCheckbox")
+        mcpCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="mcp", default="False",
+                                        save=True)) == "True")
+        mcpCheckbox.toggled.connect(lambda value: self.mcp_changed(value, name))
+
+        optionLayout.addWidget(mcpCheckbox)
         optionLayout.addWidget(streamCheckbox)
         optionGroup.setLayout(optionLayout)
 
@@ -1126,6 +1144,15 @@ class ChatView(QWidget):
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stream", default="True",
                                         save=True)) == "True")
         streamCheckbox.toggled.connect(lambda value: self.stream_changed(value, name))
+
+        mcpCheckbox = QCheckBox("MCP")
+        mcpCheckbox.setObjectName(f"{name}_mcpCheckbox")
+        mcpCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="mcp", default="False",
+                                        save=True)) == "True")
+        mcpCheckbox.toggled.connect(lambda value: self.mcp_changed(value, name))
+
+        optionLayout.addWidget(mcpCheckbox)
         optionLayout.addWidget(streamCheckbox)
         optionGroup.setLayout(optionLayout)
 
@@ -1382,6 +1409,12 @@ class ChatView(QWidget):
             self._settings.setValue(f"{name}_Model_Parameter/stream", 'True')
         else:
             self._settings.setValue(f"{name}_Model_Parameter/stream", 'False')
+
+    def mcp_changed(self, checked, name):
+        if checked:
+            self._settings.setValue(f"{name}_Model_Parameter/mcp", 'True')
+        else:
+            self._settings.setValue(f"{name}_Model_Parameter/mcp", 'False')
 
     def create_system_layout(self, name):
         groupSystem = QGroupBox(f"{name} System")
@@ -1831,7 +1864,8 @@ class ChatView(QWidget):
 
         args = {
             'api_key': api_key,
-            'ai_arg': ai_arg
+            'ai_arg': ai_arg,
+            'mcp_json': self._settings.value('MCP/config_path')
         }
 
         return args
@@ -1968,7 +2002,8 @@ class ChatView(QWidget):
 
         args = {
             'api_key': api_key,
-            'ai_arg': ai_arg
+            'ai_arg': ai_arg,
+            'mcp_json': self._settings.value('MCP/config_path')
         }
 
         return args
@@ -2091,7 +2126,6 @@ class ChatView(QWidget):
             'temperature': temperature,
             'top_p': top_p,
             'top_k': top_k,
-            'tools': []
         }
 
         if stop_sequences:
@@ -2109,7 +2143,8 @@ class ChatView(QWidget):
 
         args = {
             'api_key': api_key,
-            'ai_arg': ai_arg
+            'ai_arg': ai_arg,
+            'mcp_json': self._settings.value('MCP/config_path')
         }
 
         return args

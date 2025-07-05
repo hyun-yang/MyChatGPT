@@ -12,7 +12,6 @@ from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QMenu, QToolBar,
 from agent.AgentPresenter import AgentPresenter
 from chat.ChatPresenter import ChatPresenter
 from image.ImagePresenter import ImagePresenter
-from mcp_mvp.MCPPresenter import MCPPresenter
 from stt.STTPresenter import STTPresenter
 from tts.TTSPresenter import TTSPresenter
 from util.AnimatedProgressBar import AnimatedProgressBar
@@ -80,10 +79,6 @@ class MainWindow(QMainWindow):
         self._agent.model.thread_started_signal.connect(self.show_result_info)
         self._agent.model.response_finished_signal.connect(self.show_result_info)
 
-        self._mcp = MCPPresenter()
-        self._mcp.model.thread_started_signal.connect(self.show_result_info)
-        self._mcp.model.response_finished_signal.connect(self.show_result_info)
-
         self.set_main_widgets()
 
         self.show()
@@ -98,7 +93,6 @@ class MainWindow(QMainWindow):
             MainWidgetIndex.TTS_WIDGET: self._main_widget.addWidget(self._tts),
             MainWidgetIndex.STT_WIDGET: self._main_widget.addWidget(self._stt),
             MainWidgetIndex.AGENT_WIDGET: self._main_widget.addWidget(self._agent),
-            MainWidgetIndex.MCP_WIDGET: self._main_widget.addWidget(self._mcp),
         }
         self.setCentralWidget(self._main_widget)
         self.set_current_widget(MainWidgetIndex.CHAT_WIDGET)
@@ -110,7 +104,7 @@ class MainWindow(QMainWindow):
     def initialize_window(self):
         self.setWindowTitle(Constants.APPLICATION_TITLE)
         self.setWindowIcon(QIcon(Utility.get_icon_path('ico', 'app.svg')))
-        self.setGeometry(*self.set_window_size(3 / 5))
+        self.setGeometry(*self.set_window_size(4 / 5))
         self.set_actions()
         self.set_menubar()
         self.set_toolbar()
@@ -140,10 +134,6 @@ class MainWindow(QMainWindow):
         self.agent_action = QAction("AGENT", self)
         self.agent_action.setStatusTip(UI.AGENT_TIP)
         self.agent_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.AGENT_WIDGET))
-
-        self.mcp_action = QAction("MCP", self)
-        self.mcp_action.setStatusTip(UI.MCP_TIP)
-        self.mcp_action.triggered.connect(lambda: self.set_current_widget(MainWidgetIndex.MCP_WIDGET))
 
         self.setting_action = QAction("Setting", self)
         self.setting_action.setStatusTip(UI.SETTING_TIP)
@@ -182,7 +172,6 @@ class MainWindow(QMainWindow):
         view_menu.addAction(self.tts_action)
         view_menu.addAction(self.stt_action)
         view_menu.addAction(self.agent_action)
-        view_menu.addAction(self.mcp_action)
         menubar.addMenu(view_menu)
 
         help_menu = QMenu(UI.HELP, self)
@@ -224,11 +213,10 @@ class MainWindow(QMainWindow):
         self.stt_button = self.create_button('stt.svg', UI.STT, MainWidgetIndex.STT_WIDGET)
         self.tts_button = self.create_button('tts.svg', UI.TTS, MainWidgetIndex.TTS_WIDGET)
         self.agent_button = self.create_button('a.svg', UI.AGENT, MainWidgetIndex.AGENT_WIDGET)
-        self.mcp_button = self.create_button('mcp.svg', UI.MCP, MainWidgetIndex.MCP_WIDGET)
 
         self.buttons.extend([self.chat_button, self.image_button, self.vision_button, self.stt_button,
-                             self.tts_button, self.agent_button, self.mcp_button, self.setting_button,
-                             self.kill_button, self.exit_button])
+                             self.tts_button, self.agent_button, self.setting_button, self.kill_button,
+                             self.exit_button])
 
         main_toolbar_layout.addWidget(self.chat_button)
         main_toolbar_layout.addWidget(self.image_button)
@@ -236,7 +224,6 @@ class MainWindow(QMainWindow):
         main_toolbar_layout.addWidget(self.tts_button)
         main_toolbar_layout.addWidget(self.stt_button)
         main_toolbar_layout.addWidget(self.agent_button)
-        main_toolbar_layout.addWidget(self.mcp_button)
         main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
         main_toolbar_layout.addWidget(self.setting_button)
         main_toolbar_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
@@ -375,8 +362,7 @@ class MainWindow(QMainWindow):
             getattr(self, '_vision', None),
             getattr(self, '_tts', None),
             getattr(self, '_stt', None),
-            getattr(self, '_agent', None),
-            getattr(self, '_mcp', None)
+            getattr(self, '_agent', None)
         ]
 
         for presenter in presenters:
@@ -410,7 +396,7 @@ class MainWindow(QMainWindow):
         QMessageBox.information(self, Constants.THREAD_TERMINATION_TITLE, Constants.THREAD_TERMINATION_MESSAGE)
 
     def _get_thread_from_presenter(self, presenter):
-        thread_attrs = ['chat_thread', 'agent_thread', 'image_thread', 'mcp_thread',
+        thread_attrs = ['chat_thread', 'agent_thread', 'image_thread',
                         'vision_thread', 'tts_thread', 'stt_thread']
 
         for attr_name in thread_attrs:
@@ -440,7 +426,7 @@ class MainWindow(QMainWindow):
 
             # Find view attribute
             view = None
-            for view_attr in ['chatView', 'agentView', 'imageView', 'mcpView', 'visionView', 'ttsView', 'sttView']:
+            for view_attr in ['chatView', 'agentView', 'imageView', 'visionView', 'ttsView', 'sttView']:
                 if hasattr(presenter, view_attr):
                     view = getattr(presenter, view_attr)
                     break
