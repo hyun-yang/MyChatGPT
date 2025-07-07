@@ -7,9 +7,48 @@
 ## 주요 기능 업데이트 
 
 - 향상된 채팅 기능: 문서, 이미지, 오디오 및 비디오 파일을 포함한 다양한 파일 형식을 사용할 수 있습니다. (참고: 최적의 성능을 위해 선택한 모델이 이러한 형식을 지원하는지 확인하세요.)
+  - OpenAI 지원 파일
+    - Document: 'pdf', 'doc', 'docx', 'pptx'
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Text: 일반 텍스트 포맷 파일
+
+
+- Claude 지원 파일
+  - Document: 'pdf', 'rtf', 'docx', 'doc', 'epub'
+  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+  - Text: 일반 텍스트 포맷 파일
+
+
+- Gemini 지원 파일
+  - Document: 'pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx'
+  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+  - Video: 'x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp'
+  - Audio: 'x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm'
+  - Text: 일반 텍스트 포맷 파일
+  - Note: 특정 파일 형식은 Google AI Pro 또는 Google AI Ultra 구독자에게만 지원됩니다. Google AI Pro 또는 Ultra로 업그레이드하는 방법을 확인하세요.
+    - 이 링크 https://support.google.com/gemini/answer/14903178?hl=en 에서는 hwp/hwpx 포맷을 지원한다고 말하지만, 실제로 테스트  해보면 아래와 같은 에러가 발생합니다.
+    - application/vnd.hancom.hwp 과 application/x-hwp, 이 두가지 mime type으로 테스트 했을 때, 상세 에러 메시지 입니다.
+    ```
+    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/vnd.hancom.hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/x-hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+    ```
+
+
+- Ollama 지원 파일
+  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+  - Text: 일반 텍스트 포맷 파일
+
+
 - MCP (모델 컨텍스트 프로토콜) 통합: Claude, OpenAI, Gemini의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.
+  - Windows, Mac, Ubuntu: 최신 npx 및 upx로 시스템을 업데이트/설치하세요.
+    - Mac: 최신 npx 및 upx를 설치했지만 여전히 작동하지 않는 경우, 다음 명령어를 사용하여 coreutils 패키지를 설치하세요: 
+    ```
+    brew install coreutils
+    ```
+  
+
 - 강력한 워크플로우: 프로세스를 간소화하고 상호작용의 효율성을 높이기 위해 설계된 Orchestrator-Worker 및 Evaluator-Optimizer 워크플로우를 경험해 보세요.
-  - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+      - 참고 링크 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 
 
 ### Evaluator-Optimizer 와 Orchestrator-Worker 워크플로우 프롬프트 예제

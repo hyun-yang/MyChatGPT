@@ -30,18 +30,18 @@ class Constants:
     ORCHESTRATOR_SUBTASK = "Subtask"
     ORCHESTRATOR_WORKER = "Worker"
     ORCHESTRATOR_TASK_QUESTION = "Task : "
-    ORCHESTRATOR_ORIGINAL_RESPONSE  = "Original Response:"
-    ORCHESTRATOR_RESPONSE  = "Response: "
-    ORCHESTRATOR_COMPLETED  = "Completed "
-    ORCHESTRATOR_ERROR  = "Error: "
-    ORCHESTRATOR_FINAL_ANSWER  = "Final Answer"
-    ORCHESTRATOR_ERROR_OCCURRED  = "Error occurred: "
+    ORCHESTRATOR_ORIGINAL_RESPONSE = "Original Response:"
+    ORCHESTRATOR_RESPONSE = "Response: "
+    ORCHESTRATOR_COMPLETED = "Completed "
+    ORCHESTRATOR_ERROR = "Error: "
+    ORCHESTRATOR_FINAL_ANSWER = "Final Answer"
+    ORCHESTRATOR_ERROR_OCCURRED = "Error occurred: "
 
-    ORCHESTRATOR_JSON_PARSING_ERROR  = "JSON Parsing Error: "
-    ORCHESTRATOR_ERROR_PROCESSING  = "Error during processing: "
-    ORCHESTRATOR_ERROR_PARALLEL  = "Parallel task error: "
-    ORCHESTRATOR_ERROR_PARALLEL_PROCESSING  = "Error during parallel task processing: "
-    ORCHESTRATOR_ERROR_SEQUENTIAL_PROCESSING  = "Error during sequential streaming task processing: "
+    ORCHESTRATOR_JSON_PARSING_ERROR = "JSON Parsing Error: "
+    ORCHESTRATOR_ERROR_PROCESSING = "Error during processing: "
+    ORCHESTRATOR_ERROR_PARALLEL = "Parallel task error: "
+    ORCHESTRATOR_ERROR_PARALLEL_PROCESSING = "Error during parallel task processing: "
+    ORCHESTRATOR_ERROR_SEQUENTIAL_PROCESSING = "Error during sequential streaming task processing: "
 
     EVALUATION_PASS = "PASS"
     EVALUATION_PREVIOUS_ATTEMPTS = "Previous attempts:"
@@ -393,7 +393,7 @@ class UI:
             }
             """
 
-    VIDEO_TYPE_MAPPING = {
+    GEMINI_VIDEO_TYPE_MAPPING = {
         'x-flv': 'video/x-flv',
         'quicktime': 'video/quicktime',
         'mpeg': 'video/mpeg',
@@ -405,7 +405,7 @@ class UI:
         '3gpp': 'video/3gpp'
     }
 
-    AUDIO_TYPE_MAPPING = {
+    GEMINI_AUDIO_TYPE_MAPPING = {
         'x-aac': 'audio/x-aac',
         'flac': 'audio/flac',
         'mp3': 'audio/mp3',
@@ -419,6 +419,32 @@ class UI:
         'webm': 'audio/webm'
     }
 
+    GEMINI_DOCUMENT_TYPE_MAPPING = {
+        'pdf': 'application/pdf',
+        'doc': 'application/msword',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'dot': 'application/msword',
+        'dotx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'hwp': 'application/x-hwp',
+        'hwpx': 'application/vnd.hancom.hwpx',
+        'rtf': 'application/rtf',
+    }
+
+    CLAUDE_DOCUMENT_TYPE_MAPPING = {
+        'pdf': 'application/pdf',
+        'doc': 'application/msword',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'rtf': 'application/rtf',
+        'epub': 'application/epub+zip'
+    }
+
+    OPENAI_DOCUMENT_TYPE_MAPPING = {
+        'pdf': 'application/pdf',
+        'doc': 'application/msword',
+        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+    }
+
     IMAGE_TYPE_MAPPING = {
         'jpeg': 'image/jpeg',
         'jpg': 'image/jpeg',
@@ -427,25 +453,22 @@ class UI:
         'webp': 'image/webp'
     }
 
-    DOCUMENT_TYPE_MAPPING = {
-        'pdf': 'application/pdf',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'rtf': 'application/rtf',
-        'epub': 'application/epub+zip'
-    }
+    GEMINI_VIDEO_TYPE_EXTENSIONS = ['x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp']
 
-    VIDEO_TYPE_EXTENSIONS = ['x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp']
+    GEMINI_AUDIO_TYPE_EXTENSIONS = ['x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm']
 
-    AUDIO_TYPE_EXTENSIONS = ['x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm']
+    GEMINI_DOCUMENT_TYPE_EXTENSIONS = ['pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx']
 
-    DOCUMENT_TYPE_EXTENSIONS = ['pdf', 'rtf', 'docx', 'epub']
+    CLAUDE_DOCUMENT_TYPE_EXTENSIONS = ['pdf', 'rtf', 'docx', 'doc', 'epub']
+
+    OPENAI_DOCUMENT_TYPE_EXTENSIONS = ['pdf', 'doc', 'docx', 'pptx']
 
     IMAGE_TYPE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'gif', 'webp']
 
     TEXT_FILE_EXTENSIONS = [
-        'txt', 'md', 'csv', 'py', 'ts', 'tsx', 'js', 'jsx', 'cs', 'java', 'kt', 'swift',
-        'html', 'xhtml', 'htm', 'css', 'scss', 'sass', 'less', 'json', 'xml', 'resx', 'ini', 'mjs', 'pcfproj', 'csproj',
-        'pbxproj', 'xcworkspacedata', 'plist', 'storyboard', 'svg', 'ipynb', 'bat', 'cmd', 'ps1'
+        'txt', 'md', 'csv', 'tsv', 'py', 'ts', 'tsx', 'js', 'jsx', 'cs', 'java', 'kt', 'swift', 'go', 'c', 'cpp', 'rb',
+        'tex', 'html', 'xhtml', 'htm', 'css', 'scss', 'sass', 'less', 'json', 'xml', 'resx', 'ini', 'mjs', 'pcfproj',
+        'csproj', 'pbxproj', 'xcworkspacedata', 'plist', 'storyboard', 'svg', 'ipynb', 'bat', 'cmd', 'ps1', 'sh'
     ]
 
     BUDGET_TOKENS_ERROR_TITLE = "Budget Token Error"

@@ -1285,8 +1285,8 @@ class MCPView(QWidget):
                     })
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.CLAUDE_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.CLAUDE_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     document_data = Utility.base64_encode_file(file_name)
                     content.append({
                         'type': 'text',
@@ -1410,8 +1410,8 @@ class MCPView(QWidget):
                     )
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.CLAUDE_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.CLAUDE_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     document_data = Utility.base64_encode_file(file_name)
                     content.append({
                         'type': 'file',
@@ -1517,8 +1517,8 @@ class MCPView(QWidget):
                         logging.error(f"Error reading image file {file_name}: {str(e)}")
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.CLAUDE_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.CLAUDE_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             doc_bytes = f.read()
@@ -1528,8 +1528,8 @@ class MCPView(QWidget):
                         logging.error(f"Error reading document file {file_name}: {str(e)}")
 
                 # Handle video files
-                elif file_extension in UI.VIDEO_TYPE_EXTENSIONS:
-                    media_type = UI.VIDEO_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.GEMINI_VIDEO_TYPE_EXTENSIONS:
+                    media_type = UI.GEMINI_VIDEO_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             video_bytes = f.read()
@@ -1539,8 +1539,8 @@ class MCPView(QWidget):
                         logging.error(f"Error reading video file {file_name}: {str(e)}")
 
                 # Handle audio files
-                elif file_extension in UI.AUDIO_TYPE_EXTENSIONS:
-                    media_type = UI.AUDIO_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.GEMINI_AUDIO_TYPE_EXTENSIONS:
+                    media_type = UI.GEMINI_AUDIO_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             audio_bytes = f.read()

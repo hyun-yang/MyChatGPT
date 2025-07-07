@@ -1276,9 +1276,10 @@ class ChatView(QWidget):
     def select_files(self, llm):
         fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
         selected_files = self.show_file_explorer(llm)
-        for file in selected_files:
-            fileListWidget.addItem(file)
-        self.update_submit_status(llm)
+        if selected_files:
+            for file in selected_files:
+                fileListWidget.addItem(file)
+            self.update_submit_status(llm)
 
     def delete_file_from_list(self, llm):
         fileListWidget = self.findChild(QListWidget, f"{llm}_FileList")
@@ -1801,8 +1802,8 @@ class ChatView(QWidget):
                     })
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.CLAUDE_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.CLAUDE_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     document_data = Utility.base64_encode_file(file_name)
                     content.append({
                         'type': 'text',
@@ -1956,8 +1957,8 @@ class ChatView(QWidget):
                     )
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.OPENAI_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.OPENAI_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     document_data = Utility.base64_encode_file(file_name)
                     content.append({
                         'type': 'file',
@@ -2083,8 +2084,8 @@ class ChatView(QWidget):
                         logging.error(f"Error reading image file {file_name}: {str(e)}")
 
                 # Handle document files
-                elif file_extension in UI.DOCUMENT_TYPE_EXTENSIONS:
-                    media_type = UI.DOCUMENT_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.GEMINI_DOCUMENT_TYPE_EXTENSIONS:
+                    media_type = UI.GEMINI_DOCUMENT_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             doc_bytes = f.read()
@@ -2094,8 +2095,8 @@ class ChatView(QWidget):
                         logging.error(f"Error reading document file {file_name}: {str(e)}")
 
                 # Handle video files
-                elif file_extension in UI.VIDEO_TYPE_EXTENSIONS:
-                    media_type = UI.VIDEO_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.GEMINI_VIDEO_TYPE_EXTENSIONS:
+                    media_type = UI.GEMINI_VIDEO_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             video_bytes = f.read()
@@ -2105,8 +2106,8 @@ class ChatView(QWidget):
                         logging.error(f"Error reading video file {file_name}: {str(e)}")
 
                 # Handle audio files
-                elif file_extension in UI.AUDIO_TYPE_EXTENSIONS:
-                    media_type = UI.AUDIO_TYPE_MAPPING.get(file_extension)
+                elif file_extension in UI.GEMINI_AUDIO_TYPE_EXTENSIONS:
+                    media_type = UI.GEMINI_AUDIO_TYPE_MAPPING.get(file_extension)
                     try:
                         with open(file_name, 'rb') as f:
                             audio_bytes = f.read()
