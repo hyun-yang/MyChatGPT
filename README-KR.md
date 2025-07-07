@@ -44,7 +44,7 @@
   
 
 - 강력한 워크플로우: 프로세스를 간소화하고 상호작용의 효율성을 높이기 위해 설계된 Orchestrator-Worker 및 Evaluator-Optimizer 워크플로우를 경험해 보세요.
-      - 참고 링크 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+  - 참고 링크 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 
 
 ### Evaluator-Optimizer 와 Orchestrator-Worker 워크플로우 프롬프트 예제
