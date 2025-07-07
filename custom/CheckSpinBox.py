@@ -10,16 +10,15 @@ class CheckSpinBox(QWidget):
 
         self.label = QLabel(spin_box_name, self)
 
-        self.spin_box = QSpinBox(self)
-        self.spin_box.setObjectName(spin_box_name)
-
-        self.spin_box.valueChanged.connect(self.on_value_changed)
-
         self.check_box = QCheckBox(check_box_name, self)
         self.check_box.setObjectName(check_box_name)
         self.check_box.setChecked(False)
-
         self.check_box.stateChanged.connect(self.on_check_box_changed)
+
+        self.spin_box = QSpinBox(self)
+        self.spin_box.setObjectName(spin_box_name)
+        self.spin_box.valueChanged.connect(self.on_value_changed)
+        self.spin_box.setEnabled(self.check_box.isChecked())
 
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -32,4 +31,4 @@ class CheckSpinBox(QWidget):
         self.valueChanged.emit(value)
 
     def on_check_box_changed(self, state):
-        self.spin_box.setDisabled(state == Qt.CheckState.Checked.value)
+        self.spin_box.setDisabled(state != Qt.CheckState.Checked.value)

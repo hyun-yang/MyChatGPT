@@ -261,6 +261,7 @@ class TTSView(QWidget):
         voiceComboBox.combo_box.addItems(Constants.TTS_VOICE_LIST)
         voiceComboBox.combo_box.setCurrentText(
             Utility.get_settings_value(section=f"{name}_TTS_Parameter", prop="voice", default="alloy", save=True))
+        voiceComboBox.check_box.setChecked(True)
         voiceComboBox.combo_box.currentTextChanged.connect(lambda value: self.voice_changed(value, name))
         paramLayout.addRow('Voice', voiceComboBox)
 
@@ -271,6 +272,7 @@ class TTSView(QWidget):
         response_formatComboBox.combo_box.setCurrentText(
             Utility.get_settings_value(section=f"{name}_TTS_Parameter", prop="response_format", default="txt",
                                        save=True))
+        response_formatComboBox.check_box.setChecked(True)
         response_formatComboBox.combo_box.currentTextChanged.connect(
             lambda value: self.response_format_changed(value, name))
         paramLayout.addRow('Output Format', response_formatComboBox)
@@ -285,6 +287,7 @@ class TTSView(QWidget):
             float(
                 Utility.get_settings_value(section=f"{name}_TTS_Parameter", prop="speed",
                                            default="1", save=True)))
+        speedSpinBox.check_box.setChecked(True)
         speedSpinBox.valueChanged.connect(lambda value: self.speed_changed(value, name))
         paramLayout.addRow('Speed', speedSpinBox)
 

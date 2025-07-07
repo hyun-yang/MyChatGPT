@@ -494,7 +494,7 @@ class ChatView(QWidget):
         stop_sequencesLineEdit.line_edit.setText(
             Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stop",
                                        default="", save=True))
-        stop_sequencesLineEdit.check_box.setChecked(True)
+        stop_sequencesLineEdit.check_box.setChecked(False)
         stop_sequencesLineEdit.textChanged.connect(lambda value: self.stopsequences_changed(value, name))
         paramLayout.addRow('Stop Sequence', stop_sequencesLineEdit)
 
@@ -508,7 +508,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="num_predict",
                                            default="2048", save=True)))
-        num_predictSpinBox.check_box.setChecked(True)
+        num_predictSpinBox.check_box.setChecked(False)
         num_predictSpinBox.valueChanged.connect(lambda value: self.numpredict_changed(value, name))
         paramLayout.addRow('Max Tokens', num_predictSpinBox)
 
@@ -521,6 +521,7 @@ class ChatView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -533,7 +534,7 @@ class ChatView(QWidget):
         top_pSpinBox.spin_box.setValue(
             float(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_p", default="0.1", save=True)))
-        top_pSpinBox.check_box.setChecked(True)
+        top_pSpinBox.check_box.setChecked(False)
         top_pSpinBox.valueChanged.connect(lambda value: self.topp_changed(value, name))
         paramLayout.addRow('Top_P', top_pSpinBox)
 
@@ -546,7 +547,7 @@ class ChatView(QWidget):
         top_kSpinBox.spin_box.setValue(
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_k", default="1", save=True)))
-        top_kSpinBox.check_box.setChecked(True)
+        top_kSpinBox.check_box.setChecked(False)
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
@@ -559,7 +560,7 @@ class ChatView(QWidget):
         frequencyPenaltySpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="frequency_penalty", default="0.0",
                                              save=True)))
-        frequencyPenaltySpinBox.check_box.setChecked(True)
+        frequencyPenaltySpinBox.check_box.setChecked(False)
         frequencyPenaltySpinBox.valueChanged.connect(lambda value: self.frequency_penalty_changed(value, name))
         paramLayout.addRow('Frequency Penalty', frequencyPenaltySpinBox)
 
@@ -572,7 +573,7 @@ class ChatView(QWidget):
         presencePenaltySpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="presence_penalty", default="0.0",
                                              save=True)))
-        presencePenaltySpinBox.check_box.setChecked(True)
+        presencePenaltySpinBox.check_box.setChecked(False)
         presencePenaltySpinBox.valueChanged.connect(lambda value: self.presence_penalty_changed(value, name))
         paramLayout.addRow('Presence Penalty', presencePenaltySpinBox)
 
@@ -586,7 +587,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="seed", default="1234567",
                                            save=True)))
-        seedSpinBox.check_box.setChecked(True)
+        seedSpinBox.check_box.setChecked(False)
         seedSpinBox.valueChanged.connect(lambda value: self.seed_changed(value, name))
         paramLayout.addRow('Seed', seedSpinBox)
 
@@ -686,7 +687,7 @@ class ChatView(QWidget):
         stop_sequencesLineEdit.line_edit.setText(
             Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stop",
                                        default="", save=True))
-        stop_sequencesLineEdit.check_box.setChecked(True)
+        stop_sequencesLineEdit.check_box.setChecked(False)
         stop_sequencesLineEdit.textChanged.connect(lambda value: self.stopsequences_changed(value, name))
         paramLayout.addRow('Stop Sequence', stop_sequencesLineEdit)
 
@@ -700,7 +701,6 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
-        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
 
@@ -713,6 +713,7 @@ class ChatView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -725,7 +726,7 @@ class ChatView(QWidget):
         top_pSpinBox.spin_box.setValue(
             float(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_p", default="0.1", save=True)))
-        top_pSpinBox.check_box.setChecked(True)
+        top_pSpinBox.check_box.setChecked(False)
         top_pSpinBox.valueChanged.connect(lambda value: self.topp_changed(value, name))
         paramLayout.addRow('Top P', top_pSpinBox)
 
@@ -738,7 +739,7 @@ class ChatView(QWidget):
         frequencyPenaltySpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="frequency_penalty", default="0.0",
                                              save=True)))
-        frequencyPenaltySpinBox.check_box.setChecked(True)
+        frequencyPenaltySpinBox.check_box.setChecked(False)
         frequencyPenaltySpinBox.valueChanged.connect(lambda value: self.frequency_penalty_changed(value, name))
         paramLayout.addRow('Frequency Penalty', frequencyPenaltySpinBox)
 
@@ -751,7 +752,7 @@ class ChatView(QWidget):
         presencePenaltySpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="presence_penalty", default="0.0",
                                              save=True)))
-        presencePenaltySpinBox.check_box.setChecked(True)
+        presencePenaltySpinBox.check_box.setChecked(False)
         presencePenaltySpinBox.valueChanged.connect(lambda value: self.presence_penalty_changed(value, name))
         paramLayout.addRow('Presence Penalty', presencePenaltySpinBox)
 
@@ -765,7 +766,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="seed", default="1234567",
                                            save=True)))
-        seedSpinBox.check_box.setChecked(True)
+        seedSpinBox.check_box.setChecked(False)
         seedSpinBox.valueChanged.connect(lambda value: self.seed_changed(value, name))
         paramLayout.addRow('Seed', seedSpinBox)
 
@@ -884,7 +885,7 @@ class ChatView(QWidget):
         stop_sequencesLineEdit.line_edit.setText(
             Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stop_sequences",
                                        default="", save=True))
-        stop_sequencesLineEdit.check_box.setChecked(True)
+        stop_sequencesLineEdit.check_box.setChecked(False)
         stop_sequencesLineEdit.textChanged.connect(lambda value: self.stopsequences_changed(value, name))
         paramLayout.addRow('Stop Sequence', stop_sequencesLineEdit)
 
@@ -898,6 +899,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_output_tokens",
                                            default="2048", save=True)))
+        max_output_tokensSpinBox.check_box.setChecked(True)
         max_output_tokensSpinBox.valueChanged.connect(lambda value: self.maxoutputtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_output_tokensSpinBox)
 
@@ -910,6 +912,7 @@ class ChatView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -922,7 +925,7 @@ class ChatView(QWidget):
         top_pSpinBox.spin_box.setValue(
             float(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_p", default="0.1", save=True)))
-        top_pSpinBox.check_box.setChecked(True)
+        top_pSpinBox.check_box.setChecked(False)
         top_pSpinBox.valueChanged.connect(lambda value: self.topp_changed(value, name))
         paramLayout.addRow('Top_P', top_pSpinBox)
 
@@ -935,7 +938,7 @@ class ChatView(QWidget):
         top_kSpinBox.spin_box.setValue(
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_k", default="1", save=True)))
-        top_kSpinBox.check_box.setChecked(True)
+        top_kSpinBox.check_box.setChecked(False)
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
@@ -1045,7 +1048,7 @@ class ChatView(QWidget):
         stop_sequencesLineEdit.line_edit.setText(
             Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stop_sequences",
                                        default="", save=True))
-        stop_sequencesLineEdit.check_box.setChecked(True)
+        stop_sequencesLineEdit.check_box.setChecked(False)
         stop_sequencesLineEdit.textChanged.connect(lambda value: self.stopsequences_changed(value, name))
         paramLayout.addRow('Stop Sequence', stop_sequencesLineEdit)
 
@@ -1059,6 +1062,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
+        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.check_box.setEnabled(False)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
@@ -1072,6 +1076,7 @@ class ChatView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -1086,7 +1091,7 @@ class ChatView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="budget_tokens",
                                            default="2048", save=True)))
-        budget_tokensSpinBox.check_box.setChecked(True)
+        # budget_tokensSpinBox.check_box.setChecked(True)
         budget_tokensSpinBox.valueChanged.connect(lambda value: self.budget_tokens_changed(value, name))
         budget_tokensSpinBox.setVisible(
             Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
@@ -1105,7 +1110,7 @@ class ChatView(QWidget):
         top_pSpinBox.spin_box.setValue(
             float(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_p", default="0.1", save=True)))
-        top_pSpinBox.check_box.setChecked(True)
+        top_pSpinBox.check_box.setChecked(False)
         top_pSpinBox.valueChanged.connect(lambda value: self.topp_changed(value, name))
         paramLayout.addRow('Top_P', top_pSpinBox)
 
@@ -1118,7 +1123,7 @@ class ChatView(QWidget):
         top_kSpinBox.spin_box.setValue(
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="top_k", default="1", save=True)))
-        top_kSpinBox.check_box.setChecked(True)
+        top_kSpinBox.check_box.setChecked(False)
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
@@ -1404,6 +1409,7 @@ class ChatView(QWidget):
         self._settings.setValue(f"{name}_Model_Parameter/thinking", 'True' if checked else 'False')
         budget_tokens_label.setVisible(checked)
         budget_tokensSpinBox.setVisible(checked)
+        budget_tokensSpinBox.check_box.setChecked(True)
 
     def stream_changed(self, checked, name):
         if checked:

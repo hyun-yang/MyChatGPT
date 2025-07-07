@@ -261,6 +261,7 @@ class STTView(QWidget):
         languageComboBox.combo_box.setCurrentText(
             Utility.get_settings_value(section=f"{name}_STT_Parameter", prop="language",
                                        default="English", save=True))
+        languageComboBox.check_box.setChecked(True)
         languageComboBox.currentTextChanged.connect(lambda value: self.language_changed(value, name))
         paramLayout.addRow('Language', languageComboBox)
 
@@ -273,6 +274,7 @@ class STTView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_STT_Parameter", prop="temperature", default="0",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -283,6 +285,7 @@ class STTView(QWidget):
         response_formatComboBox.combo_box.setCurrentText(
             Utility.get_settings_value(section=f"{name}_STT_Parameter", prop="response_format", default="text",
                                        save=True))
+        response_formatComboBox.check_box.setChecked(True)
         response_formatComboBox.combo_box.currentTextChanged.connect(
             lambda value: self.response_format_changed(value, name))
         paramLayout.addRow('Response Format', response_formatComboBox)
@@ -295,6 +298,7 @@ class STTView(QWidget):
         timestampLineEdit.line_edit.setText(
             Utility.get_settings_value(section=f"{name}_STT_Parameter", prop="timestamp",
                                        default="segment", save=True))
+        timestampLineEdit.check_box.setChecked(True)
         timestampLineEdit.textChanged.connect(lambda value: self.timestamp_changed(value, name))
         paramLayout.addRow('Timestamp', timestampLineEdit)
 

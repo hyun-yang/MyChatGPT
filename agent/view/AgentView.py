@@ -486,6 +486,7 @@ class AgentView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
+        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.check_box.setEnabled(False)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
@@ -499,6 +500,7 @@ class AgentView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -512,6 +514,7 @@ class AgentView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_retries",
                                            default="3", save=True)))
+        max_retriesSpinBox.check_box.setChecked(True)
         max_retriesSpinBox.valueChanged.connect(lambda value: self.maxretriess_changed(value, name))
         paramLayout.addRow('Max Retries', max_retriesSpinBox)
 
@@ -610,6 +613,7 @@ class AgentView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
+        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.check_box.setEnabled(False)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
@@ -623,6 +627,7 @@ class AgentView(QWidget):
         temperatureSpinBox.spin_box.setValue(
             float(Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="temperature", default="0.2",
                                              save=True)))
+        temperatureSpinBox.check_box.setChecked(True)
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
@@ -808,6 +813,9 @@ class AgentView(QWidget):
         fileListWidget = self.findChild(QListWidget, f"{agent_pattern}_FileList")
         deleteButton = self.findChild(QPushButton, f"{agent_pattern}_DeleteButton")
         submitButton = self.findChild(QPushButton, f"{agent_pattern}_SubmitButton")
+
+        if fileListWidget is None:
+            return
 
         if clear:
             fileListWidget.clear()

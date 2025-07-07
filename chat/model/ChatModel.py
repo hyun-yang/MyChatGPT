@@ -50,8 +50,8 @@ class ChatModel(QObject):
             print(f"{MODEL_MESSAGE.THREAD_RUNNING}")
             self.chat_thread.wait()
 
-        mcp_check = args['mcp']
-        mcp_json = args['mcp_json']
+        mcp_check = args.get('mcp', False)
+        mcp_json = args.get('mcp_json', False)
         self.chat_thread = AIThreadFactory.create_thread(args, chat_llm, mcp_check and mcp_json)
         self.chat_thread.started.connect(self.thread_started_signal.emit)
         self.chat_thread.finished.connect(self.handle_thread_finished)

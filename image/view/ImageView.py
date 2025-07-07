@@ -362,6 +362,7 @@ class ImageView(QWidget):
                 Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="number_of_images",
                                            default="1", save=True)))
         number_of_imagesSpinBox.valueChanged.connect(lambda value: self.number_of_images_changed(value, name))
+        number_of_imagesSpinBox.check_box.setChecked(True)
         number_of_imagesSpinBox.check_box.setEnabled(False)
         paramLayout.addRow('No. of images', number_of_imagesSpinBox)
 
@@ -373,6 +374,7 @@ class ImageView(QWidget):
             Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="size",
                                        default="1024x1024", save=True)
         )
+        sizeComboBox.check_box.setChecked(False)
         sizeComboBox.currentTextChanged.connect(lambda value: self.size_changed(value, name))
         paramLayout.addRow('Size', sizeComboBox)
 
@@ -439,6 +441,7 @@ class ImageView(QWidget):
                 Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="number_of_images",
                                            default="1", save=True)))
         number_of_imagesSpinBox.valueChanged.connect(lambda value: self.number_of_images_changed(value, name))
+        number_of_imagesSpinBox.check_box.setChecked(True)
         number_of_imagesSpinBox.check_box.setEnabled(False)
         paramLayout.addRow('No. of images', number_of_imagesSpinBox)
 
@@ -451,6 +454,7 @@ class ImageView(QWidget):
             Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="size",
                                        default="1024x1024", save=True)
         )
+        sizeComboBox.check_box.setChecked(False)
         sizeComboBox.currentTextChanged.connect(lambda value: self.size_changed(value, name))
         paramLayout.addRow('Size', sizeComboBox)
 
@@ -531,6 +535,7 @@ class ImageView(QWidget):
                 Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="number_of_images",
                                            default="1", save=True)))
         number_of_imagesSpinBox.valueChanged.connect(lambda value: self.number_of_images_changed(value, name))
+        number_of_imagesSpinBox.check_box.setChecked(True)
         number_of_imagesSpinBox.check_box.setEnabled(False)
         paramLayout.addRow('No. of images', number_of_imagesSpinBox)
 
@@ -543,6 +548,7 @@ class ImageView(QWidget):
             Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="size",
                                        default="1024x1024", save=True)
         )
+        sizeComboBox.check_box.setChecked(False)
         sizeComboBox.currentTextChanged.connect(lambda value: self.size_changed(value, name))
         paramLayout.addRow('Size', sizeComboBox)
 
@@ -625,6 +631,7 @@ class ImageView(QWidget):
                 Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="number_of_images",
                                            default="1", save=True)))
         number_of_imagesSpinBox.valueChanged.connect(lambda value: self.number_of_images_changed(value, name))
+        number_of_imagesSpinBox.check_box.setChecked(True)
         number_of_imagesSpinBox.check_box.setEnabled(False)
         paramLayout.addRow('No. of images', number_of_imagesSpinBox)
 
@@ -637,6 +644,7 @@ class ImageView(QWidget):
             Utility.get_settings_value(section=f"{name}_Image_Parameter", prop="size",
                                        default="1024x1024", save=True)
         )
+        sizeComboBox.check_box.setChecked(False)
         sizeComboBox.currentTextChanged.connect(lambda value: self.size_changed(value, name))
         paramLayout.addRow('Size', sizeComboBox)
 
@@ -654,10 +662,14 @@ class ImageView(QWidget):
             sizeComboBox.combo_box.addItems(Constants.DALLE2_SIZE_LIST)
             styleComboBox.setEnabled(False)
             qualityComboBox.setEnabled(False)
+            styleComboBox.check_box.setChecked(False)
+            qualityComboBox.check_box.setChecked(False)
         elif current_model == Constants.DALLE3:
             sizeComboBox.combo_box.addItems(Constants.DALLE3_SIZE_LIST)
             styleComboBox.setEnabled(True)
             qualityComboBox.setEnabled(True)
+            styleComboBox.check_box.setChecked(True)
+            qualityComboBox.check_box.setChecked(True)
         sizeComboBox.combo_box.setCurrentText(existing_size)
 
     def set_model_list(self, modelList, llm, name):

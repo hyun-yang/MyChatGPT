@@ -294,6 +294,7 @@ class VisionView(QWidget):
             Utility.get_settings_value(section=f"{name}_Vision_Parameter", prop="detail",
                                        default="auto", save=True)
         )
+        detailComboBox.check_box.setChecked(False)
         detailComboBox.currentTextChanged.connect(lambda value: self.detail_changed(value, name))
         paramLayout.addRow('Style', detailComboBox)
 
@@ -307,6 +308,7 @@ class VisionView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Vision_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
+        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.check_box.setEnabled(False)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
@@ -407,6 +409,7 @@ class VisionView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Vision_Parameter", prop="max_output_tokens",
                                            default="2048", save=True)))
+        max_output_tokensSpinBox.check_box.setChecked(True)
         max_output_tokensSpinBox.check_box.setEnabled(False)
         max_output_tokensSpinBox.valueChanged.connect(lambda value: self.maxoutput_tokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_output_tokensSpinBox)
@@ -507,6 +510,7 @@ class VisionView(QWidget):
             int(
                 Utility.get_settings_value(section=f"{name}_Vision_Parameter", prop="max_tokens",
                                            default="2048", save=True)))
+        max_tokensSpinBox.check_box.setChecked(True)
         max_tokensSpinBox.check_box.setEnabled(False)
         max_tokensSpinBox.valueChanged.connect(lambda value: self.maxtokens_changed(value, name))
         paramLayout.addRow('Max Tokens', max_tokensSpinBox)
