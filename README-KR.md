@@ -11,32 +11,28 @@
     - Document: 'pdf', 'doc', 'docx', 'pptx'
     - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
     - Text: 일반 텍스트 포맷 파일
-
-
-- Claude 지원 파일
-  - Document: 'pdf', 'rtf', 'docx', 'doc', 'epub'
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Text: 일반 텍스트 포맷 파일
-
-
-- Gemini 지원 파일
-  - Document: 'pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx'
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Video: 'x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp'
-  - Audio: 'x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm'
-  - Text: 일반 텍스트 포맷 파일
-  - Note: 특정 파일 형식은 Google AI Pro 또는 Google AI Ultra 구독자에게만 지원됩니다. Google AI Pro 또는 Ultra로 업그레이드하는 방법을 확인하세요.
-    - 이 링크 https://support.google.com/gemini/answer/14903178?hl=en 에서는 hwp/hwpx 포맷을 지원한다고 말하지만, 실제로 테스트  해보면 아래와 같은 에러가 발생합니다.
-    - application/vnd.hancom.hwp 과 application/x-hwp, 이 두가지 mime type으로 테스트 했을 때, 상세 에러 메시지 입니다.
-    ```
-    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/vnd.hancom.hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
-    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/x-hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
-    ```
-
-
-- Ollama 지원 파일
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Text: 일반 텍스트 포맷 파일
+  
+  - Claude 지원 파일
+    - Document: 'pdf', 'rtf', 'docx', 'doc', 'epub'
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Text: 일반 텍스트 포맷 파일
+ 
+  - Gemini 지원 파일
+    - Document: 'pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx'
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Video: 'x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp'
+    - Audio: 'x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm'
+    - Text: 일반 텍스트 포맷 파일
+    - Note: 특정 파일 형식은 Google AI Pro 또는 Google AI Ultra 구독자에게만 지원됩니다. Google AI Pro 또는 Ultra로 업그레이드하는 방법을 확인하세요.
+      - 이 링크 https://support.google.com/gemini/answer/14903178?hl=en 에서는 hwp/hwpx 포맷을 지원한다고 말하지만, 실제로 테스트  해보면 아래와 같은 에러가 발생합니다.
+      - application/vnd.hancom.hwp 과 application/x-hwp, 이 두가지 mime type으로 테스트 했을 때, 상세 에러 메시지 입니다.
+      ```
+      400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/vnd.hancom.hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+      400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/x-hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+      ```
+  - Ollama 지원 파일
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Text: 일반 텍스트 포맷 파일
 
 
 - MCP (모델 컨텍스트 프로토콜) 통합: Claude, OpenAI, Gemini의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.

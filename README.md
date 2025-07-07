@@ -12,32 +12,29 @@ Utilize a variety of file formats, including documents, images, audio, and video
     - Document: 'pdf', 'doc', 'docx', 'pptx'
     - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
     - Text: Plain text format files
-
-
-- Claude Supported File Types
-  - Document: 'pdf', 'rtf', 'docx', 'doc', 'epub'
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Text: Plain text format files
-
-
-- Gemini Supported File Types
-  - Document: 'pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx'
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Video: 'x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp'
-  - Audio: 'x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm'
-  - Text: Plain text format files
-  - Note: Some file types are only supported for Google AI Pro or Google AI Ultra subscribers. Learn how to upgrade to Google AI Pro or Ultra.
-    - The link at https://support.google.com/gemini/answer/14903178?hl=en says that hwp/hwpx files are supported, but when tested, the following error occurs.
-    - This is the detailed error message when tested with the two MIME types: application/vnd.hancom.hwp and application/x-hwp.
-    ```
-    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/vnd.hancom.hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
-    400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/x-hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
-    ```
-
-
-- Ollama Supported File Types
-  - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
-  - Text: Plain text format files
+  
+  - Claude Supported File Types
+    - Document: 'pdf', 'rtf', 'docx', 'doc', 'epub'
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Text: Plain text format files
+ 
+  - Gemini Supported File Types
+    - Document: 'pdf', 'rtf', 'doc', 'docx', 'dot', 'dotx', 'hwp', 'hwpx'  
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Video: 'x-flv', 'quicktime', 'mpeg', 'mpegs', 'mpg', 'mp4', 'webm', 'wmv', '3gpp'
+    - Audio: 'x-aac', 'flac', 'mp3', 'm4a', 'mpeg', 'mpga', 'mp4', 'opus', 'pcm', 'wav', 'webm'
+    - Text: Plain text format files
+    - Note: Some file types are only supported for Google AI Pro or Google AI Ultra subscribers. Learn how to upgrade to Google AI Pro or Ultra.
+      - The link at https://support.google.com/gemini/answer/14903178?hl=en says that hwp/hwpx files are supported, but when tested, the following error occurs.
+      - This is the detailed error message when tested with the two MIME types: application/vnd.hancom.hwp and application/x-hwp.
+       ```
+        400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/vnd.hancom.hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+        400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'Unable to submit request because it has a mimeType parameter with value application/x-hwp, which is not supported. Update the mimeType and try again. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini', 'status': 'INVALID_ARGUMENT'}}
+       ```
+      
+  - Ollama Supported File Types
+    - Image: 'jpeg', 'jpg', 'png', 'gif', 'webp'
+    - Text: Plain text format files
 
 
 - MCP (Model Context Protocol) Integration: 
