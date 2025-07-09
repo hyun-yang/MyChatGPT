@@ -120,6 +120,13 @@ class Constants:
     NEW_AGENT = "New Agent"
     NEW_MCP = "New MCP"
 
+    # Chat
+    OPENAI_REASONING_LIST = [
+        "low",
+        "medium",
+        "high"
+    ]
+
     # Image
     DALLE2 = "dall-e-2"
     DALLE3 = "dall-e-3"

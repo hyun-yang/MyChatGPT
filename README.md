@@ -51,6 +51,10 @@ Unlock new possibilities with the Orchestrator-Worker and Evaluator-Optimizer wo
   - Reference Link [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 
 
+- Reasoning/Thinking Feature:
+  - Support the 'reasoning/thinking' feature of OpenAI, Gemini and Claude. Please note that you need to select a model that supports this 'reasoning/thinking' feature.
+
+
 ### Evaluator-Optimizer and Orchestrator-Worker Workflows Prompt Sample
 
 - Evaluator-Optimizer Prompt sample

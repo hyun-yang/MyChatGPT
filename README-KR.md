@@ -47,6 +47,10 @@
   - 참고 링크 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
 
 
+- 추론/사고 기능:
+  - OpenAI, Gemini 및 Claude의 '추론/사고' 기능을 지원합니다. 이 '추론/사고' 기능을 지원하는 모델을 선택해야 한다는 점에 유의해 주세요.
+
+
 ### Evaluator-Optimizer 와 Orchestrator-Worker 워크플로우 프롬프트 예제
 
 - Evaluator-Optimizer 프롬프트 예제

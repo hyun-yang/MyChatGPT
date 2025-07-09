@@ -10,6 +10,7 @@ from google.genai import types
 
 from chat.view.ChatHistory import ChatHistory
 from chat.view.ChatWidget import ChatWidget
+from custom.CheckComboBox import CheckComboBox
 from custom.CheckDoubleSpinBox import CheckDoubleSpinBox
 from custom.CheckLineEdit import CheckLineEdit
 from custom.CheckSpinBox import CheckSpinBox
@@ -770,6 +771,34 @@ class ChatView(QWidget):
         seedSpinBox.valueChanged.connect(lambda value: self.seed_changed(value, name))
         paramLayout.addRow('Seed', seedSpinBox)
 
+        reasoningEffortLabel = QLabel('Reasoning Effort')
+        reasoningEffortComboBox = CheckComboBox()
+        reasoningEffortComboBox.setObjectName(f"{name}_reasoningEffortComboBox")
+        reasoningEffortComboBox.combo_box.addItems(Constants.OPENAI_REASONING_LIST)
+        reasoningEffortComboBox.combo_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        reasoningEffortComboBox.combo_box.setCurrentText(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="reasoning_effort",
+                                       default="medium", save=True)
+        )
+        reasoningEffortComboBox.currentTextChanged.connect(lambda value: self.reasoning_effort_changed(value, name))
+        reasoningEffortComboBox.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="reasoning", default="False",
+                                       save=True) == "True")
+        reasoningEffortLabel.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="reasoning", default="False",
+                                       save=True) == "True")
+        paramLayout.addRow(reasoningEffortLabel, reasoningEffortComboBox)
+
+        reasoningCheckbox = QCheckBox()
+        reasoningCheckbox.setObjectName(f"{name}_reasoningCheckbox")
+        reasoningCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="reasoning", default="False",
+                                        save=True)) == "True")
+        reasoningCheckbox.toggled.connect(
+            lambda checked: self.reasoning_changed(checked, name, reasoningEffortLabel, reasoningEffortComboBox)
+        )
+        paramLayout.addRow('Reasoning', reasoningCheckbox)
+
         groupParam.setLayout(paramLayout)
         layoutMain.addWidget(groupParam)
 
@@ -942,6 +971,36 @@ class ChatView(QWidget):
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
+        thinkingBudgetLabel = QLabel('Thinking Budget')
+        thinkingBudgetSpinBox = CheckSpinBox()
+        thinkingBudgetSpinBox.setObjectName(f"{name}_thinkingBudgetSpinBox")
+        thinkingBudgetSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        thinkingBudgetSpinBox.spin_box.setRange(0, 128000)
+        thinkingBudgetSpinBox.spin_box.setAccelerated(True)
+        thinkingBudgetSpinBox.spin_box.setSingleStep(1)
+        thinkingBudgetSpinBox.spin_box.setValue(
+            int(
+                Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking_budget",
+                                           default="1024", save=True)))
+        thinkingBudgetSpinBox.valueChanged.connect(lambda value: self.budget_tokens_changed(value, name))
+        thinkingBudgetSpinBox.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        thinkingBudgetLabel.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        paramLayout.addRow(thinkingBudgetLabel, thinkingBudgetSpinBox)
+
+        thinkingCheckbox = QCheckBox()
+        thinkingCheckbox.setObjectName(f"{name}_thinkingBudgetCheckbox")
+        thinkingCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                        save=True)) == "True")
+        thinkingCheckbox.toggled.connect(
+            lambda checked: self.thinking_budget_changed(checked, name, thinkingBudgetLabel, thinkingBudgetSpinBox)
+        )
+        paramLayout.addRow('Thinking', thinkingCheckbox)
+
         groupParam.setLayout(paramLayout)
         layoutMain.addWidget(groupParam)
 
@@ -1080,27 +1139,6 @@ class ChatView(QWidget):
         temperatureSpinBox.valueChanged.connect(lambda value: self.temperature_changed(value, name))
         paramLayout.addRow('Temperature', temperatureSpinBox)
 
-        budget_tokens_label = QLabel('Budget Tokens')
-        budget_tokensSpinBox = CheckSpinBox()
-        budget_tokensSpinBox.setObjectName(f"{name}_budget_tokensSpinBox")
-        budget_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        budget_tokensSpinBox.spin_box.setRange(0, 128000)
-        budget_tokensSpinBox.spin_box.setAccelerated(True)
-        budget_tokensSpinBox.spin_box.setSingleStep(1)
-        budget_tokensSpinBox.spin_box.setValue(
-            int(
-                Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="budget_tokens",
-                                           default="2048", save=True)))
-        # budget_tokensSpinBox.check_box.setChecked(True)
-        budget_tokensSpinBox.valueChanged.connect(lambda value: self.budget_tokens_changed(value, name))
-        budget_tokensSpinBox.setVisible(
-            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
-                                       save=True) == "True")
-        budget_tokens_label.setVisible(
-            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
-                                       save=True) == "True")
-        paramLayout.addRow(budget_tokens_label, budget_tokensSpinBox)
-
         top_pSpinBox = CheckDoubleSpinBox()
         top_pSpinBox.setObjectName(f"{name}_top_pSpinBox")
         top_pSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
@@ -1127,13 +1165,33 @@ class ChatView(QWidget):
         top_kSpinBox.valueChanged.connect(lambda value: self.topk_changed(value, name))
         paramLayout.addRow('Top_K', top_kSpinBox)
 
+        budgetTokensLabel = QLabel('Budget Tokens')
+        budget_tokensSpinBox = CheckSpinBox()
+        budget_tokensSpinBox.setObjectName(f"{name}_budgetTokensSpinBox")
+        budget_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        budget_tokensSpinBox.spin_box.setRange(0, 128000)
+        budget_tokensSpinBox.spin_box.setAccelerated(True)
+        budget_tokensSpinBox.spin_box.setSingleStep(1)
+        budget_tokensSpinBox.spin_box.setValue(
+            int(
+                Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="budget_tokens",
+                                           default="2048", save=True)))
+        budget_tokensSpinBox.valueChanged.connect(lambda value: self.budget_tokens_changed(value, name))
+        budget_tokensSpinBox.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        budgetTokensLabel.setVisible(
+            Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
+                                       save=True) == "True")
+        paramLayout.addRow(budgetTokensLabel, budget_tokensSpinBox)
+
         thinkingCheckbox = QCheckBox()
         thinkingCheckbox.setObjectName(f"{name}_thinkingCheckbox")
         thinkingCheckbox.setChecked(
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="thinking", default="False",
                                         save=True)) == "True")
         thinkingCheckbox.toggled.connect(
-            lambda checked: self.thinking_changed(checked, name, budget_tokens_label, budget_tokensSpinBox)
+            lambda checked: self.thinking_changed(checked, name, budgetTokensLabel, budget_tokensSpinBox)
         )
         paramLayout.addRow('Thinking', thinkingCheckbox)
 
@@ -1405,11 +1463,26 @@ class ChatView(QWidget):
         else:
             self._settings.setValue(f"{name}_Model_Parameter/budget_tokens", value)
 
+    def thinking_budget_changed(self, checked, name, thinkingBudgetLabel, thinkingBudgetSpinBox):
+        self._settings.setValue(f"{name}_Model_Parameter/thinking", 'True' if checked else 'False')
+        thinkingBudgetLabel.setVisible(checked)
+        thinkingBudgetSpinBox.setVisible(checked)
+        thinkingBudgetSpinBox.check_box.setChecked(True)
+
     def thinking_changed(self, checked, name, budget_tokens_label, budget_tokensSpinBox):
         self._settings.setValue(f"{name}_Model_Parameter/thinking", 'True' if checked else 'False')
         budget_tokens_label.setVisible(checked)
         budget_tokensSpinBox.setVisible(checked)
         budget_tokensSpinBox.check_box.setChecked(True)
+
+    def reasoning_changed(self, checked, name, reasoningEffortLabel, reasoningEffortComboBox):
+        self._settings.setValue(f"{name}_Model_Parameter/reasoning", 'True' if checked else 'False')
+        reasoningEffortLabel.setVisible(checked)
+        reasoningEffortComboBox.setVisible(checked)
+        reasoningEffortComboBox.check_box.setChecked(True)
+
+    def reasoning_effort_changed(self, value, name):
+        self._settings.setValue(f"{name}_Model_Parameter/reasoning_effort", value)
 
     def stream_changed(self, checked, name):
         if checked:
@@ -1763,7 +1836,7 @@ class ChatView(QWidget):
         top_k = top_k_spin_box.value() if top_k_spin_box.isEnabled() else None
 
         budget_tokens_spin_box = self.findChild(CheckSpinBox,
-                                                f'{chat_llm}_budget_tokensSpinBox').spin_box
+                                                f'{chat_llm}_budgetTokensSpinBox').spin_box
 
         thinking = self.findChild(QCheckBox,
                                   f'{chat_llm}_thinkingCheckbox').isChecked()
@@ -1926,6 +1999,12 @@ class ChatView(QWidget):
                                              f'{chat_llm}_seedSpinBox').spin_box
         seed = seed_check_spin_box.value() if seed_check_spin_box.isEnabled() else None
 
+        reasoning_effort = self.findChild(CheckComboBox,
+                                          f'{chat_llm}_reasoningEffortComboBox').combo_box
+
+        reasoning = self.findChild(QCheckBox,
+                                   f'{chat_llm}_reasoningCheckbox').isChecked()
+
         file_list = self.get_selected_files(chat_llm)
 
         content = []
@@ -2014,6 +2093,9 @@ class ChatView(QWidget):
         if stop:
             ai_arg['stop'] = [stop]
 
+        if reasoning:
+            ai_arg['reasoning_effort'] = reasoning_effort.currentText()
+
         args = {
             'api_key': api_key,
             'ai_arg': ai_arg,
@@ -2055,6 +2137,12 @@ class ChatView(QWidget):
         top_k_spin_box = self.findChild(CheckSpinBox,
                                         f'{chat_llm}_top_kSpinBox').spin_box
         top_k = top_k_spin_box.value() if top_k_spin_box.isEnabled() else None
+
+        thinking_budget_spin_box = self.findChild(CheckSpinBox,
+                                                  f'{chat_llm}_thinkingBudgetSpinBox').spin_box
+
+        thinking = self.findChild(QCheckBox,
+                                  f'{chat_llm}_thinkingBudgetCheckbox').isChecked()
 
         file_list = self.get_selected_files(chat_llm)
 
@@ -2151,6 +2239,13 @@ class ChatView(QWidget):
 
         config['safety_settings'] = self.create_safety_settings()
         config['system_instruction'] = self.findChild(QTextEdit, f'{chat_llm}_current_system').toPlainText()
+
+        if thinking:
+            thinking_config = types.ThinkingConfig(
+                include_thoughts=True,
+                thinking_budget= thinking_budget_spin_box.value()
+            )
+            config['thinking_config'] = thinking_config
 
         ai_arg = {
             'model': model,
