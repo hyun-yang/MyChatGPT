@@ -38,7 +38,7 @@ Utilize a variety of file formats, including documents, images, audio, and video
 
 
 - MCP (Model Context Protocol) Integration: 
-Experience the power of advanced AI with the integration of Claude, OpenAI and Gemini, enabling richer and more context-aware conversations.
+Experience the power of advanced AI with the integration of Claude, OpenAI, Gemini and Ollama enabling richer and more context-aware conversations.
   - Windows, Mac, Ubuntu: Update/install your system with the latest npx and upx.
     - Mac: If you have installed the latest npx and upx, however if it still doesn't work, install the coreutils package using the following command:  
     ```

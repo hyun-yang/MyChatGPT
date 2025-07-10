@@ -35,7 +35,7 @@
     - Text: 일반 텍스트 포맷 파일
 
 
-- MCP (모델 컨텍스트 프로토콜) 통합: Claude, OpenAI, Gemini의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.
+- MCP (모델 컨텍스트 프로토콜) 통합: Claude, OpenAI, Gemini, Ollama의 통합을 통해 더 풍부하고 맥락을 이해하는 대화를 경험해 보세요.
   - Windows, Mac, Ubuntu: 최신 npx 및 upx로 시스템을 업데이트/설치하세요.
     - Mac: 최신 npx 및 upx를 설치했지만 여전히 작동하지 않는 경우, 다음 명령어를 사용하여 coreutils 패키지를 설치하세요: 
     ```
