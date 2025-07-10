@@ -4,9 +4,10 @@ from chat.model.ClaudeThread import ClaudeThread
 from chat.model.GeminiThread import GeminiThread
 from chat.model.OllamaThread import OllamaThread
 from chat.model.OpenAIThread import OpenAIThread
-from mcp_mvp.model.MCPClaudeThread import MCPClaudeThread
-from mcp_mvp.model.MCPGeminiThread import MCPGeminiThread
-from mcp_mvp.model.MCPOpenAIThread import MCPOpenAIThread
+from chat.model.MCPClaudeThread import MCPClaudeThread
+from chat.model.MCPGeminiThread import MCPGeminiThread
+from chat.model.MCPOllamaThread import MCPOllamaThread
+from chat.model.MCPOpenAIThread import MCPOpenAIThread
 from util.Constants import AIProviderName, MODEL_MESSAGE
 
 
@@ -20,6 +21,8 @@ class AIThreadFactory:
                 return MCPOpenAIThread(args)
             elif chat_llm == AIProviderName.GEMINI.value:
                 return MCPGeminiThread(args)
+            elif chat_llm == AIProviderName.OLLAMA.value:
+                return MCPOllamaThread(args)
             else:
                 raise ValueError(f"{MODEL_MESSAGE.MODEL_UNSUPPORTED} {chat_llm}")
         else:

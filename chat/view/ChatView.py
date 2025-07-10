@@ -592,6 +592,14 @@ class ChatView(QWidget):
         seedSpinBox.valueChanged.connect(lambda value: self.seed_changed(value, name))
         paramLayout.addRow('Seed', seedSpinBox)
 
+        thinkCheckbox = QCheckBox()
+        thinkCheckbox.setObjectName(f"{name}_thinkCheckbox")
+        thinkCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="think", default="False",
+                                        save=True)) == "True")
+        thinkCheckbox.setEnabled(False)
+        paramLayout.addRow('Think', thinkCheckbox)
+
         groupParam.setLayout(paramLayout)
         layoutMain.addWidget(groupParam)
 
@@ -604,6 +612,15 @@ class ChatView(QWidget):
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="stream", default="True",
                                         save=True)) == "True")
         streamCheckbox.toggled.connect(lambda value: self.stream_changed(value, name))
+
+        mcpCheckbox = QCheckBox("MCP")
+        mcpCheckbox.setObjectName(f"{name}_mcpCheckbox")
+        mcpCheckbox.setChecked(
+            (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="mcp", default="False",
+                                        save=True)) == "True")
+        mcpCheckbox.toggled.connect(lambda value: self.mcp_changed(value, name))
+
+        optionLayout.addWidget(mcpCheckbox)
         optionLayout.addWidget(streamCheckbox)
         optionGroup.setLayout(optionLayout)
 
@@ -1683,6 +1700,9 @@ class ChatView(QWidget):
         api_key = self._settings.value(f'AI_Provider/{chat_llm}')
         model = self.findChild(QComboBox, f'{chat_llm}_ModelList').currentText()
 
+        mcp = self.findChild(QCheckBox,
+                             f'{chat_llm}_mcpCheckbox').isChecked()
+
         stream = self.findChild(QCheckBox,
                                 f'{chat_llm}_streamCheckbox').isChecked()
 
@@ -1717,6 +1737,9 @@ class ChatView(QWidget):
         seed_check_spin_box = self.findChild(CheckSpinBox,
                                              f'{chat_llm}_seedSpinBox').spin_box
         seed = seed_check_spin_box.value() if seed_check_spin_box.isEnabled() else None
+
+        think = self.findChild(QCheckBox,
+                               f'{chat_llm}_thinkCheckbox').isChecked()
 
         file_list = self.get_selected_files(chat_llm)
 
@@ -1794,11 +1817,14 @@ class ChatView(QWidget):
             'messages': messages,
             'stream': stream,
             'options': options,
+            'think': think
         }
 
         args = {
             'api_key': api_key,
-            'ai_arg': ai_arg
+            'ai_arg': ai_arg,
+            'mcp_json': self._settings.value('MCP/config_path'),
+            'mcp': mcp
         }
 
         return args
@@ -2243,7 +2269,7 @@ class ChatView(QWidget):
         if thinking:
             thinking_config = types.ThinkingConfig(
                 include_thoughts=True,
-                thinking_budget= thinking_budget_spin_box.value()
+                thinking_budget=thinking_budget_spin_box.value()
             )
             config['thinking_config'] = thinking_config
 
