@@ -597,8 +597,10 @@ class ChatView(QWidget):
         thinkCheckbox.setChecked(
             (Utility.get_settings_value(section=f"{name}_Model_Parameter", prop="think", default="False",
                                         save=True)) == "True")
-        thinkCheckbox.setEnabled(False)
         paramLayout.addRow('Think', thinkCheckbox)
+        thinkCheckbox.toggled.connect(
+            lambda checked: self.think_changed(checked, name)
+        )
 
         groupParam.setLayout(paramLayout)
         layoutMain.addWidget(groupParam)
@@ -789,6 +791,8 @@ class ChatView(QWidget):
         paramLayout.addRow('Seed', seedSpinBox)
 
         reasoningEffortLabel = QLabel('Reasoning Effort')
+        reasoningEffortLabel.setObjectName(f"{name}_reasoningEffortLabel")
+
         reasoningEffortComboBox = CheckComboBox()
         reasoningEffortComboBox.setObjectName(f"{name}_reasoningEffortComboBox")
         reasoningEffortComboBox.combo_box.addItems(Constants.OPENAI_REASONING_LIST)
@@ -1428,6 +1432,20 @@ class ChatView(QWidget):
 
     def model_list_changed(self, current_text, name):
         self._settings.setValue(f"{name}_Model_Parameter/model_name", current_text)
+        reasoning = self.findChild(QCheckBox,
+                                   f'{name}_reasoningCheckbox')
+        reasoning_effort_label = self.findChild(QLabel,
+                                          f'{name}_reasoningEffortLabel')
+        reasoning_effort = self.findChild(CheckComboBox,
+                                          f'{name}_reasoningEffortComboBox')
+        if Utility.is_reasoning_model(current_text):
+            reasoning.setEnabled(True)
+        else:
+            reasoning_effort_label.setVisible(False)
+            reasoning_effort.setVisible(False)
+            reasoning.setChecked(False)
+            reasoning.setEnabled(False)
+
         # Sync with main model combo box if the current provider is active
         if name == self._current_chat_llm and hasattr(self, 'main_model_combo'):
             self.main_model_combo.blockSignals(True)  # Prevent recursive signal calls
@@ -1491,6 +1509,9 @@ class ChatView(QWidget):
         budget_tokens_label.setVisible(checked)
         budget_tokensSpinBox.setVisible(checked)
         budget_tokensSpinBox.check_box.setChecked(True)
+
+    def think_changed(self, checked, name):
+        self._settings.setValue(f"{name}_Model_Parameter/think", 'True' if checked else 'False')
 
     def reasoning_changed(self, checked, name, reasoningEffortLabel, reasoningEffortComboBox):
         self._settings.setValue(f"{name}_Model_Parameter/reasoning", 'True' if checked else 'False')
@@ -1816,9 +1837,11 @@ class ChatView(QWidget):
             'model': model,
             'messages': messages,
             'stream': stream,
-            'options': options,
-            'think': think
+            'options': options
         }
+
+        if think:
+            ai_arg['think'] = think
 
         args = {
             'api_key': api_key,
@@ -2105,10 +2128,8 @@ class ChatView(QWidget):
             'stream': stream,
         }
 
-        # If the model name starts with 'o1' or 'o3' or 'o4' then remove max_tokens,  temperature, top_p, frequency_penalty
-        # presence_penalty, seed
-        o1_o3_o4_model = model.lower().startswith(("o1", "o3", "o4"))
-        if not o1_o3_o4_model:
+        reasoning_model = model.lower().startswith(("o1", "o3", "o4", "gpt-5"))
+        if not reasoning_model:
             ai_arg['max_tokens'] = max_tokens
             ai_arg['temperature'] = temperature
             ai_arg['top_p'] = top_p

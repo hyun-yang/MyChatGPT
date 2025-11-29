@@ -57,20 +57,11 @@ class Utility:
 
     @staticmethod
     def check_claude_api_key(api_key):
+        claude = anthropic.Anthropic(api_key=api_key)
         try:
-            client = anthropic.Anthropic(api_key=api_key)
-            response = client.messages.create(
-                max_tokens=1024,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "Hi",
-                    }
-                ],
-                model="claude-3-haiku-20240307",
-                stream=False,
-            )
-            if response.content:
+            response = claude.models.list()
+            model_list = Utility.filter_models(response.data, min_version=(3, 5))
+            if len(model_list) > 0:
                 return True
             else:
                 return False
@@ -102,16 +93,39 @@ class Utility:
             return []
 
     @staticmethod
+    def is_reasoning_model(model_name):
+        return model_name.startswith("gpt-5") or bool(re.match(r"^o\d+", model_name))
+
+    @staticmethod
     def get_openai_model_list(api_key):
         openai.api_key = api_key
+
+        def is_gpt_4_or_higher(model_id: str) -> bool:
+            match = re.match(r'gpt-(\d+)', model_id)
+            if match:
+                version = int(match.group(1))
+                return version >= 4
+            return False
+
+        def is_o_number_model(model_id: str) -> bool:
+            return re.match(r'^o\d+', model_id) is not None
 
         try:
             response = openai.models.list().model_dump()
             response_data = response['data']
-            gtp_ids = sorted([item['id'] for item in response_data if
-                              'instruct' not in item['id'] and (item['id'].strip().startswith('gpt') or
-                                                                item['id'].strip().startswith('o'))],
-                             key=lambda x: ('gpt-3.5' in x, x))
+            gtp_ids = sorted(
+                [
+                    item['id']
+                    for item in response_data
+                    if (
+                        'instruct' not in item['id']
+                        and ((item['id'].strip().startswith('gpt') and is_gpt_4_or_higher(item['id']))
+                             or is_o_number_model(item['id'].strip())
+                        )
+                    )
+                ],
+                key=lambda x: x
+            )
             return gtp_ids
         except openai.AuthenticationError:
             print(f"{MODEL_MESSAGE.AUTHENTICATION_FAILED_OPENAI}")
