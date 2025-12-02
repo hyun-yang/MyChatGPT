@@ -1084,8 +1084,8 @@ class AgentView(QWidget):
 
         # If the model provider starts with 'o1' or 'o3' or 'o4' then remove max_tokens,  temperature, top_p, frequency_penalty
         # presence_penalty, seed
-        o1_o3_o4_model = model.lower().startswith(("o1", "o3", "o4"))
-        if not o1_o3_o4_model:
+        reasoning_model = model.lower().startswith(("o1", "o3", "o4", "gpt-5"))
+        if not reasoning_model:
             ai_arg['max_tokens'] = max_tokens
             ai_arg['temperature'] = temperature
 
@@ -1301,8 +1301,8 @@ class AgentView(QWidget):
             'stream': stream,
         }
 
-        o1_o3_o4_model = model.lower().startswith(("o1", "o3", "o4"))
-        if not o1_o3_o4_model:
+        reasoning_model = model.lower().startswith(("o1", "o3", "o4", "gpt-5"))
+        if not reasoning_model:
             ai_arg['max_tokens'] = max_tokens
             ai_arg['temperature'] = temperature
 

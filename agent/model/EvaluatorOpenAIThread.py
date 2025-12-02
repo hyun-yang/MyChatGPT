@@ -106,12 +106,8 @@ class EvaluatorOpenAIThread(QThread):
         if self.stream:
             return self.dispatch_response(messages)
         else:
-            response = self.openai.chat.completions.create(
-                model=self.ai_arg['model'],
-                max_tokens=self.ai_arg['max_tokens'],
-                messages=messages,
-                temperature=self.ai_arg['temperature'],
-            )
+            params = self.build_api_params(messages)
+            response = self.openai.chat.completions.create(**params)
             return response.choices[0].message.content
 
     def dispatch_response(self, messages: list) -> str:
@@ -119,13 +115,8 @@ class EvaluatorOpenAIThread(QThread):
             self.finish_run(self.model, Constants.FORCE_STOP, self.stream)
             return ""
 
-        response_stream = self.openai.chat.completions.create(
-            model=self.ai_arg['model'],
-            max_tokens=self.ai_arg['max_tokens'],
-            messages=messages,
-            temperature=self.ai_arg['temperature'],
-            stream=True,
-        )
+        params = self.build_api_params(messages, stream=True)
+        response_stream = self.openai.chat.completions.create(**params)
 
         current_model = None
         full_text = ""
@@ -150,6 +141,23 @@ class EvaluatorOpenAIThread(QThread):
                     pass
 
         return full_text
+
+    def build_api_params(self, messages: list, stream: bool = False) -> dict:
+        params = {
+            "model": self.ai_arg['model'],
+            "messages": messages,
+        }
+
+        if 'max_tokens' in self.ai_arg and self.ai_arg['max_tokens'] is not None:
+            params["max_tokens"] = self.ai_arg['max_tokens']
+
+        if 'temperature' in self.ai_arg and self.ai_arg['temperature'] is not None:
+            params["temperature"] = self.ai_arg['temperature']
+
+        if stream:
+            params["stream"] = True
+
+        return params
 
     def extract_xml(self, text: str, tag: str) -> str:
         match = re.search(f'<{tag}>(.*?)</{tag}>', text, re.DOTALL)
