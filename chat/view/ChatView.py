@@ -1190,7 +1190,7 @@ class ChatView(QWidget):
         budget_tokensSpinBox = CheckSpinBox()
         budget_tokensSpinBox.setObjectName(f"{name}_budgetTokensSpinBox")
         budget_tokensSpinBox.spin_box.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        budget_tokensSpinBox.spin_box.setRange(0, 128000)
+        budget_tokensSpinBox.spin_box.setRange(1024, 128000)
         budget_tokensSpinBox.spin_box.setAccelerated(True)
         budget_tokensSpinBox.spin_box.setSingleStep(1)
         budget_tokensSpinBox.spin_box.setValue(

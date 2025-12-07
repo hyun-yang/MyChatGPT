@@ -2,7 +2,8 @@ import time
 import anthropic
 
 from PyQt6.QtCore import QThread, pyqtSignal
-from anthropic.types import ContentBlockDeltaEvent, MessageStopEvent, MessageStartEvent
+from anthropic.types import ContentBlockDeltaEvent, MessageStopEvent, MessageStartEvent, ContentBlockStartEvent, \
+    ContentBlockStopEvent
 from util.Constants import Constants
 
 
@@ -14,9 +15,11 @@ class ClaudeThread(QThread):
         super().__init__()
         self.ai_arg = args['ai_arg']
         self.claude = anthropic.Anthropic(api_key=args['api_key'])
+        self.thinking_enabled = 'thinking' in self.ai_arg
         self.stream = self.ai_arg['stream']
         self.force_stop = False
         self.start_time = None
+        self.current_block_type = None
 
     def run(self):
         self.start_time = time.time()
@@ -39,10 +42,24 @@ class ClaudeThread(QThread):
     def handle_response(self, response):
         if self.force_stop:
             self.finish_run(response.model, Constants.FORCE_STOP, self.stream)
+
         else:
-            result = response.content[0].text
-            self.response_signal.emit(result, self.stream)
-            self.finish_run(response.model, response.stop_reason, self.stream)
+            if self.thinking_enabled:
+                for block in response.content:
+                    if hasattr(block, 'type'):
+                        if block.type == 'thinking':
+                            thinking_text = getattr(block, 'thinking', '')
+                            if thinking_text:
+                                self.response_signal.emit(thinking_text, self.stream)
+                        elif block.type == 'text':
+                            result = getattr(block, 'text', '')
+                            if result:
+                                self.response_signal.emit(result, self.stream)
+            else:
+                result = response.content[0].text
+                self.response_signal.emit(result, self.stream)
+
+        self.finish_run(response.model, response.stop_reason, self.stream)
 
     def handle_stream_response(self, response):
         current_model = None
@@ -53,8 +70,31 @@ class ClaudeThread(QThread):
             else:
                 if isinstance(chunk, MessageStartEvent):
                     current_model = chunk.message.model
+                elif isinstance(chunk, ContentBlockStartEvent):
+                    if hasattr(chunk, 'content_block'):
+                        self.current_block_type = getattr(chunk.content_block, 'type', None)
                 elif isinstance(chunk, ContentBlockDeltaEvent):
-                    self.response_signal.emit(chunk.delta.text, self.stream)
+                    delta = chunk.delta
+
+                    if hasattr(delta, 'thinking'):
+                        thinking_text = delta.thinking
+                        self.response_signal.emit(thinking_text, self.stream)
+
+                    elif hasattr(delta, 'text'):
+                        text = delta.text
+                        self.response_signal.emit(text, self.stream)
+
+                    elif hasattr(delta, 'type'):
+                        if delta.type == 'thinking_delta':
+                            thinking_text = getattr(delta, 'thinking', '')
+                            if thinking_text:
+                                self.response_signal.emit(thinking_text, self.stream)
+                        elif delta.type == 'text_delta':
+                            text = getattr(delta, 'text', '')
+                            if text:
+                                self.response_signal.emit(text, self.stream)
+                elif isinstance(chunk, ContentBlockStopEvent):
+                    self.current_block_type = None
                 elif isinstance(chunk, MessageStopEvent):
                     self.finish_run(current_model, chunk.type, self.stream)
 
@@ -62,4 +102,3 @@ class ClaudeThread(QThread):
         end_time = time.time()
         elapsed_time = end_time - self.start_time
         self.response_finished_signal.emit(model, finish_reason, elapsed_time, stream)
-
